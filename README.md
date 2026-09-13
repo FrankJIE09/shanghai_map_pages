@@ -26,8 +26,11 @@ scripts/   extract_data.py  validate_data.py              抽取与校验
            patch_bars_dianping.py  patch_all_stores.py    定点补丁（改 JSON）
            parity_diag.html  parity_geo_diag.html         渲染结果对比探针
 build.py   render.sh
+index.html                                      手写的平台入口页（转发到 dist/index.html，不参与构建）
 dist/                                           构建产物，提交进 git（含 index.html 落地页）
 ```
+
+> 根目录的 `index.html` 和 `dist/index.html` 是两回事：前者是手写的，只为满足「静态托管平台要在部署目录根部找到 `index.html` 或 `package.json`」的识别规则（见下文部署一节）；后者是构建产物，才是真正的站点首页。
 
 `eat.html` 没有自己的数据文件：它的数据由构建期把 `bichi.json` 与 `michelin.json` **合并生成**（规则见 `scripts/merge_venues.py`），所以不存在需要手工维护的 `eat.json`。
 
@@ -184,6 +187,27 @@ python3 -m http.server 8000    # 然后访问 http://localhost:8000/dist/
 - 因此 **改了 `data/` 或 `src/` 就要跑 `./render.sh` 并提交 `dist/`**。`build.py` 里 `EXPECT` 记的条数是「数据体量」的护栏：数据增删后条数变了，`--check` 会报错要求你同步更新 `EXPECT`（落地页 `count` 标记的条数会自动算，不用手改）。
 
 `dist/` 已提交进 git，所以旧平台（帽子云等）那种「构建命令留空 + 输出目录 `dist`」的静态托管方式同样仍然可用。
+
+### 帽子云等静态平台
+
+帽子云在**部署目录根部**找 `index.html` 或 `package.json` 来判定「这是不是一个静态站」，两个都没有就会拒绝部署并报：
+
+```
+ERROR: 未知服务类型：检测到当前应用非 Some[static] 应用。
+```
+
+本仓库的站点文件都在 `dist/`，根目录原本两个文件都没有，所以照下面配：
+
+| 设置项 | 值 |
+| --- | --- |
+| 安装命令 | 留空 |
+| 构建命令 | 留空（产物已提交，平台侧不需要构建） |
+| 输出目录 | `dist` |
+| 根目录 | 留空 |
+
+根目录那个 `index.html` 是给平台做识别的兜底（转发到 `dist/index.html`），同时也是「输出目录误配成仓库根」时仍能跳对地方的安全网。**不要**改成加根目录 `package.json`：那会让平台以为这是个 Node 项目，可能去跑 `npm install` / `npm run build`，反而多一层失败点。
+
+改平台配置后要**先保存再部署**，否则用的还是旧配置。
 
 ## 与旧仓库的关系
 

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--
+  仓库根的「静态托管平台入口」，不是站点首页。
+
+  有些静态托管平台（如帽子云）在部署目录根部找 index.html 或 package.json 来
+  判定「这是不是一个静态站」；两个都没有就报
+  「未知服务类型：检测到当前应用非 Some[static] 应用」并拒绝部署。
+  本仓库的站点产物在 dist/，根目录原本两个文件都没有，故在此放一个转发页。
+
+  真正的首页是 dist/index.html，它由 build.py 从 src/pages/index.html 生成。
+  本文件是手写的、不参与构建，也不被 build.py 校验（--check 只扫 dist/）。
+  改这里请直接改本文件；不要把它当成产物。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上海探店地图 2026 · 四张地图总入口</title>
+<!-- 让静态平台「看见」入口文件；同时把真人送到真正的首页 -->
+<meta http-equiv="refresh" content="0; url=dist/index.html">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="dist/index.html">
+<style>
+  :root{ --paper:#FAF5EB; --ink:#2E2B27; --ink-dim:#6B6357; --gold:#B8860B; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Inter','Noto Serif SC',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background-color:var(--paper); color:var(--ink);
+  }
+  .box{ text-align:center; padding:24px; }
+  .kicker{
+    display:inline-block; font-size:11px; font-weight:700; letter-spacing:.14em;
+    color:#1F402B; background:#D9A05B; padding:3px 9px; border-radius:3px;
+  }
+  p{ color:var(--ink-dim); font-size:14px; }
+  a{ color:var(--gold); font-weight:600; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <span class="kicker">上海探店地图 2026</span>
+    <p>正在进入四张地图的总入口…</p>
+    <p>若没有自动跳转，请点 <a href="dist/index.html">这里</a>。</p>
+  </div>
+  <script>
+    // meta refresh 在部分平台/浏览器下会被禁用；JS 作为兜底，保留锚点。
+    location.replace('dist/index.html' + location.hash);
+  </script>
+</body>
+</html>
