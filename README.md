@@ -15,8 +15,10 @@ data/
 src/
   pages/   bars.html  bichi.html  michelin.html   页面模板，含构建标记
   static/  map-base.js  theme.js                  共用地图底座
-scripts/   extract_data.py  validate_data.py
-           patch_bars_dianping.py  patch_all_stores.py
+scripts/   extract_data.py  validate_data.py              抽取与校验
+           jslit.py  js_eval_literal.js                   抽取时求值 JS 字面量
+           patch_bars_dianping.py  patch_all_stores.py    定点补丁（改 JSON）
+           parity_diag.html                               渲染结果对比探针
 build.py   render.sh
 dist/                                           构建产物，提交进 git
 ```
@@ -44,6 +46,19 @@ python3 build.py --check           # 只校验，不写盘
 ```
 
 `build.py` 会把每个生成区的 sha256 记进 `dist/.build-manifest.json`。若检测到 dist 里的生成内容被手改过，会报错退出，加 `--force` 才覆盖。
+
+## 补数据
+
+`data/venues/*.json` 是唯一数据源。批量补字段用两个补丁脚本，它们只改 JSON，不再碰 HTML：
+
+```bash
+python3 scripts/patch_bars_dianping.py --dry    # 先看会改什么
+python3 scripts/patch_bars_dianping.py          # 写回 bars.json
+python3 scripts/patch_all_stores.py             # 写回 bichi.json
+./render.sh                                     # 校验 + 重新构建
+```
+
+两个脚本都是**幂等**的：重复运行第二次不再有变更。`patch_bars_dianping.py` 里 `NOTE` / `SRC_ADD` 只在 `UPDATES` 命中的 key 上生效——这是原脚本的语义，脚本每次都会把「不生效的遗留条目」列出来，便于清理。`patch_all_stores.py` 里 `AVG` 是人均的唯一来源（先把所有 `avg` 清成 `null` 再写入），所以从 `AVG` 删掉一个 key 就能真正清掉它的人均。
 
 ## 构建标记
 
