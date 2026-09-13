@@ -2,6 +2,8 @@
 
 上海探店地图（四张）：米其林 / 必吃榜×扫街榜 / 酒吧×Livehouse×夜店 / **餐饮总览（三榜合并）**。
 
+**在线访问：<https://frankjie09.github.io/shanghai_map_pages/>**（GitHub Pages 托管的落地页，四张图的总入口）
+
 页面是**自包含的单文件 HTML**：数据与共用地图逻辑在构建期内联进去，产物零依赖、可离线双击打开。
 
 ## 目录结构
@@ -158,14 +160,28 @@ python3 -m http.server 8000    # 然后访问 http://localhost:8000/dist/
 
 ## 部署（GitHub Pages）
 
-站点：`https://frankjie09.github.io/shanghai_map_pages/` —— 打开就是 `dist/index.html` 这张落地页。
+**已上线**：<https://frankjie09.github.io/shanghai_map_pages/>
 
-发布由 `.github/workflows/deploy-pages.yml` 完成：`main` 每次推送（或手动 `workflow_dispatch`）时，把 `dist/` 整个目录作为 Pages 产物上传发布。
+| 页面 | 线上地址 |
+| --- | --- |
+| 落地页（四张图总入口） | <https://frankjie09.github.io/shanghai_map_pages/> |
+| 餐饮总览（三榜合一） | <https://frankjie09.github.io/shanghai_map_pages/shanghai_eat_2026.html> |
+| 必吃榜 × 扫街榜 | <https://frankjie09.github.io/shanghai_map_pages/shanghai_bichi_saojie_2026.html> |
+| 米其林指南 2026 | <https://frankjie09.github.io/shanghai_map_pages/shanghai_michelin_2026.html> |
+| 酒吧 × Livehouse × 夜店 | <https://frankjie09.github.io/shanghai_map_pages/shanghai_bars_livehouse_2026.html> |
 
-- 仓库 `Settings → Pages → Build and deployment → Source` 需选 **GitHub Actions**（只需设一次；用 `POST /repos/{owner}/{repo}/pages` 带 `build_type=workflow` 也能开）。
+发布由 `.github/workflows/deploy-pages.yml` 完成：`main` 每次推送（或手动 `workflow_dispatch`）时，把 `dist/` 整个目录作为 Pages 产物上传发布；站点根页就是 `dist/index.html`，所以落地页的文件名必须是 `index.html`。
+
+一次性配置（**均已完成**）：
+
+- 仓库为 **public** —— 免费计划下 GitHub 不允许私有仓库使用 Pages。
+- Pages 的 `Build and deployment → Source` 为 **GitHub Actions**（等价于 `POST /repos/{owner}/{repo}/pages` 带 `build_type=workflow`）。
+- 推送凭据带 `workflow` scope。注意 `gh auth refresh -s workflow` **只更新 gh 自己的 keyring**，`~/.git-credentials` 里若存着旧 token，推送 `.github/workflows/*` 仍会被拒（报 `without 'workflow' scope`），需把凭据文件里的 token 一并换新。
+
+日常注意：
+
 - 工作流**不构建**，只在发布前跑一次 `python3 build.py --check` 当门禁：产物必须与源模板一致、落地页链接不得断开，否则拒发。
-- 因此 **改了 `data/` 就要跑 `./render.sh` 并提交 `dist/`**。`build.py` 里 `EXPECT` 记的条数是「数据体量」的护栏：数据增删后条数变了，`--check` 会报错要求你同步更新 `EXPECT`（落地页 `count` 标记的条数会自动算，不用手改）。
-- 首次启用前需确认 `gh` / git 凭据带 `workflow` scope（`gh auth refresh -s workflow`），否则推送 `.github/workflows/*` 会被拒。
+- 因此 **改了 `data/` 或 `src/` 就要跑 `./render.sh` 并提交 `dist/`**。`build.py` 里 `EXPECT` 记的条数是「数据体量」的护栏：数据增删后条数变了，`--check` 会报错要求你同步更新 `EXPECT`（落地页 `count` 标记的条数会自动算，不用手改）。
 
 `dist/` 已提交进 git，所以旧平台（帽子云等）那种「构建命令留空 + 输出目录 `dist`」的静态托管方式同样仍然可用。
 
@@ -173,4 +189,4 @@ python3 -m http.server 8000    # 然后访问 http://localhost:8000/dist/
 
 这些页面原本在 `gemini_htmls` 仓库中，数据内联在 HTML 里。本仓库把它拆成「JSON 源 + 构建期内联」并抽出了共用的地图底座；`eat`（三榜合并总览）是本仓库新增的页面，`gemini_htmls` 里没有对应快照。
 
-`gemini_htmls` 里的同名页面是**冻结的历史快照**，不再更新。本仓库现在自己有一张 `dist/index.html` 落地页作为四张图的总入口（地址见「部署」一节），`gemini_htmls` 的 `index.html` 可以改成指向它。
+`gemini_htmls` 里的同名页面是**冻结的历史快照**，不再更新。本仓库自己有一张 `dist/index.html` 落地页作为四张图的总入口，线上地址为 <https://frankjie09.github.io/shanghai_map_pages/>；`gemini_htmls` 的 `index.html` 可以改成指向它。
