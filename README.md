@@ -103,6 +103,10 @@ cp dist/*.html scripts/parity_diag.html /tmp/b/          # 新版本
 
 （`bars` 的定位实现是页面自己的，它不给 🧭 / ✕ 按钮设 id，所以这个探针只适用于 `bichi` 与 `michelin`。）
 
+详情弹窗与筛选计数用 `scripts/parity_ui_diag.html`：点地图标记 → 点列表行 → 开筛选 → 复位，每步读详情卡标题/类型/地址块/导航按钮与列表行数、计数文案。三页都能跑。
+
+注意它依赖的类名各页不同：`bars` 的列表行是 `.venue-item`，`bichi` 与 `michelin` 是 `.rest-item`；筛选复位要点第 0 个「全部」chip，因为 chip 再点一次并不会取消筛选。
+
 ## 本地预览
 
 直接用浏览器打开 `dist/*.html` 即可（`file://` 也能正常工作）。
