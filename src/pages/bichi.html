@@ -159,6 +159,76 @@
         .poi-name.mall    { color: #6E6558; }
         .poi-name.transit { color: #6B7580; }
 
+        /* ===== 地铁线路 / 站点（MapBase.drawMetro）=====
+           线色是线路固有属性，来自 data/map/metro/lines.json（--mc / --mc2 / --mc3 在入图时写入）；
+           这里的 CSS 只负责「亮色底图上的对比度」与形状（普通站单环、换乘站白底双环）。
+           站点一律白底 + 深色分离线：2 号线 #97D700 / 3 号线 #FFD100 这类亮线色在宣纸底图上
+           单靠线色描边几乎看不出圆点边界，补一圈深色分离线来对等暗色版的深色填充。 */
+        .metro-ctl { display: flex; flex-direction: column; align-items: flex-end; }
+        .metro-panel {
+            width: 190px;
+            max-height: 54vh;
+            overflow-y: auto;
+            margin-top: 4px;
+            padding: 7px;
+            background: #FFFDF9;
+            border: 2px solid #3E3933;
+            box-shadow: 3px 3px 0 #3E3933;
+            border-radius: 8px;
+        }
+        .metro-panel.hidden { display: none; }
+        .metro-panel-head { display: flex; flex-direction: column; gap: 1px; font-size: 11px; font-weight: 700; color: #2E2B27; }
+        .metro-panel-stat { font-size: 9px; font-weight: 400; color: #6B6357; }
+        .metro-panel-acts { display: flex; gap: 4px; margin: 6px 0; }
+        .metro-panel-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+        /* 面板里的 chip 与本页其它 chip 同款配色：页面其它 chip 的边框/底色靠 Tailwind 的
+           border-gray-300 / bg-white / text-gray-700 给出，而 map-base 生成的这几个只挂了
+           .chip，所以在这里补齐同一套中性色；选中态复用全局 .chip.active，不另配一套色 */
+        .metro-panel .chip { border: 1px solid #D1D5DB; background: #FFFFFF; color: #374151; }
+        .metro-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin-right: 3px;
+            border-radius: 50%;
+            vertical-align: middle;
+            border: 1px solid rgba(62, 57, 51, 0.55);
+        }
+        .metro-station {
+            box-sizing: border-box;
+            border-radius: 50%;
+            cursor: help;
+            background: #FFFDF9;
+            border: 2px solid var(--mc, #3E3933);
+            box-shadow: 0 0 0 1px rgba(62, 57, 51, 0.55);
+        }
+        /* 换乘站：白底双环；多线共站时外环按线路色分割（未定义 --mc2/--mc3 时回落到主色） */
+        .metro-station.transfer {
+            border: none;
+            box-shadow: 0 0 0 1.5px rgba(62, 57, 51, 0.72);
+            background: conic-gradient(var(--mc) 0 33.4%, var(--mc2, var(--mc)) 33.4% 66.7%, var(--mc3, var(--mc)) 66.7% 100%);
+        }
+        .metro-station.transfer::before { content: ''; position: absolute; inset: 2.5px; border-radius: 50%; background: #FFFDF9; }
+        .metro-station.transfer::after { content: ''; position: absolute; inset: 2.5px; border-radius: 50%; border: 1.5px solid var(--mc); }
+        /* z13 只留换乘站（z>=14 由 JS 摘掉 hide-minor） */
+        .metro-stations-pane.hide-minor .metro-station:not(.transfer) { display: none; }
+        /* 常驻站名（z>=16，metroNamesPane z=358）：抬高 18px 让下方站点圆点完整可见；
+           墨色文字 + 近不透明宣纸底，保证亮色底图上的对比度；pointer-events 由 pane 关掉，不挡店标点击 */
+        .metro-name {
+            display: inline-block;
+            transform: translate(-50%, calc(-50% - 18px));
+            white-space: nowrap;
+            padding: 0 3px;
+            border-radius: 2px;
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: #2E2B27;
+            background: rgba(255, 253, 249, 0.94);
+            border: 1px solid rgba(62, 57, 51, 0.45);
+        }
+        .metro-tip { font-size: 9px !important; }
+
         /* ===== 筛选按钮 ===== */
         .cat-btn { transition: all 0.15s ease; }
         .cat-btn.active { background-color: #1F402B !important; color: #FAF5EB !important; border-color: #1F402B !important; }
@@ -433,6 +503,18 @@
     const LANDMARKS = [ /* 构建生成：勿手改，改数据请改 data/map/landmarks/greater.json */ ];
     /* @@BUILD:end@@ */
 
+    /* ================= 地铁线路 / 站点（data/map/metro/） =================
+       lines.json 13 条线（6 号线全在浦东、核心区 bbox 内 0 站，按「范围外不收录」跳过）；
+       stations.json 87 个站，故意不带 lines 字段 —— 所属线路与换乘与否由 lines.json 反查派生。
+       chip 数量遍历数组生成，不硬编码。 */
+    /* @@BUILD:json data/map/metro/lines.json -> METRO_LINES@@ */
+    const METRO_LINES = [ /* 构建生成：勿手改，改数据请改 data/map/metro/lines.json */ ];
+    /* @@BUILD:end@@ */
+    /* @@BUILD:json data/map/metro/stations.json -> METRO_STATIONS@@ */
+    const METRO_STATIONS = [ /* 构建生成：勿手改，改数据请改 data/map/metro/stations.json */ ];
+    /* @@BUILD:end@@ */
+    /* 地铁的绘制与线路多选面板已抽到 src/static/map-base.js（MapBase.drawMetro） */
+
     const CAT_META = {
         both:   { label: '双榜（必吃 + 扫街）', badge: '双', color: '#7C3AED', bg: 'bg-violet-100', text: 'text-violet-900', border: 'border-violet-400' },
         bichi:  { label: '大众点评必吃榜',      badge: '吃', color: '#DC2626', bg: 'bg-red-100',    text: 'text-red-900',    border: 'border-red-300' },
@@ -512,6 +594,9 @@
             theme: MAP_THEMES.light,
             poiMinZoom: { area: 10, landmark: 12 }
         });
+
+        /* 地铁默认全不选：首屏不再叠一层地铁，要看的线路由右上角 🚇 自行勾选 */
+        MapBase.drawMetro({ lines: METRO_LINES, stations: METRO_STATIONS, theme: MAP_THEMES.light });
 
         ALL_STORES.forEach(r => {
             const meta = CAT_META[r.category];

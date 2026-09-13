@@ -14,18 +14,18 @@
     },
     "shanghai_bichi_saojie_2026.html": {
       "source": "src/pages/bichi.html",
-      "sha256": "da7899b18aaf3db04053c680d033c80d7e5e377065977e8239aa4488562b2dda",
-      "bytes": 217332
+      "sha256": "8cecf64860cc7e61f84f1d2399806cfa344d4b00c1b3122770fcac7f86a7a701",
+      "bytes": 236832
     },
     "shanghai_michelin_2026.html": {
       "source": "src/pages/michelin.html",
-      "sha256": "9f7e169321edab57263a263abc85aad0563e6797828ad569e6e4b4220074444e",
-      "bytes": 229762
+      "sha256": "e76ae5585c688fddae02887355112c5767a8eb3b24efd883863e594d735add9b",
+      "bytes": 249262
     },
     "shanghai_eat_2026.html": {
       "source": "src/pages/eat.html",
-      "sha256": "7b5a920901393bfc201d66ffad60f51718893420e83f4e4c113d37a32174da8a",
-      "bytes": 270738
+      "sha256": "d1d5657324eae46f346de533fb97e617faab8e9b36547cdb1d13cfcefadad349",
+      "bytes": 290238
     }
   }
 }
