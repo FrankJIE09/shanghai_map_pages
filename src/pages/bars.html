@@ -136,6 +136,13 @@
   .metro-station.transfer::after{ content:''; position:absolute; inset:2.5px; border-radius:50%; border:1.5px solid var(--mc); }
   /* z13 只留换乘站（z>=14 由 JS 摘掉 hide-minor） */
   .metro-stations-pane.hide-minor .metro-station:not(.transfer){ display:none; }
+  /* 常驻站名（z>=16，metroNamesPane z=358）：抬高 18px 让下方站点圆点完整可见；
+     半透明底 + 描边保证暗色底图上的对比度；pointer-events 由 pane 关掉，不挡店标点击 */
+  .metro-name{
+    display:inline-block; transform:translate(-50%,calc(-50% - 18px)); white-space:nowrap;
+    padding:0 3px; border-radius:2px; font-size:10px; font-weight:600; line-height:1.25;
+    color:#E7E2F2; background:rgba(20,18,26,.66); border:1px solid rgba(120,110,150,.5);
+  }
   .metro-tip{ font-size:9px!important; }
 
   /* ===== 筛选按钮 ===== */

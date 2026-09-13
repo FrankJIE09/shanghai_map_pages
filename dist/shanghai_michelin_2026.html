@@ -444,6 +444,8 @@
             /* 地铁图层（drawMetro）：图层组、索引与勾选状态 */
             metroLinesGroup: null,
             metroStationsGroup: null,
+            metroNamesGroup: null,      // 常驻站名（z>=16）：独立 pane + 独立 marker
+            metroNameMarkers: null,     // 站 id -> 常驻站名 marker
             metroLineLayers: null,      // 线路 id -> polyline（建好但不入图，勾选后再 add）
             metroLineColor: null,       // 线路 id -> 线色（线色是线路固有属性，不进 theme.js）
             metroStationMarkers: null,  // 站 id -> marker
@@ -455,7 +457,8 @@
             metroLineCount: 0,          // 13（数据驱动，不硬编码）
             metroStationCount: 0,       // 87
             metroTransferCount: 0,      // 47（被引用线路数 > 1 的站）
-            metroZoom: { lines: 11, stations: 13, allStations: 14, names: 15 }
+            /* lines 11 / stations 13 / allStations 14 / names(hover) 15 / pinNames(常驻) 16 */
+            metroZoom: { lines: 11, stations: 13, allStations: 14, names: 15, pinNames: 16 }
         };
 
         function getMap() {
@@ -780,6 +783,35 @@
                 S.metroStationMarkers[s.id] = mk;
             });
 
+            // 常驻站名（z>=16）：用独立 marker + 独立 pane，而不是把 hover tooltip 改成
+            // permanent —— Leaflet 每个 marker 只能挂一个 tooltip，改成 permanent 就会丢掉
+            // z15 的 hover 能力；而且 tooltip 固定落在 tooltipPane(650)，比店铺图标所在的
+            // markerPane(600) 还高，常驻标签会整片盖住 37 个店标。
+            // 这里把站名 pane 夹在 metroStationsPane(356) 与 landmarksPane(365) 之间：
+            // 站名压在站点圆点之上，但仍在店标(markerPane 600) 之下。
+            map.createPane('metroNamesPane');
+            const nmPane = map.getPane('metroNamesPane');
+            nmPane.style.zIndex = 358;
+            nmPane.style.pointerEvents = 'none';
+
+            S.metroNameMarkers = {};
+            stations.forEach(function (s) {
+                if (!s || !s.coords || !s.name) return;
+                if (!(stationLines[s.id] || []).length) return;   // 不在任何线路上：不画
+                S.metroNameMarkers[s.id] = L.marker(s.coords, {
+                    pane: 'metroNamesPane',
+                    interactive: false,                            // 常驻名不抢鼠标事件
+                    keyboard: false,
+                    icon: L.divIcon({
+                        className: '',
+                        html: '<span class="metro-name">' + s.name + '</span>',
+                        iconSize: [0, 0],
+                        iconAnchor: [0, 0]
+                    })
+                });
+            });
+            S.metroNamesGroup = L.layerGroup().addTo(map);         // 内容跟随勾选，显隐跟随 pane
+
             updateMetroVisibility();
             map.on('zoomend', updateMetroVisibility);
 
@@ -859,12 +891,17 @@
                 if (lyr) S.metroLinesGroup.addLayer(lyr);
             });
             S.metroStationsGroup.clearLayers();
+            S.metroNamesGroup.clearLayers();
             if (sel.size) {
                 Object.keys(S.metroStationMarkers).forEach(function (sid) {
                     const ids = S.metroStationLines[sid] || [];
                     for (let i = 0; i < ids.length; i++) {
                         // 换乘站若其任一线被勾选即显示
-                        if (sel.has(ids[i])) { S.metroStationsGroup.addLayer(S.metroStationMarkers[sid]); return; }
+                        if (sel.has(ids[i])) {
+                            S.metroStationsGroup.addLayer(S.metroStationMarkers[sid]);
+                            if (S.metroNameMarkers[sid]) S.metroNamesGroup.addLayer(S.metroNameMarkers[sid]);
+                            return;
+                        }
                     }
                 });
             }
@@ -897,8 +934,14 @@
                     if (lyr) lyr.setStyle({ weight: weight });
                 });
             }
-            // 站名只在 z>=15 可用，且靠 hover 出（密集站点不用 permanent tooltip）
-            setMetroStationNames(z >= Z.names);
+            // 站名只在 z>=15 可用，且靠 hover 出（密集站点不用 permanent tooltip）；
+            // z>=16 改由常驻站名层接管（见 metroNamesPane），此时卸掉 hover tooltip，
+            // 避免同一站点同时出现「常驻名 + hover 名」两个标签。
+            setMetroStationNames(z >= Z.names && z < Z.pinNames);
+
+            // 常驻站名：只切 pane 的 display，不逐个 add/removeLayer，避免缩放时闪烁
+            const pn = map.getPane('metroNamesPane');
+            if (pn) pn.style.display = (has && z >= Z.pinNames) ? '' : 'none';
         }
 
         function setMetroStationNames(on) {
