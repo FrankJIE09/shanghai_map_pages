@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>geo-diag-loading</title>
+<style>body{font:12px monospace;margin:6px}iframe{width:1280px;height:820px;border:1px solid #999}</style>
+<body>
+<pre id="out">running…</pre>
+<iframe id="f" scrolling="no"></iframe>
+<script>
+// 定位流程对比探针：伪造 navigator.geolocation 后依次点 🧭 / 📏 / ✕，
+// 每步记录提示条文案、按钮状态、我的位置标记数、精度圆数、名录前三项。
+// 用法：_geo_diag.html#shanghai_bichi_saojie_2026.html
+const target = decodeURIComponent(location.hash.slice(1)) || 'shanghai_bichi_saojie_2026.html';
+const f = document.getElementById('f');
+const log = [];
+
+const FIX = { coords: { latitude: 31.2304, longitude: 121.4737, accuracy: 35 } };
+
+function stubGeo(w) {
+  let asked = 0;
+  const gp = w.navigator.geolocation;
+  Object.defineProperty(w.navigator, 'geolocation', {
+    configurable: true,
+    value: {
+      getCurrentPosition(ok) { asked++; ok(FIX); },
+      watchPosition() { return 1; },
+      clearWatch() {},
+      _asked: () => asked
+    }
+  });
+  return gp;
+}
+
+function listSel(d) { return d.querySelector('#venue-list') ? '#venue-list' : '#rest-list'; }
+
+function firstItems(d) {
+  const el = d.querySelector(listSel(d));
+  if (!el) return 'none';
+  return Array.from(el.children).slice(0, 3).map(function (c) {
+    return (c.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 26);
+  }).join(' | ');
+}
+
+function snap(tag) {
+  const d = f.contentDocument, w = f.contentWindow;
+  const q = s => d.querySelectorAll(s).length;
+  const g = w.navigator.geolocation;
+  const clr = d.getElementById('locate-clear');
+  const sb = d.getElementById('sort-dist');
+  const hint = d.getElementById('map-hint');
+  return [
+    tag,
+    'hint=' + JSON.stringify((hint ? hint.textContent : 'none').replace(/\s+/g, ' ').slice(0, 58)),
+    'hintColor=' + (hint ? hint.style.color || '-' : '-'),
+    'clear=' + (clr ? (clr.style.display === 'none' ? 'hidden' : clr.style.display || 'default') : 'none'),
+    'sort=' + (sb ? JSON.stringify(sb.textContent) + (sb.classList.contains('active') ? '+active' : '') : 'none'),
+    'dots=' + q('.user-dot'),
+    'circles=' + q('.leaflet-overlay-pane svg path'),
+    'markers=' + q('.leaflet-marker-pane > *'),
+    'asked=' + (g && g._asked ? g._asked() : 'n/a'),
+    'first3=' + JSON.stringify(firstItems(d)),
+  ].join(' ');
+}
+
+function click(d, id) {
+  const el = d.getElementById(id);
+  if (!el) return false;
+  el.click();
+  return true;
+}
+
+function run() {
+  const d = f.contentDocument, w = f.contentWindow;
+  if (!d) { document.title = 'GEOERR no contentDocument'; return; }
+  try {
+    log.push(snap('0_initial'));
+    stubGeo(w);
+    click(d, 'locate-btn');
+    log.push(snap('1_located'));
+    click(d, 'sort-dist');
+    log.push(snap('2_sort_on'));
+    click(d, 'sort-dist');
+    log.push(snap('3_sort_off'));
+    click(d, 'locate-clear');
+    log.push(snap('4_cleared'));
+  } catch (e) {
+    log.push('ERR ' + e.message);
+  }
+  document.title = 'GEO[' + target.slice(11, 20) + '] ' + log.join('  ##  ');
+  document.getElementById('out').textContent = log.join('\n\n');
+}
+
+f.addEventListener('load', function () { setTimeout(run, 1800); });
+f.src = target;
+setTimeout(function () { if (document.title === 'geo-diag-loading') run(); }, 7000);
+</script>
+</body>

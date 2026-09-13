@@ -405,6 +405,8 @@
     /* @@BUILD:end@@ */
     /* @@BUILD:js src/static/map-base.js@@ */
     /* @@BUILD:end@@ */
+    /* @@BUILD:js src/static/geo-controls.js@@ */
+    /* @@BUILD:end@@ */
 
     /* ================= 数据（由 shanghai_wutong_streets.html 抽取） ================= */
     /* @@BUILD:json data/venues/bichi.json -> ALL_STORES@@ */
@@ -443,7 +445,7 @@
     let map;
     let markerMap = {};        // key -> marker
     let activeKey = null;
-    const state = { lists: [], cuisine: 'all', district: 'all', price: [], q: '', onlyNew: false, onlyMichelin: false, sortByDist: false };
+    const state = { lists: [], cuisine: 'all', district: 'all', price: [], q: '', onlyNew: false, onlyMichelin: false };
     let labelsPermanent = false;
 
     /* ================= 工具 ================= */
@@ -630,7 +632,7 @@
     }
 
     document.addEventListener('click', function (e) {
-        if (e.target.closest('#sort-dist')) { toggleSortDist(); return; }
+        if (e.target.closest('#sort-dist')) { geo.toggleSortDist(); return; }
         const catBtn = e.target.closest('.cat-btn');
         if (catBtn) {
             const v = catBtn.dataset.list;
@@ -717,7 +719,7 @@
         document.querySelectorAll('#cuisine-chips .chip').forEach(b => b.classList.toggle('active', b.dataset.cuisine === 'all'));
         document.querySelectorAll('#district-chips .chip').forEach(b => b.classList.toggle('active', b.dataset.district === 'all'));
         syncPriceChips();
-        syncSortBtn();
+        geo.syncSortButton();
         renderList(); updateMarkers();
     }
 
@@ -750,7 +752,7 @@
             if (ok) shown++;
         });
         let extra = '';
-        if (userLatLng) {
+        if (geo && geo.pos()) {
             const mine = ALL_STORES.filter(match);
             if (mine.length) {
                 let best = mine[0], bd = distOf(best);
@@ -784,7 +786,7 @@
                 <span class="text-[10px] text-gray-400">${group.length} 家</span>`;
             list.appendChild(head);
 
-            group.sort(state.sortByDist && userLatLng
+            group.sort(geo && geo.isSortByDist() && geo.pos()
                 ? (a, b) => (distOf(a) ?? Infinity) - (distOf(b) ?? Infinity)
                 : (a, b) => a.name.localeCompare(b.name, 'zh'));
             group.forEach(r => {
@@ -831,7 +833,7 @@
         chips.push(r.bichi ? '🍜 必吃榜' : '🛣️ 扫街榜');
         if (r.michelin !== 0) chips.push('⭐ ' + MICHELIN_LABEL[r.michelin]);
         const dm = distOf(r);
-        if (dm != null) chips.unshift(`📍 距你约 ${MapBase.fmtDist(dm)}（${MapBase.bearingOf(userLatLng, r)}）`);
+        if (dm != null) chips.unshift(`📍 距你约 ${MapBase.fmtDist(dm)}（${MapBase.bearingOf(geo.pos(), r)}）`);
         chips.forEach(t => {
             const s = document.createElement('span');
             s.className = `inline-block text-[10px] font-semibold mr-1.5 mb-1.5 px-2 py-0.5 rounded border ${meta.bg} ${meta.text} ${meta.border}`;
@@ -865,130 +867,13 @@
     }
 
     /* ================= 定位（我的位置） ================= */
-    let userMarker = null;      // 我的位置标记
-    let userCircle = null;      // 定位精度圆
-    let userLatLng = null;      // [lat, lng]
-    let watchId = null;         // watchPosition 句柄
-    let geoBusy = false;        // 正在请求定位
+    /* 授权 → 落点/精度圈 → 距离排序 → 清除，这套流程已抽到 src/static/map-base.js
+       的 MapBase.initGeoControls（本页与 michelin 共用一套）。这里只留本页的接线。 */
+    let geo = null;             // 由 initLocate() 赋值；updateMarkers / renderList / 详情卡都从这里取位置
 
-    const GEO_OPTS = { enableHighAccuracy: true, timeout: 12000, maximumAge: 20000 };
-
-    /* 球面距离 / 距离格式化 / 8 向方位已抽到 src/static/map-base.js
-       （MapBase.geoDist / fmtDist / bearingOf）。distOf 保留为薄封装，因为它绑定页面自己的 userLatLng。 */
+    /* 距离：绑定本页 geo 的薄封装 */
     function distOf(r) {
-        return (userLatLng && r && r.coords) ? MapBase.geoDist(userLatLng, r.coords) : null;
-    }
-
-    function setGeoBtn(on, busy) {
-        const btn = document.getElementById('locate-btn');
-        const clr = document.getElementById('locate-clear');
-        if (btn) {
-            btn.classList.toggle('locate-on', !!on);
-            btn.innerHTML = busy ? '⏳' : '🧭';
-            btn.title = on ? '重新居中到我的位置' : '定位到我的位置（需浏览器授权）';
-        }
-        if (clr) clr.style.display = on ? 'flex' : 'none';
-    }
-    function syncSortBtn() {
-        const b = document.getElementById('sort-dist');
-        if (!b) return;
-        b.classList.toggle('active', state.sortByDist);
-        b.textContent = (state.sortByDist ? '📏 近→远 ✓' : '📏 近→远');
-        b.title = state.sortByDist ? '已按距你远近排序，再点一次恢复按店名排序' : '按距我的位置远近排序（首次点击会请求定位授权）';
-    }
-    /* 定位/错误提示：借用地图上方的 hint 条，5 秒后恢复默认统计 */
-    function flashHint(msg, isErr) {
-        const el = document.getElementById('map-hint');
-        if (!el) return;
-        el.textContent = msg;
-        el.style.color = isErr ? '#B91C1C' : '#1F402B';
-        el.style.borderColor = isErr ? '#FCA5A5' : '#86EFAC';
-        el.style.background = '#FFFFFF';
-        clearTimeout(flashHint._t);
-        flashHint._t = setTimeout(() => {
-            el.style.color = ''; el.style.borderColor = ''; el.style.background = '';
-            updateMarkers();
-        }, 5000);
-    }
-
-    /* 把定位结果显示到地图上；recenter=true 时才移动地图 */
-    function applyUserPos(pos, recenter) {
-        const c = pos.coords;
-        const next = [c.latitude, c.longitude];
-        const moved = userLatLng ? MapBase.geoDist(userLatLng, next) : Infinity;
-        userLatLng = next;
-
-        if (!userMarker) {
-            userMarker = L.marker(userLatLng, {
-                zIndexOffset: 2000,
-                keyboard: false,
-                icon: L.divIcon({ className: '', html: '<div class="user-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] })
-            }).addTo(map).bindTooltip('我的位置', { permanent: true, direction: 'top', offset: [0, -12], className: 'user-tip' });
-        } else {
-            userMarker.setLatLng(userLatLng);
-        }
-
-        const acc = Math.max(20, c.accuracy || 50);
-        if (!userCircle) {
-            userCircle = L.circle(userLatLng, {
-                radius: acc, color: '#2563EB', weight: 1.2, opacity: 0.55,
-                fillColor: '#3B82F6', fillOpacity: 0.13, interactive: false
-            }).addTo(map);
-        } else {
-            userCircle.setLatLng(userLatLng).setRadius(acc);
-        }
-
-        if (recenter) map.flyTo(userLatLng, Math.max(map.getZoom(), 15), { duration: 0.8 });
-        if (recenter || moved > 40) { renderList(); updateMarkers(); }
-        return acc;
-    }
-
-    function onGeoOk(pos) {
-        geoBusy = false;
-        setGeoBtn(true, false);
-        const acc = applyUserPos(pos, true);
-        syncSortBtn();
-        flashHint(`📍 已定位（精度约 ${MapBase.fmtDist(acc)}）· 名录已显示距离`, false);
-    }
-    function onGeoErr(err) {
-        geoBusy = false;
-        setGeoBtn(!!userLatLng, false);
-        const code = err && err.code;
-        flashHint(code === 1 ? '🚫 定位被拒绝：请点地址栏的「位置」图标允许授权后重试'
-            : code === 3 ? '⏱️ 定位超时：请到窗边 / 室外，并确认系统定位服务已开启'
-            : '⚠️ 暂时拿不到位置：请检查系统定位服务或稍后重试', true);
-    }
-
-    /* 点击 🧭：首次请求授权定位，之后仅重新居中 */
-    function locateMe() {
-        if (!navigator.geolocation) { flashHint('❌ 当前浏览器不支持定位（Geolocation API）', true); return; }
-        if (userLatLng) { map.flyTo(userLatLng, Math.max(map.getZoom(), 15), { duration: 0.8 }); return; }
-        if (geoBusy) return;
-        geoBusy = true;
-        setGeoBtn(true, true);
-        navigator.geolocation.getCurrentPosition(onGeoOk, onGeoErr, GEO_OPTS);
-        if (watchId == null) {
-            // 持续跟踪：位置变化只刷新标记与距离，不打断正在浏览的地图
-            watchId = navigator.geolocation.watchPosition(
-                p => applyUserPos(p, false),
-                () => {},
-                GEO_OPTS
-            );
-        }
-    }
-
-    function clearLocation() {
-        if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
-        if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
-        if (userCircle) { map.removeLayer(userCircle); userCircle = null; }
-        userLatLng = null;
-        geoBusy = false;
-        setGeoBtn(false, false);
-        renderList(); updateMarkers();
-        const nav = document.getElementById('detail-nav');
-        if (nav) nav.style.display = 'none';
-        syncSortBtn();
-        flashHint('已清除定位：距离与排序已恢复默认', false);
+        return geo ? geo.distOf(r) : null;
     }
 
     /* 详情卡里的高德打开 / 导航按钮 */
@@ -998,53 +883,28 @@
         if (!r || !r.coords) { nav.style.display = 'none'; return; }
         const [lat, lng] = r.coords;
         const name = encodeURIComponent(r.name);
-        nav.href = userLatLng
-            ? `https://uri.amap.com/navigation?from=${userLatLng[1]},${userLatLng[0]},我的位置&to=${lng},${lat},${name}&mode=walk&coordinate=wgs84&callnative=0`
+        const me = geo && geo.pos();
+        nav.href = me
+            ? `https://uri.amap.com/navigation?from=${me[1]},${me[0]},我的位置&to=${lng},${lat},${name}&mode=walk&coordinate=wgs84&callnative=0`
             : `https://uri.amap.com/marker?position=${lng},${lat}&name=${name}&coordinate=wgs84&callnative=0`;
-        nav.textContent = userLatLng ? '🧭 高德步行导航到店' : '🧭 在高德地图打开';
+        nav.textContent = me ? '🧭 高德步行导航到店' : '🧭 在高德地图打开';
         nav.style.display = 'flex';
     }
 
-    function toggleSortDist() {
-        if (state.sortByDist) {
-            state.sortByDist = false;
-        } else {
-            state.sortByDist = true;
-            if (!userLatLng) locateMe();       // 未定位时顺手请求授权
-        }
-        syncSortBtn();
-        renderList();
-    }
-
-    /* 右上角定位控件（🧭 定位 / ✕ 清除） */
+    /* 右上角定位控件（🧭 定位 / ✕ 清除）与「📏 近→远」开关 */
     function initLocate() {
-        const LocateControl = L.Control.extend({
-            options: { position: 'topright' },
-            onAdd: function () {
-                const wrap = L.DomUtil.create('div', 'leaflet-bar');
-                const css = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;text-decoration:none;background:#FCF9F2;';
-
-                const btn = L.DomUtil.create('a', '', wrap);
-                btn.id = 'locate-btn';
-                btn.href = '#';
-                btn.innerHTML = '🧭';
-                btn.title = '定位到我的位置（需浏览器授权）';
-                btn.style.cssText = css + 'font-size:15px;';
-                L.DomEvent.on(btn, 'click', function (e) { L.DomEvent.stop(e); locateMe(); });
-
-                const clr = L.DomUtil.create('a', '', wrap);
-                clr.id = 'locate-clear';
-                clr.href = '#';
-                clr.innerHTML = '✕';
-                clr.title = '清除定位与距离';
-                clr.style.cssText = css + 'display:none;font-size:13px;color:#7F1D1D;';
-                L.DomEvent.on(clr, 'click', function (e) { L.DomEvent.stop(e); clearLocation(); });
-                return wrap;
+        geo = MapBase.initGeoControls(map, {
+            zoom: 15,
+            hint: { plain: '#1F402B', err: '#B91C1C', border: { ok: '#86EFAC', err: '#FCA5A5' }, bg: '#FFFFFF' },
+            onPosition: function () { renderList(); updateMarkers(); },
+            onSortChanged: function () { renderList(); },
+            onHintReset: function () { updateMarkers(); },
+            onClear: function () {
+                const nav = document.getElementById('detail-nav');
+                if (nav) nav.style.display = 'none';
             }
         });
-        map.addControl(new LocateControl());
-        setGeoBtn(false, false);
-        syncSortBtn();
+        geo.init();
     }
 
     /* ================= 统计 ================= */

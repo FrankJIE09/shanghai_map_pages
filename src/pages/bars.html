@@ -844,10 +844,13 @@ function selectVenue(key, fromMap){
 }
 
 /* ================= 定位（我的位置） ================= */
+/* 亮色两页（bichi / michelin）的定位流程已收拢到 src/static/map-base.js 的
+   MapBase.initGeoControls。bars 不走共用实现，是有意的：本页没有距离显示、没有
+   「近→远」排序、定位标记用 circleMarker 而非 divIcon、提示条配色也不同，硬套
+   共用 config 只会让那边多出一堆分支，省下的代码还没配置多。
+   球面距离 / 距离格式化 / 8 向方位（MapBase.geoDist / fmtDist / bearingOf）仍然共用。 */
 let userMarker = null, userCircle = null, userLatLng = null, watchId = null;
 const GEO_OPTS = {enableHighAccuracy:true, timeout:12000, maximumAge:20000};
-/* 球面距离 / 距离格式化 / 8 向方位已抽到 src/static/map-base.js
-   （MapBase.geoDist / fmtDist / bearingOf）。bars 页面本身不显示距离，故不再定义本地副本。 */
 function flashHint(msg, isErr){
   const el = document.getElementById('map-hint');
   if (!el) return;

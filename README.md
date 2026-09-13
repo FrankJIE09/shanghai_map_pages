@@ -15,10 +15,11 @@ data/
 src/
   pages/   bars.html  bichi.html  michelin.html   页面模板，含构建标记
   static/  map-base.js  theme.js                  共用地图底座
+           geo-controls.js                        定位控件（仅 bichi/michelin 内联）
 scripts/   extract_data.py  validate_data.py              抽取与校验
            jslit.py  js_eval_literal.js                   抽取时求值 JS 字面量
            patch_bars_dianping.py  patch_all_stores.py    定点补丁（改 JSON）
-           parity_diag.html                               渲染结果对比探针
+           parity_diag.html  parity_geo_diag.html         渲染结果对比探针
 build.py   render.sh
 dist/                                           构建产物，提交进 git
 ```
@@ -91,6 +92,16 @@ cp dist/*.html scripts/parity_diag.html /tmp/b/          # 新版本
 ```
 
 关注这些量：`polylines` / `road_labels` / `areas` / `pois` / `icons` / `list`，以及开关前后的增减与 `mapstate`。**不要用 `firstTileZ` 判断缩放**——Leaflet 会保留 `fitBounds` 之前的旧瓦片，DOM 里第一个瓦片的 z 可能是初始值，而 `mapstate.z` 才是真实缩放。
+
+定位流程用另一个探针，它会伪造 `navigator.geolocation`，再依次点 🧭 / 📏 / ✕，记录每步的提示条文案、按钮状态、我的位置标记数、精度圆数与名录前三项：
+
+```bash
+# 两个端口同样各开一个，对比页面标题
+# http://localhost:8766/parity_geo_diag.html#shanghai_bichi_saojie_2026.html
+# http://localhost:8765/parity_geo_diag.html#shanghai_bichi_saojie_2026.html
+```
+
+（`bars` 的定位实现是页面自己的，它不给 🧭 / ✕ 按钮设 id，所以这个探针只适用于 `bichi` 与 `michelin`。）
 
 ## 本地预览
 
