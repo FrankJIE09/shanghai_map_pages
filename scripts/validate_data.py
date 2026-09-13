@@ -9,6 +9,7 @@ import json
 import os
 import re
 import sys
+from collections import Counter
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -58,6 +59,27 @@ LANDMARK_FILES = ["data/map/landmarks/downtown.json", "data/map/landmarks/greate
 
 AREA_KINDS = ["origin", "zone"]
 LANDMARK_KINDS = ["tower", "venue", "mall", "park", "transit"]
+
+METRO_LINES = "data/map/metro/lines.json"
+METRO_STATIONS = "data/map/metro/stations.json"
+
+# 地铁线色必须是 #RRGGBB（Leaflet 直接把它喂给 SVG stroke）
+COLOR_HEX = re.compile(r"^#[0-9A-Fa-f]{6}$")
+
+# bars.json 的 metro 是自然语言，从中抠出「8/12号线」这类线号
+METRO_REF = re.compile(r"([0-9]+(?:\s*/\s*[0-9]+)*)\s*号线")
+
+# 已知偏差白名单：bars.json 的 metro 里提到、但 lines.json 故意不收录的线路。
+# 6 号线在核心区 bbox 内 0 站（最近的高科西路距东边界约 400 m），按「范围外不收录 /
+# 严禁编造坐标」的铁律跳过 —— 用户已知并接受，见 README「地铁线路」与阶段一报告。
+# 关键：白名单只对下面列出的线号生效，其余任何「bars 提到却查无此线」都要报错，
+# 这条断言的未来价值就是抓住「新开了一条线却忘了收录」。
+MISSING_LINES = {
+    6: "核心区 bbox 内 0 站（最近的高科西路距东边界约 400 m），按不编造坐标的铁律跳过；见 README / 阶段一报告",
+}
+
+# 「规划中未启用」的站允许不被任何线路引用。目前一个都没有 —— 保持空集合而不是关掉整条检查。
+PLANNED_STATIONS = set()
 
 # 上海大致范围（含崇明/金山等外围），坐标超出必然是填错了
 LAT_RANGE = (30.60, 31.90)
@@ -304,6 +326,134 @@ def check_points(errors, rel, allowed_kinds):
     print("  {:<34} {:>3} 条  注记点".format(rel, len(pts)))
 
 
+def check_metro(errors):
+    """校验 data/map/metro/ 的线路与站点，并和 bars.json 的 metro 文本交叉核对。
+
+    stations.json 故意不带 lines 字段（所属线路由 lines.json 反查派生），所以这里
+    只能顺着 lines.json 的 stations 引用去查，孤儿站另行报错。
+    """
+    lines = load(METRO_LINES)
+    stations = load(METRO_STATIONS)
+    if not isinstance(lines, list) or not lines:
+        errors.append("{}: 必须是非空裸数组".format(METRO_LINES))
+        return
+    if not isinstance(stations, list) or not stations:
+        errors.append("{}: 必须是非空裸数组".format(METRO_STATIONS))
+        return
+
+    # bbox 从 roads.json 实时算，绝不硬编码 —— 以后路网扩边，这里会跟着变
+    roads = load(ROADS_JSON)
+    if not isinstance(roads, list) or not roads:
+        errors.append("{}: 无法从路网计算 bbox（顶层不是非空数组）".format(ROADS_JSON))
+        return
+    pts = [p for r in roads if isinstance(r, dict) for p in (r.get("path") or [])]
+    if not pts:
+        errors.append("{}: 无法取到路网顶点，不能计算 bbox".format(ROADS_JSON))
+        return
+    lat0, lat1 = min(p[0] for p in pts), max(p[0] for p in pts)
+    lng0, lng1 = min(p[1] for p in pts), max(p[1] for p in pts)
+
+    def in_bbox(where, coord):
+        if not (isinstance(coord, list) and len(coord) == 2
+                and all(isinstance(x, (int, float)) for x in coord)):
+            errors.append("{}: 坐标必须是 [lat, lng] 数字对，实际 {!r}".format(where, coord))
+            return
+        if not (lat0 <= coord[0] <= lat1 and lng0 <= coord[1] <= lng1):
+            errors.append("{}: 坐标 {} 超出 roads.json bbox（lat {}~{} / lng {}~{}）".format(
+                where, coord, lat0, lat1, lng0, lng1))
+
+    # ---------- 站点：id 唯一、形状、坐标在 bbox 内 ----------
+    st_ids = set()
+    for i, s in enumerate(stations):
+        where = "{}[{}]".format(METRO_STATIONS, i)
+        if not isinstance(s, dict):
+            errors.append("{}: 必须是对象".format(where))
+            continue
+        where = "{} ({})".format(where, s.get("name") or s.get("id") or "?")
+        for f in ["id", "name", "coords"]:
+            if f not in s:
+                errors.append("{}: 缺字段 {}".format(where, f))
+        sid = s.get("id")
+        if not sid:
+            errors.append("{}: id 为空".format(where))
+        elif sid in st_ids:
+            errors.append("{}: id 重复 {}".format(where, sid))
+        else:
+            st_ids.add(sid)
+        if "coords" in s:
+            in_bbox(where + " coords", s["coords"])
+
+    # ---------- 线路：id 唯一、color 合法、path 与 stations 引用 ----------
+    line_ids = set()
+    for i, l in enumerate(lines):
+        where = "{}[{}]".format(METRO_LINES, i)
+        if not isinstance(l, dict):
+            errors.append("{}: 必须是对象".format(where))
+            continue
+        where = "{} ({})".format(where, l.get("name") or l.get("id") or "?")
+        for f in ["id", "name", "color", "path", "stations"]:
+            if f not in l:
+                errors.append("{}: 缺字段 {}".format(where, f))
+        lid = l.get("id")
+        if not lid:
+            errors.append("{}: id 为空".format(where))
+        elif lid in line_ids:
+            errors.append("{}: id 重复 {}".format(where, lid))
+        else:
+            line_ids.add(lid)
+
+        if "color" in l and not (isinstance(l["color"], str) and COLOR_HEX.match(l["color"])):
+            errors.append("{}: color 必须是 #RRGGBB，实际 {!r}".format(where, l["color"]))
+
+        path = l.get("path")
+        if not (isinstance(path, list) and len(path) >= 2):
+            errors.append("{}: path 至少要有 2 个点，实际 {}".format(
+                where, len(path) if isinstance(path, list) else path))
+        else:
+            for p in path:
+                in_bbox(where + " path", p)
+
+        refs = l.get("stations")
+        if not (isinstance(refs, list) and len(refs) >= 2):
+            errors.append("{}: stations 至少引用 2 个站，实际 {}".format(
+                where, len(refs) if isinstance(refs, list) else refs))
+        else:
+            for sid in refs:
+                if sid not in st_ids:
+                    errors.append("{}: 引用了不存在的站 {!r}（悬空引用）".format(where, sid))
+
+    # ---------- 孤儿站：每个站至少被一条线引用 ----------
+    used = Counter(x for l in lines if isinstance(l, dict) for x in (l.get("stations") or []))
+    for s in stations:
+        sid = s.get("id") if isinstance(s, dict) else None
+        if sid and sid not in used and sid not in PLANNED_STATIONS:
+            errors.append("{}: 孤儿站 {}（不被任何线路引用，也不在 PLANNED_STATIONS 白名单里）".format(
+                METRO_STATIONS, sid))
+    transfers = sum(1 for n in used.values() if n > 1)
+
+    # ---------- 交叉校验：bars.json 的 metro 里提到的线号都必须有对应线路 ----------
+    known = set()
+    for l in lines:
+        m = re.match(r"^m_(\d+)$", (l.get("id") if isinstance(l, dict) else "") or "")
+        if m:
+            known.add(int(m.group(1)))
+    referenced = set()
+    for r in load("data/venues/bars.json"):
+        for m in METRO_REF.finditer(r.get("metro") or ""):
+            referenced.update(int(n.strip()) for n in m.group(1).split("/"))
+    for n in sorted(referenced - known):
+        if n in MISSING_LINES:
+            print("  ⚠ SKIP 地铁交叉校验：bars.json 提到 {} 号线，但 lines.json 故意不收录 —— {}".format(
+                n, MISSING_LINES[n]))
+        else:
+            errors.append("bars.json 的 metro 提到 {} 号线，但 lines.json 里没有对应线路，"
+                          "且不在 MISSING_LINES 白名单里 —— 请补数据，或显式加白名单并写明理由".format(n))
+
+    print("  {:<34} {:>3} 条  地铁线路".format(METRO_LINES, len(lines)))
+    print("  {:<34} {:>3} 条  地铁站点（换乘 {} / 引用 {} 次）".format(
+        METRO_STATIONS, len(stations), transfers, sum(used.values())))
+
+
 def validate_all(verbose=True):
     """返回错误列表；空列表表示通过。"""
     errors = []
@@ -321,6 +471,10 @@ def validate_all(verbose=True):
         check_roads(errors)
     except json.JSONDecodeError as e:
         errors.append("{}: JSON 解析失败 {}".format(ROADS_JSON, e))
+    try:
+        check_metro(errors)
+    except json.JSONDecodeError as e:
+        errors.append("{}: JSON 解析失败 {}".format(METRO_LINES, e))
     try:
         check_merged(errors, verbose=verbose)
     except (json.JSONDecodeError, ValueError) as e:

@@ -7,8 +7,11 @@
 <iframe id="f" scrolling="no"></iframe>
 <script>
 // 同源 iframe 加载一张地图页，把关键 DOM 计数与「点开关后」的状态写进 document.title，
-// 用于「新构建 dist vs 原文件」逐项对比（浏览器快照读不到 Leaflet 的文字，只能这样取数）。
+// 用于两个版本逐项对比（浏览器快照读不到 Leaflet 的文字，只能这样取数）。
+// 步骤：初始 → 🛣️ 关/开 → 📍 关/开（有才点）→ 🚇 开面板 → 勾第 1 条线（bars 页才有）。
 // 用法：_diag.html#shanghai_bars_livehouse_2026.html
+// 注意：对比必须「同版本前后」，即两个目录放同一版本的产物、用同一份本探针分别跑；
+// 拿旧产物当基线会把新增图层误判成回归。
 const target = decodeURIComponent(location.hash.slice(1)) || 'shanghai_bars_livehouse_2026.html';
 const f = document.getElementById('f');
 const log = [];
@@ -20,6 +23,45 @@ function paneState(d, name) {
   return p.style.display === 'none' ? 'none' : 'shown';
 }
 function roadPaths(d) { return d.querySelectorAll('.leaflet-roads-pane svg path').length; }
+
+// ---- 地铁图层探针 ----
+// 地铁折线单独在 metroLinesPane 里，不在 roadsPane，所以不会被上面的 polylines 统计到，
+// 这里给一个独立计数。
+function metroLines(d) { return d.querySelectorAll('.leaflet-metroLines-pane svg path.metro-line').length; }
+
+// 站点：DOM 里几个 / 几何可见几个，两个数必须分开看：
+//   1) 未勾选任何线路时，站点 marker 根本没进 DOM（只在被勾线路入图后才 addLayer），不是 CSS 隐藏；
+//   2) pane 自身 display:none 时，子元素的 getComputedStyle().display 仍返回它自己的值，
+//      所以必须先判 pane 是否展示，再逐元素查 display（z13 的 hide-minor 正是后者的效果）。
+function metroStationStats(d) {
+  const all = Array.from(d.querySelectorAll('.metro-station'));
+  const pane = d.querySelector('.metro-stations-pane');
+  const paneShown = !!pane && pane.style.display !== 'none';
+  const hideMinor = !!pane && pane.classList.contains('hide-minor');
+  let visible = 0;
+  if (paneShown) {
+    all.forEach(function (el) { if (getComputedStyle(el).display !== 'none') visible++; });
+  }
+  return {
+    dom: all.length,
+    visible: visible,
+    transfer: all.filter(function (el) { return el.classList.contains('transfer'); }).length,
+    hideMinor: hideMinor
+  };
+}
+
+function openMetroPanel(d) {
+  const a = d.querySelector('.metro-ctl .leaflet-bar a');
+  if (!a) return false;          // 只有 bars 页有 🚇
+  a.click();
+  return true;
+}
+function clickMetroLine(d, idx) {
+  const chip = d.querySelectorAll('[data-metro-chips] [data-line]')[idx || 0];
+  if (!chip) return false;
+  chip.click();
+  return true;
+}
 
 // 在 iframe 页面自己的作用域里求值。页面顶层的 `let map` 属于全局词法环境，
 // 后续注入的 <script> 能直接引用它（但外部拿不到 w.map，属性上并不存在）。
@@ -46,6 +88,7 @@ function listSelOf(d) { return d.querySelector('#venue-list') ? '#venue-list' : 
 function snap(tag) {
   const d = f.contentDocument;
   const q = s => d.querySelectorAll(s).length;
+  const ms = metroStationStats(d);
   return [
     tag,
     'polylines=' + roadPaths(d),
@@ -62,6 +105,17 @@ function snap(tag) {
     'paneRoadB=' + paneState(d, 'roadLabelsPaneB'),
     'paneArea=' + paneState(d, 'areaLabelsPane'),
     'panePoi=' + paneState(d, 'landmarksPane'),
+    'paneMetroLines=' + paneState(d, 'metroLinesPane'),
+    'paneMetroStations=' + paneState(d, 'metroStationsPane'),
+    // 地铁：DOM 计数 vs 几何可见计数分开报
+    'metro_lines=' + metroLines(d),
+    'metro_stations=' + ms.dom,
+    'metro_stations_visible=' + ms.visible,
+    'metro_stations_transfer=' + ms.transfer,
+    'metro_hide_minor=' + ms.hideMinor,
+    'metro_chips=' + q('[data-metro-chips] [data-line]'),
+    'metro_chips_active=' + q('[data-metro-chips] [data-line].active'),
+    'metro_stat=' + JSON.stringify(((d.querySelector('[data-metro-stat]') || {}).textContent || 'n/a').trim()),
     'list=' + q(listSelOf(d) + ' > *'),
     'count=' + JSON.stringify(((d.getElementById('list-count') || {}).textContent || 'n/a').trim()),
     'panes=' + JSON.stringify(Array.from(d.querySelectorAll('.leaflet-map-pane .leaflet-pane')).map(e => e.className.replace('leaflet-pane ', '').replace('leaflet-', '').replace('-pane', ''))),
@@ -90,6 +144,9 @@ function run() {
     if (clickToggle(d, '显示 / 隐藏道路骨架')) log.push(snap('roads_on'));
     if (clickToggle(d, '显示 / 隐藏地标参照')) log.push(snap('poi_off'));
     if (clickToggle(d, '显示 / 隐藏地标参照')) log.push(snap('poi_on'));
+    // 地铁（只有 bars 页有 🚇）：开面板 → 勾第 1 条线，再各读一轮
+    if (openMetroPanel(d)) log.push(snap('metro_open'));
+    if (clickMetroLine(d, 0)) log.push(snap('metro_line1'));
   } catch (e) {
     log.push('ERR ' + e.message);
   }

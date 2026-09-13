@@ -14,6 +14,7 @@ data/
   map/     roads.json                             227 条道路，各页共用
            areas/     downtown.json  greater.json
            landmarks/ downtown.json  greater.json
+           metro/     lines.json  stations.json    地铁线路 / 站点（仅 bars 页用，见下文）
 .github/   workflows/deploy-pages.yml          GitHub Pages 发布（把 dist/ 发上线）
 src/
   pages/   index.html                            落地页模板（总入口，不含数据）
@@ -21,6 +22,7 @@ src/
   static/  map-base.js  theme.js                  共用地图底座
            geo-controls.js                        定位控件（bichi/michelin/eat 内联）
 scripts/   extract_data.py  validate_data.py              抽取与校验
+           extract_metro.py                               地铁数据抽取（离线维护，不在构建链路上）
            merge_venues.py                                 bichi + michelin 合并（eat 页数据）
            jslit.py  js_eval_literal.js                   抽取时求值 JS 字面量
            patch_bars_dianping.py  patch_all_stores.py    定点补丁（改 JSON）
@@ -41,9 +43,23 @@ dist/                                           构建产物，提交进 git（�
 ```
 data/*.json + src/static/*.js  --build.py-->  dist/*.html
 data/venues/bichi.json + michelin.json  --merge_venues-->  eat 页的 EAT_STORES
+data/map/metro/lines.json + stations.json  --build.py-->  bars 页的 METRO_LINES / METRO_STATIONS
 ```
 
 源数据只写 JSON，**不要手改 HTML 里的数据**——那只在构建时生成。改数据请改 `data/`，然后重新构建。
+
+### 地铁图层（bars 页）
+
+`data/map/metro/` 只有 bars 页用到，两份文件都是**裸顶层数组**：
+
+- `lines.json` —— 13 条线，形状 `{ id, name, color, path:[[lat,lng]…], stations:[stationId…] }`，`id` 形如 `m_1`、`m_2`、`m_7`（线号直接写进 id）。
+- `stations.json` —— 87 个站，形状 `{ id, name, coords:[lat,lng] }`。**故意不带 `lines` 字段**：所属线路与「是否换乘」都在渲染时由 `lines.json` 反查派生（被 2 条及以上线路引用即换乘，实测 47 个换乘站）。
+
+构建期用 `json` 标记把两份数据分别内联成 `METRO_LINES` / `METRO_STATIONS`（见 `src/pages/bars.html` 约 541/545 行），绘制与右上角 🚇 多选面板在 `MapBase.drawMetro()`（`src/static/map-base.js`）。缩放分级：z11-12 只画线不画站 / z13 只画换乘站 / z≥14 全部站 / z≥15 hover 出站名；默认**全不选**，勾选后才入图。
+
+`extract_metro.py` 是**离线维护脚本**（重跑抽取才用它），**不在 `render.sh` 链路上**，平时改数据不需要碰它。
+
+**已知偏差：没有 6 号线（`m_6`）。** 6 号线全在浦东，核心区 bbox 内 0 站（最近的高科西路距东边界约 400 m），按「范围外不收录 / 严禁编造坐标」的铁律被跳过，因此 `lines.json` 里没有它。但 `data/venues/bars.json` 的 `metro` 文本里确实引用了 6 号线（赤红 EKA·天物那条「6号线金桥路站 / 9号线金桥站」），所以 `validate_data.py` 的线号交叉校验带一个**显式白名单 `MISSING_LINES = {6: …}`**：白名单内的线号只打印 `⚠ SKIP` 说明，白名单外的任何缺失线号照样报错（这条断言的作用就是抓「新开线忘了收录」，不要把它放宽成「忽略找不到的线号」）。
 
 ## 三榜合并口径（eat 页）
 
@@ -60,7 +76,7 @@ data/venues/bichi.json + michelin.json  --merge_venues-->  eat 页的 EAT_STORES
 ## 构建
 
 ```bash
-python3 scripts/validate_data.py   # 数据自检（key 唯一、坐标范围、枚举、必填字段、合并不变量）
+python3 scripts/validate_data.py   # 数据自检（key 唯一、坐标范围、枚举、必填字段、合并不变量、地铁线与站点）
 python3 build.py                   # 内联 JSON 与共用 JS，输出 dist/
 python3 build.py --check           # 只校验，不写盘
 ```
@@ -122,12 +138,12 @@ const EAT_STORES = [ /* 构建生成：多源合并，勿手改 */ ];
 
 重构过地图底座之后，要确认产物与重构前「渲染结果一致」，不能只看代码。`scripts/parity_diag.html` 就是为此准备的探针：
 
-它把一张地图页塞进同源 iframe，点一遍 🛣️ / 📍 开关，把两轮开关后的 DOM 计数与 Leaflet 真实状态（缩放、中心、bounds、pane 可见性）写进 `document.title`，供人或脚本读取。
+它把一张地图页塞进同源 iframe，依次点 🛣️ / 📍 开关（页面没有的会跳过），再对 bars 页额外「点 🚇 开面板 → 勾第 1 条线」，每步把 DOM 计数与 Leaflet 真实状态（缩放、中心、bounds、pane 可见性）写进 `document.title`，供人或脚本读取。
 
 ```bash
 mkdir -p /tmp/a /tmp/b
-cp dist/*.html scripts/parity_diag.html /tmp/a/          # 旧版本
-cp dist/*.html scripts/parity_diag.html /tmp/b/          # 新版本
+cp dist/*.html scripts/parity_diag.html /tmp/a/          # 版本 A
+cp dist/*.html scripts/parity_diag.html /tmp/b/          # 版本 B（同一版本时用于确认探针自洽）
 (cd /tmp/a && python3 -m http.server 8766 &)
 (cd /tmp/b && python3 -m http.server 8765 &)
 # 浏览器打开 http://localhost:8766/parity_diag.html#shanghai_michelin_2026.html
@@ -135,7 +151,14 @@ cp dist/*.html scripts/parity_diag.html /tmp/b/          # 新版本
 # 对比两边页面标题里的这几十个计数：应逐字相同
 ```
 
-关注这些量：`polylines` / `road_labels` / `areas` / `pois` / `icons` / `list`，以及开关前后的增减与 `mapstate`。**不要用 `firstTileZ` 判断缩放**——Leaflet 会保留 `fitBounds` 之前的旧瓦片，DOM 里第一个瓦片的 z 可能是初始值，而 `mapstate.z` 才是真实缩放。
+**必须同版本前后对比**：两个目录放**同一版本**的产物、用**同一份探针**分别跑（例如重构前后各构建一次，各自复制进一个目录）。不要拿旧产物当基线去对新产物，否则新增图层（如地铁 pane 与站点）会被误判成回归。只想确认「新图层没有动到旧计数」时，也可以只跑新版本，看 `initial → metro_line1` 这一步里除地铁相关量外其余计数是否纹丝不动。
+
+关注这些量：`polylines` / `road_labels` / `areas` / `pois` / `icons` / `list`，以及开关前后的增减与 `mapstate`。地铁新增 `metro_lines` / `metro_stations` / `metro_stations_visible` / `metro_stations_transfer` / `metro_chips` / `metro_chips_active` / `metro_stat` 与 `paneMetroLines` / `paneMetroStations` / `metro_hide_minor`。注意两点：
+
+- `polylines` 只数 `.leaflet-roads-pane svg path`，地铁折线在独立的 `metroLinesPane` 里，所以**不进入** `polylines`，要看 `metro_lines`。
+- `metro_stations` 是 **DOM 里的站数**，`metro_stations_visible` 是**几何可见的站数**：未勾线时站点根本不在 DOM；勾线后 z13 时普通站仍在 DOM，只是被 `.metro-stations-pane.hide-minor .metro-station:not(.transfer)` 用 `display:none` 藏掉。两个数要分开看，别混成一个。
+
+**不要用 `firstTileZ` 判断缩放**——Leaflet 会保留 `fitBounds` 之前的旧瓦片，DOM 里第一个瓦片的 z 可能是初始值，而 `mapstate.z` 才是真实缩放。
 
 定位流程用另一个探针，它会伪造 `navigator.geolocation`，再依次点 🧭 / 📏 / ✕，记录每步的提示条文案、按钮状态、我的位置标记数、精度圆数与名录前三项：
 
