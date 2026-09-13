@@ -463,7 +463,23 @@
             poiVisible: true,
             roadStyle: null,
             btn: null,
-            poiMinZoom: { area: 10, landmark: 12 }
+            poiMinZoom: { area: 10, landmark: 12 },
+
+            /* 地铁图层（drawMetro）：图层组、索引与勾选状态 */
+            metroLinesGroup: null,
+            metroStationsGroup: null,
+            metroLineLayers: null,      // 线路 id -> polyline（建好但不入图，勾选后再 add）
+            metroLineColor: null,       // 线路 id -> 线色（线色是线路固有属性，不进 theme.js）
+            metroStationMarkers: null,  // 站 id -> marker
+            metroStationLines: null,    // 站 id -> [线路 id]（由 lines.json 反查派生）
+            metroStationNames: null,    // 站 id -> 站名
+            metroSelected: null,        // Set<线路 id>，默认空 = 首屏不画任何地铁
+            metroPanel: null,
+            metroNamesOn: false,
+            metroLineCount: 0,          // 13（数据驱动，不硬编码）
+            metroStationCount: 0,       // 87
+            metroTransferCount: 0,      // 47（被引用线路数 > 1 的站）
+            metroZoom: { lines: 11, stations: 13, allStations: 14, names: 15 }
         };
 
         function getMap() {
@@ -680,6 +696,265 @@
             if (pl) pl.style.display = (S.poiVisible && z >= S.poiMinZoom.landmark) ? '' : 'none';
         }
 
+        /* ---------------- 地铁：线路折线 + 站点 ----------------
+
+           lines.json 给线路（id / name / color / path / stations 引用），stations.json 只给
+           站（id / name / coords，故意不带 lines 字段）：「所属线路」与「是否换乘」都在这里
+           由 lines.json 反查派生（被引用线路数 > 1 即换乘站）。线色是线路的固有属性、不随主题
+           变化，所以存在 lines.json 上，不塞进 theme.js 的「主题配色」。
+
+           缩放分级（与默认 fitBounds(maxZoom:13/14) 贴合）：
+             z 11~12 只画勾选的线路（细线），不画站
+             z 13    画站，但只画换乘站
+             z >=14  画全部站
+             z >=15  站名可用（靠 hover，不用 permanent tooltip —— 密集站会铺满地图）
+           pane：metroLinesPane(352) 压在道路骨架之上、路名之下；metroStationsPane(356) 在
+           路名之上、地标之下。站点必须显式 pane，否则会落进默认 markerPane(600) 去和店铺
+           图标抢位置。 */
+        function drawMetro(opts) {
+            const o = opts || {};
+            const lines = o.lines || [];
+            const stations = o.stations || [];
+            const theme = o.theme || window.MAP_THEMES.light;
+            const map = S.map;
+
+            // 反查索引：站 -> 所属线路（lines 由 station 反查，换乘与否由此派生）
+            const stationLines = {};
+            const lineColor = {};
+            const stationNames = {};
+            lines.forEach(function (l) {
+                lineColor[l.id] = l.color;
+                (l.stations || []).forEach(function (sid) {
+                    if (!stationLines[sid]) stationLines[sid] = [];
+                    stationLines[sid].push(l.id);
+                });
+            });
+            stations.forEach(function (s) { if (s && s.id) stationNames[s.id] = s.name; });
+
+            S.metroStationLines = stationLines;
+            S.metroStationNames = stationNames;
+            S.metroLineColor = lineColor;
+            S.metroLineCount = lines.length;
+            S.metroStationCount = stations.length;
+            S.metroTransferCount = stations.filter(function (s) {
+                return (stationLines[s.id] || []).length > 1;
+            }).length;
+            S.metroSelected = new Set();     // 默认全不选：首屏已有 37 个店标，不再叠地铁
+            S.metroNamesOn = false;
+
+            map.createPane('metroLinesPane');
+            map.getPane('metroLinesPane').style.zIndex = 352;
+            map.getPane('metroLinesPane').style.pointerEvents = 'none';
+            map.createPane('metroStationsPane');
+            const stPane = map.getPane('metroStationsPane');
+            stPane.style.zIndex = 356;
+            stPane.classList.add('metro-stations-pane');   // 供页面 CSS 与 parity 探针定位
+
+            S.metroLinesGroup = L.layerGroup().addTo(map);
+            S.metroStationsGroup = L.layerGroup().addTo(map);
+
+            // 线路：一次建好，勾选后再入图层组（未勾选的不画 —— 1/2/8/10/12/13 号线在人民
+            // 广场一带高度重叠，13 条全亮会直接压掉店标）
+            S.metroLineLayers = {};
+            lines.forEach(function (l) {
+                S.metroLineLayers[l.id] = L.polyline(l.path, {
+                    pane: 'metroLinesPane',
+                    color: l.color,
+                    weight: 2,
+                    opacity: 0.85,
+                    lineCap: 'round',
+                    lineJoin: 'round',      // 相邻保留站直连会有折角（如 7 号线 4182 m 跨站直连）
+                    interactive: false,
+                    className: 'metro-line'
+                });
+            });
+
+            // 站点：普通站单环、换乘站白底双环；多线共用时外环按线路色分割（CSS 里做）。
+            // 视觉权重明显低于 32px 的店铺图标：普通站 9px、换乘站 13px，无填充高亮。
+            S.metroStationMarkers = {};
+            stations.forEach(function (s) {
+                if (!s || !s.coords) return;
+                const ids = stationLines[s.id] || [];
+                const cols = ids.map(function (id) { return lineColor[id]; }).filter(Boolean);
+                if (!cols.length) return;                       // 不在任何线路上：不画（数据兜底）
+                const isTransfer = ids.length > 1;
+                const size = isTransfer ? 13 : 9;
+                const mk = L.marker(s.coords, {
+                    pane: 'metroStationsPane',
+                    interactive: true,                          // hover 出站名（z>=15）
+                    keyboard: false,
+                    icon: L.divIcon({
+                        className: 'metro-station' + (isTransfer ? ' transfer' : ''),
+                        html: '',
+                        iconSize: [size, size],
+                        iconAnchor: [size / 2, size / 2]
+                    })
+                });
+                // Leaflet 接管 marker 的 DOM：元素由 divIcon 生成，data-* 与线色在入图时补上
+                mk.on('add', function () {
+                    const el = mk.getElement();
+                    if (!el) return;
+                    el.dataset.stationId = s.id;
+                    el.dataset.lines = ids.join(',');
+                    el.dataset.transfer = isTransfer ? '1' : '0';
+                    el.style.setProperty('--mc', cols[0]);
+                    if (cols[1]) el.style.setProperty('--mc2', cols[1]);
+                    if (cols[2]) el.style.setProperty('--mc3', cols[2]);
+                });
+                S.metroStationMarkers[s.id] = mk;
+            });
+
+            updateMetroVisibility();
+            map.on('zoomend', updateMetroVisibility);
+
+            // 右上角 🚇：展开线路多选面板（chip 复用页面已有的 .chip / .chip.active）
+            const MetroControl = L.Control.extend({
+                options: { position: 'topright' },
+                onAdd: function () {
+                    const wrap = L.DomUtil.create('div', 'metro-ctl');
+                    const bar = L.DomUtil.create('div', 'leaflet-bar', wrap);
+                    const btn = L.DomUtil.create('a', '', bar);
+                    btn.href = '#';
+                    btn.title = '地铁线路图层（可多选）';
+                    btn.innerHTML = '🚇';
+                    btn.style.cssText = btnCss(theme, false);
+
+                    const panel = L.DomUtil.create('div', 'metro-panel hidden', wrap);
+                    panel.innerHTML =
+                        '<div class="metro-panel-head">🚇 地铁线路' +
+                        '<span class="metro-panel-stat" data-metro-stat></span></div>' +
+                        '<div class="metro-panel-acts">' +
+                        '<button type="button" class="chip px-2 py-0.5 text-[10px] rounded" data-metro-act="all">全选</button>' +
+                        '<button type="button" class="chip px-2 py-0.5 text-[10px] rounded" data-metro-act="none">全不选</button>' +
+                        '</div><div class="metro-panel-chips" data-metro-chips></div>';
+
+                    const chips = panel.querySelector('[data-metro-chips]');
+                    lines.forEach(function (l) {
+                        const b = document.createElement('button');
+                        b.type = 'button';
+                        b.className = 'chip px-2 py-0.5 text-[10px] rounded';
+                        b.dataset.line = l.id;
+                        b.innerHTML = '<span class="metro-dot" style="background:' + l.color + '"></span>' + l.name;
+                        chips.appendChild(b);
+                    });
+
+                    L.DomEvent.disableClickPropagation(wrap);
+                    L.DomEvent.disableScrollPropagation(panel);
+
+                    L.DomEvent.on(btn, 'click', function (e) {
+                        L.DomEvent.stop(e);
+                        const open = !panel.classList.contains('hidden');
+                        panel.classList.toggle('hidden');
+                        btn.style.cssText = btnCss(theme, !open);
+                    });
+
+                    L.DomEvent.on(panel, 'click', function (e) {
+                        const act = e.target.closest('[data-metro-act]');
+                        if (act) {
+                            S.metroSelected.clear();
+                            if (act.dataset.metroAct === 'all') {
+                                lines.forEach(function (l) { S.metroSelected.add(l.id); });
+                            }
+                            applyMetroSelection();
+                            return;
+                        }
+                        const chip = e.target.closest('[data-line]');
+                        if (!chip) return;
+                        const id = chip.dataset.line;
+                        if (S.metroSelected.has(id)) S.metroSelected.delete(id);
+                        else S.metroSelected.add(id);
+                        applyMetroSelection();
+                    });
+
+                    S.metroPanel = panel;
+                    return wrap;
+                }
+            });
+            map.addControl(new MetroControl());
+            syncMetroUi();
+        }
+
+        /** 按 S.metroSelected 重算「画哪些线、画哪些站」，再走一次分级显隐。 */
+        function applyMetroSelection() {
+            const sel = S.metroSelected;
+            S.metroLinesGroup.clearLayers();
+            sel.forEach(function (id) {
+                const lyr = S.metroLineLayers[id];
+                if (lyr) S.metroLinesGroup.addLayer(lyr);
+            });
+            S.metroStationsGroup.clearLayers();
+            if (sel.size) {
+                Object.keys(S.metroStationMarkers).forEach(function (sid) {
+                    const ids = S.metroStationLines[sid] || [];
+                    for (let i = 0; i < ids.length; i++) {
+                        // 换乘站若其任一线被勾选即显示
+                        if (sel.has(ids[i])) { S.metroStationsGroup.addLayer(S.metroStationMarkers[sid]); return; }
+                    }
+                });
+            }
+            updateMetroVisibility();
+            syncMetroUi();
+        }
+
+        function updateMetroVisibility() {
+            const map = S.map;
+            if (!map || !S.metroLinesGroup) return;
+            const z = map.getZoom();
+            const Z = S.metroZoom;
+            const has = !!(S.metroSelected && S.metroSelected.size);
+
+            const pl = map.getPane('metroLinesPane');
+            const ps = map.getPane('metroStationsPane');
+            if (pl) pl.style.display = (has && z >= Z.lines) ? '' : 'none';
+            const showStations = !!(has && z >= Z.stations);
+            if (ps) {
+                ps.style.display = showStations ? '' : 'none';
+                // z13 只留换乘站，z>=14 全部站：整块 pane 切一个 class，不逐个 add/removeLayer
+                ps.classList.toggle('hide-minor', z < Z.allStations);
+            }
+
+            // 低缩放只要一根细线，放大后再加粗
+            const weight = z >= Z.allStations ? 3.2 : (z >= Z.stations ? 2.4 : 1.8);
+            if (S.metroSelected) {
+                S.metroSelected.forEach(function (id) {
+                    const lyr = S.metroLineLayers[id];
+                    if (lyr) lyr.setStyle({ weight: weight });
+                });
+            }
+            // 站名只在 z>=15 可用，且靠 hover 出（密集站点不用 permanent tooltip）
+            setMetroStationNames(z >= Z.names);
+        }
+
+        function setMetroStationNames(on) {
+            if (S.metroNamesOn === on || !S.metroStationMarkers) return;
+            S.metroNamesOn = on;
+            Object.keys(S.metroStationMarkers).forEach(function (sid) {
+                const mk = S.metroStationMarkers[sid];
+                if (on) {
+                    if (!mk.getTooltip()) {
+                        mk.bindTooltip(S.metroStationNames[sid] || '', {
+                            direction: 'top', offset: [0, -7], className: 'm-tip metro-tip'
+                        });
+                    }
+                } else if (mk.getTooltip()) {
+                    mk.unbindTooltip();
+                }
+            });
+        }
+
+        function syncMetroUi() {
+            const panel = S.metroPanel;
+            if (!panel || !S.metroSelected) return;
+            panel.querySelectorAll('[data-line]').forEach(function (b) {
+                b.classList.toggle('active', S.metroSelected.has(b.dataset.line));
+            });
+            const stat = panel.querySelector('[data-metro-stat]');
+            if (stat) {
+                stat.textContent = '已选 ' + S.metroSelected.size + '/' + S.metroLineCount + ' 条线 · ' +
+                    S.metroStationCount + ' 站（换乘 ' + S.metroTransferCount + '）';
+            }
+        }
+
         /* ---------------- 标记上的常驻名称 ---------------- */
 
         function bindLabels(items, markerMap, permanent) {
@@ -734,6 +1009,8 @@
             drawAreas: drawAreas,
             drawLandmarks: drawLandmarks,
             updatePoiVisibility: updatePoiVisibility,
+            drawMetro: drawMetro,
+            updateMetroVisibility: updateMetroVisibility,
             bindLabels: bindLabels,
             geoDist: geoDist,
             fmtDist: fmtDist,

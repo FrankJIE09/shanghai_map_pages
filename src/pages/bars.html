@@ -105,6 +105,39 @@
   .poi-name{ margin-top:2px; font-size:10px; font-weight:600; white-space:nowrap; padding:0 3px; border-radius:2px; background:rgba(20,18,26,.72); }
   .poi-name.park{ color:#7FB894; } .poi-name.tower,.poi-name.venue,.poi-name.mall{ color:#B3AACB; } .poi-name.transit{ color:#7FB6D9; }
 
+  /* ===== 地铁线路 / 站点（MapBase.drawMetro）=====
+     线色是线路固有属性，来自 data/map/metro/lines.json（--mc / --mc2 / --mc3 在入图时写入）；
+     这里的 CSS 只负责「暗色底图上的对比度」与形状（普通站单环、换乘站白底双环）。 */
+  .metro-ctl{ display:flex; flex-direction:column; align-items:flex-end; }
+  .metro-panel{
+    width:190px; max-height:54vh; overflow-y:auto; margin-top:4px; padding:7px;
+    background:rgba(20,18,26,.96); border:2px solid var(--stroke);
+    box-shadow:3px 3px 0 var(--hard); border-radius:8px;
+  }
+  .metro-panel.hidden{ display:none; }
+  .metro-panel-head{ display:flex; flex-direction:column; gap:1px; font-size:11px; font-weight:700; color:var(--ink); }
+  .metro-panel-stat{ font-size:9px; font-weight:400; color:var(--ink-dim); }
+  .metro-panel-acts{ display:flex; gap:4px; margin:6px 0; }
+  .metro-panel-chips{ display:flex; flex-wrap:wrap; gap:4px; }
+  .metro-dot{
+    display:inline-block; width:7px; height:7px; margin-right:3px; border-radius:50%;
+    vertical-align:middle; border:1px solid rgba(10,8,16,.85);
+  }
+  .metro-station{
+    box-sizing:border-box; border-radius:50%; cursor:help;
+    background:rgba(10,8,16,.62); border:2px solid var(--mc,#EDE9F5);
+  }
+  /* 换乘站：白底双环；多线共站时外环按线路色分割（未定义 --mc2/--mc3 时回落到主色） */
+  .metro-station.transfer{
+    border:none; box-shadow:0 0 0 1.5px rgba(10,8,16,.9);
+    background:conic-gradient(var(--mc) 0 33.4%,var(--mc2,var(--mc)) 33.4% 66.7%,var(--mc3,var(--mc)) 66.7% 100%);
+  }
+  .metro-station.transfer::before{ content:''; position:absolute; inset:2.5px; border-radius:50%; background:#F5F3FA; }
+  .metro-station.transfer::after{ content:''; position:absolute; inset:2.5px; border-radius:50%; border:1.5px solid var(--mc); }
+  /* z13 只留换乘站（z>=14 由 JS 摘掉 hide-minor） */
+  .metro-stations-pane.hide-minor .metro-station:not(.transfer){ display:none; }
+  .metro-tip{ font-size:9px!important; }
+
   /* ===== 筛选按钮 ===== */
   .cat-btn{ transition:all .15s ease; border:1.5px solid var(--stroke); background:var(--panel2); color:var(--ink-dim); }
   .cat-btn:hover{ color:var(--ink); }
@@ -457,6 +490,7 @@ window.onload = function(){
   MapBase.drawRoads({roads: MAIN_ROADS, theme: MAP_THEMES.dark});
   MapBase.drawAreas({areas: AREAS});
   MapBase.drawLandmarks({landmarks: LANDMARKS});
+  MapBase.drawMetro({lines: METRO_LINES, stations: METRO_STATIONS, theme: MAP_THEMES.dark});
 
   VENUES.forEach(v => {
     const t = typeOf(v), meta = TYPE_META[t];
@@ -498,6 +532,19 @@ const AREAS = [ /* 构建生成：勿手改，改数据请改 data/map/areas/dow
 const LANDMARKS = [ /* 构建生成：勿手改，改数据请改 data/map/landmarks/downtown.json */ ];
 /* @@BUILD:end@@ */
 /* 区域锚点 / 地标注记的绘制已抽到 src/static/map-base.js（MapBase.drawAreas / drawLandmarks） */
+
+
+/* ================= 地铁线路 / 站点（data/map/metro/） =================
+   lines.json 13 条线（6 号线全在浦东、核心区 bbox 内 0 站，按「范围外不收录」跳过）；
+   stations.json 87 个站，故意不带 lines 字段 —— 所属线路与换乘与否由 lines.json 反查派生。
+   chip 数量遍历数组生成，不硬编码。 */
+/* @@BUILD:json data/map/metro/lines.json -> METRO_LINES@@ */
+const METRO_LINES = [ /* 构建生成：勿手改，改数据请改 data/map/metro/lines.json */ ];
+/* @@BUILD:end@@ */
+/* @@BUILD:json data/map/metro/stations.json -> METRO_STATIONS@@ */
+const METRO_STATIONS = [ /* 构建生成：勿手改，改数据请改 data/map/metro/stations.json */ ];
+/* @@BUILD:end@@ */
+/* 地铁的绘制与线路多选面板已抽到 src/static/map-base.js（MapBase.drawMetro） */
 
 
 /* ================= 筛选 chip ================= */

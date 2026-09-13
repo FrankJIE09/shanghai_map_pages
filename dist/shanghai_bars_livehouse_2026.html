@@ -107,6 +107,39 @@
   .poi-name{ margin-top:2px; font-size:10px; font-weight:600; white-space:nowrap; padding:0 3px; border-radius:2px; background:rgba(20,18,26,.72); }
   .poi-name.park{ color:#7FB894; } .poi-name.tower,.poi-name.venue,.poi-name.mall{ color:#B3AACB; } .poi-name.transit{ color:#7FB6D9; }
 
+  /* ===== 地铁线路 / 站点（MapBase.drawMetro）=====
+     线色是线路固有属性，来自 data/map/metro/lines.json（--mc / --mc2 / --mc3 在入图时写入）；
+     这里的 CSS 只负责「暗色底图上的对比度」与形状（普通站单环、换乘站白底双环）。 */
+  .metro-ctl{ display:flex; flex-direction:column; align-items:flex-end; }
+  .metro-panel{
+    width:190px; max-height:54vh; overflow-y:auto; margin-top:4px; padding:7px;
+    background:rgba(20,18,26,.96); border:2px solid var(--stroke);
+    box-shadow:3px 3px 0 var(--hard); border-radius:8px;
+  }
+  .metro-panel.hidden{ display:none; }
+  .metro-panel-head{ display:flex; flex-direction:column; gap:1px; font-size:11px; font-weight:700; color:var(--ink); }
+  .metro-panel-stat{ font-size:9px; font-weight:400; color:var(--ink-dim); }
+  .metro-panel-acts{ display:flex; gap:4px; margin:6px 0; }
+  .metro-panel-chips{ display:flex; flex-wrap:wrap; gap:4px; }
+  .metro-dot{
+    display:inline-block; width:7px; height:7px; margin-right:3px; border-radius:50%;
+    vertical-align:middle; border:1px solid rgba(10,8,16,.85);
+  }
+  .metro-station{
+    box-sizing:border-box; border-radius:50%; cursor:help;
+    background:rgba(10,8,16,.62); border:2px solid var(--mc,#EDE9F5);
+  }
+  /* 换乘站：白底双环；多线共站时外环按线路色分割（未定义 --mc2/--mc3 时回落到主色） */
+  .metro-station.transfer{
+    border:none; box-shadow:0 0 0 1.5px rgba(10,8,16,.9);
+    background:conic-gradient(var(--mc) 0 33.4%,var(--mc2,var(--mc)) 33.4% 66.7%,var(--mc3,var(--mc)) 66.7% 100%);
+  }
+  .metro-station.transfer::before{ content:''; position:absolute; inset:2.5px; border-radius:50%; background:#F5F3FA; }
+  .metro-station.transfer::after{ content:''; position:absolute; inset:2.5px; border-radius:50%; border:1.5px solid var(--mc); }
+  /* z13 只留换乘站（z>=14 由 JS 摘掉 hide-minor） */
+  .metro-stations-pane.hide-minor .metro-station:not(.transfer){ display:none; }
+  .metro-tip{ font-size:9px!important; }
+
   /* ===== 筛选按钮 ===== */
   .cat-btn{ transition:all .15s ease; border:1.5px solid var(--stroke); background:var(--panel2); color:var(--ink-dim); }
   .cat-btn:hover{ color:var(--ink); }
@@ -426,7 +459,23 @@ window.MapBase = (function () {
         poiVisible: true,
         roadStyle: null,
         btn: null,
-        poiMinZoom: { area: 10, landmark: 12 }
+        poiMinZoom: { area: 10, landmark: 12 },
+
+        /* 地铁图层（drawMetro）：图层组、索引与勾选状态 */
+        metroLinesGroup: null,
+        metroStationsGroup: null,
+        metroLineLayers: null,      // 线路 id -> polyline（建好但不入图，勾选后再 add）
+        metroLineColor: null,       // 线路 id -> 线色（线色是线路固有属性，不进 theme.js）
+        metroStationMarkers: null,  // 站 id -> marker
+        metroStationLines: null,    // 站 id -> [线路 id]（由 lines.json 反查派生）
+        metroStationNames: null,    // 站 id -> 站名
+        metroSelected: null,        // Set<线路 id>，默认空 = 首屏不画任何地铁
+        metroPanel: null,
+        metroNamesOn: false,
+        metroLineCount: 0,          // 13（数据驱动，不硬编码）
+        metroStationCount: 0,       // 87
+        metroTransferCount: 0,      // 47（被引用线路数 > 1 的站）
+        metroZoom: { lines: 11, stations: 13, allStations: 14, names: 15 }
     };
 
     function getMap() {
@@ -643,6 +692,265 @@ window.MapBase = (function () {
         if (pl) pl.style.display = (S.poiVisible && z >= S.poiMinZoom.landmark) ? '' : 'none';
     }
 
+    /* ---------------- 地铁：线路折线 + 站点 ----------------
+
+       lines.json 给线路（id / name / color / path / stations 引用），stations.json 只给
+       站（id / name / coords，故意不带 lines 字段）：「所属线路」与「是否换乘」都在这里
+       由 lines.json 反查派生（被引用线路数 > 1 即换乘站）。线色是线路的固有属性、不随主题
+       变化，所以存在 lines.json 上，不塞进 theme.js 的「主题配色」。
+
+       缩放分级（与默认 fitBounds(maxZoom:13/14) 贴合）：
+         z 11~12 只画勾选的线路（细线），不画站
+         z 13    画站，但只画换乘站
+         z >=14  画全部站
+         z >=15  站名可用（靠 hover，不用 permanent tooltip —— 密集站会铺满地图）
+       pane：metroLinesPane(352) 压在道路骨架之上、路名之下；metroStationsPane(356) 在
+       路名之上、地标之下。站点必须显式 pane，否则会落进默认 markerPane(600) 去和店铺
+       图标抢位置。 */
+    function drawMetro(opts) {
+        const o = opts || {};
+        const lines = o.lines || [];
+        const stations = o.stations || [];
+        const theme = o.theme || window.MAP_THEMES.light;
+        const map = S.map;
+
+        // 反查索引：站 -> 所属线路（lines 由 station 反查，换乘与否由此派生）
+        const stationLines = {};
+        const lineColor = {};
+        const stationNames = {};
+        lines.forEach(function (l) {
+            lineColor[l.id] = l.color;
+            (l.stations || []).forEach(function (sid) {
+                if (!stationLines[sid]) stationLines[sid] = [];
+                stationLines[sid].push(l.id);
+            });
+        });
+        stations.forEach(function (s) { if (s && s.id) stationNames[s.id] = s.name; });
+
+        S.metroStationLines = stationLines;
+        S.metroStationNames = stationNames;
+        S.metroLineColor = lineColor;
+        S.metroLineCount = lines.length;
+        S.metroStationCount = stations.length;
+        S.metroTransferCount = stations.filter(function (s) {
+            return (stationLines[s.id] || []).length > 1;
+        }).length;
+        S.metroSelected = new Set();     // 默认全不选：首屏已有 37 个店标，不再叠地铁
+        S.metroNamesOn = false;
+
+        map.createPane('metroLinesPane');
+        map.getPane('metroLinesPane').style.zIndex = 352;
+        map.getPane('metroLinesPane').style.pointerEvents = 'none';
+        map.createPane('metroStationsPane');
+        const stPane = map.getPane('metroStationsPane');
+        stPane.style.zIndex = 356;
+        stPane.classList.add('metro-stations-pane');   // 供页面 CSS 与 parity 探针定位
+
+        S.metroLinesGroup = L.layerGroup().addTo(map);
+        S.metroStationsGroup = L.layerGroup().addTo(map);
+
+        // 线路：一次建好，勾选后再入图层组（未勾选的不画 —— 1/2/8/10/12/13 号线在人民
+        // 广场一带高度重叠，13 条全亮会直接压掉店标）
+        S.metroLineLayers = {};
+        lines.forEach(function (l) {
+            S.metroLineLayers[l.id] = L.polyline(l.path, {
+                pane: 'metroLinesPane',
+                color: l.color,
+                weight: 2,
+                opacity: 0.85,
+                lineCap: 'round',
+                lineJoin: 'round',      // 相邻保留站直连会有折角（如 7 号线 4182 m 跨站直连）
+                interactive: false,
+                className: 'metro-line'
+            });
+        });
+
+        // 站点：普通站单环、换乘站白底双环；多线共用时外环按线路色分割（CSS 里做）。
+        // 视觉权重明显低于 32px 的店铺图标：普通站 9px、换乘站 13px，无填充高亮。
+        S.metroStationMarkers = {};
+        stations.forEach(function (s) {
+            if (!s || !s.coords) return;
+            const ids = stationLines[s.id] || [];
+            const cols = ids.map(function (id) { return lineColor[id]; }).filter(Boolean);
+            if (!cols.length) return;                       // 不在任何线路上：不画（数据兜底）
+            const isTransfer = ids.length > 1;
+            const size = isTransfer ? 13 : 9;
+            const mk = L.marker(s.coords, {
+                pane: 'metroStationsPane',
+                interactive: true,                          // hover 出站名（z>=15）
+                keyboard: false,
+                icon: L.divIcon({
+                    className: 'metro-station' + (isTransfer ? ' transfer' : ''),
+                    html: '',
+                    iconSize: [size, size],
+                    iconAnchor: [size / 2, size / 2]
+                })
+            });
+            // Leaflet 接管 marker 的 DOM：元素由 divIcon 生成，data-* 与线色在入图时补上
+            mk.on('add', function () {
+                const el = mk.getElement();
+                if (!el) return;
+                el.dataset.stationId = s.id;
+                el.dataset.lines = ids.join(',');
+                el.dataset.transfer = isTransfer ? '1' : '0';
+                el.style.setProperty('--mc', cols[0]);
+                if (cols[1]) el.style.setProperty('--mc2', cols[1]);
+                if (cols[2]) el.style.setProperty('--mc3', cols[2]);
+            });
+            S.metroStationMarkers[s.id] = mk;
+        });
+
+        updateMetroVisibility();
+        map.on('zoomend', updateMetroVisibility);
+
+        // 右上角 🚇：展开线路多选面板（chip 复用页面已有的 .chip / .chip.active）
+        const MetroControl = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function () {
+                const wrap = L.DomUtil.create('div', 'metro-ctl');
+                const bar = L.DomUtil.create('div', 'leaflet-bar', wrap);
+                const btn = L.DomUtil.create('a', '', bar);
+                btn.href = '#';
+                btn.title = '地铁线路图层（可多选）';
+                btn.innerHTML = '🚇';
+                btn.style.cssText = btnCss(theme, false);
+
+                const panel = L.DomUtil.create('div', 'metro-panel hidden', wrap);
+                panel.innerHTML =
+                    '<div class="metro-panel-head">🚇 地铁线路' +
+                    '<span class="metro-panel-stat" data-metro-stat></span></div>' +
+                    '<div class="metro-panel-acts">' +
+                    '<button type="button" class="chip px-2 py-0.5 text-[10px] rounded" data-metro-act="all">全选</button>' +
+                    '<button type="button" class="chip px-2 py-0.5 text-[10px] rounded" data-metro-act="none">全不选</button>' +
+                    '</div><div class="metro-panel-chips" data-metro-chips></div>';
+
+                const chips = panel.querySelector('[data-metro-chips]');
+                lines.forEach(function (l) {
+                    const b = document.createElement('button');
+                    b.type = 'button';
+                    b.className = 'chip px-2 py-0.5 text-[10px] rounded';
+                    b.dataset.line = l.id;
+                    b.innerHTML = '<span class="metro-dot" style="background:' + l.color + '"></span>' + l.name;
+                    chips.appendChild(b);
+                });
+
+                L.DomEvent.disableClickPropagation(wrap);
+                L.DomEvent.disableScrollPropagation(panel);
+
+                L.DomEvent.on(btn, 'click', function (e) {
+                    L.DomEvent.stop(e);
+                    const open = !panel.classList.contains('hidden');
+                    panel.classList.toggle('hidden');
+                    btn.style.cssText = btnCss(theme, !open);
+                });
+
+                L.DomEvent.on(panel, 'click', function (e) {
+                    const act = e.target.closest('[data-metro-act]');
+                    if (act) {
+                        S.metroSelected.clear();
+                        if (act.dataset.metroAct === 'all') {
+                            lines.forEach(function (l) { S.metroSelected.add(l.id); });
+                        }
+                        applyMetroSelection();
+                        return;
+                    }
+                    const chip = e.target.closest('[data-line]');
+                    if (!chip) return;
+                    const id = chip.dataset.line;
+                    if (S.metroSelected.has(id)) S.metroSelected.delete(id);
+                    else S.metroSelected.add(id);
+                    applyMetroSelection();
+                });
+
+                S.metroPanel = panel;
+                return wrap;
+            }
+        });
+        map.addControl(new MetroControl());
+        syncMetroUi();
+    }
+
+    /** 按 S.metroSelected 重算「画哪些线、画哪些站」，再走一次分级显隐。 */
+    function applyMetroSelection() {
+        const sel = S.metroSelected;
+        S.metroLinesGroup.clearLayers();
+        sel.forEach(function (id) {
+            const lyr = S.metroLineLayers[id];
+            if (lyr) S.metroLinesGroup.addLayer(lyr);
+        });
+        S.metroStationsGroup.clearLayers();
+        if (sel.size) {
+            Object.keys(S.metroStationMarkers).forEach(function (sid) {
+                const ids = S.metroStationLines[sid] || [];
+                for (let i = 0; i < ids.length; i++) {
+                    // 换乘站若其任一线被勾选即显示
+                    if (sel.has(ids[i])) { S.metroStationsGroup.addLayer(S.metroStationMarkers[sid]); return; }
+                }
+            });
+        }
+        updateMetroVisibility();
+        syncMetroUi();
+    }
+
+    function updateMetroVisibility() {
+        const map = S.map;
+        if (!map || !S.metroLinesGroup) return;
+        const z = map.getZoom();
+        const Z = S.metroZoom;
+        const has = !!(S.metroSelected && S.metroSelected.size);
+
+        const pl = map.getPane('metroLinesPane');
+        const ps = map.getPane('metroStationsPane');
+        if (pl) pl.style.display = (has && z >= Z.lines) ? '' : 'none';
+        const showStations = !!(has && z >= Z.stations);
+        if (ps) {
+            ps.style.display = showStations ? '' : 'none';
+            // z13 只留换乘站，z>=14 全部站：整块 pane 切一个 class，不逐个 add/removeLayer
+            ps.classList.toggle('hide-minor', z < Z.allStations);
+        }
+
+        // 低缩放只要一根细线，放大后再加粗
+        const weight = z >= Z.allStations ? 3.2 : (z >= Z.stations ? 2.4 : 1.8);
+        if (S.metroSelected) {
+            S.metroSelected.forEach(function (id) {
+                const lyr = S.metroLineLayers[id];
+                if (lyr) lyr.setStyle({ weight: weight });
+            });
+        }
+        // 站名只在 z>=15 可用，且靠 hover 出（密集站点不用 permanent tooltip）
+        setMetroStationNames(z >= Z.names);
+    }
+
+    function setMetroStationNames(on) {
+        if (S.metroNamesOn === on || !S.metroStationMarkers) return;
+        S.metroNamesOn = on;
+        Object.keys(S.metroStationMarkers).forEach(function (sid) {
+            const mk = S.metroStationMarkers[sid];
+            if (on) {
+                if (!mk.getTooltip()) {
+                    mk.bindTooltip(S.metroStationNames[sid] || '', {
+                        direction: 'top', offset: [0, -7], className: 'm-tip metro-tip'
+                    });
+                }
+            } else if (mk.getTooltip()) {
+                mk.unbindTooltip();
+            }
+        });
+    }
+
+    function syncMetroUi() {
+        const panel = S.metroPanel;
+        if (!panel || !S.metroSelected) return;
+        panel.querySelectorAll('[data-line]').forEach(function (b) {
+            b.classList.toggle('active', S.metroSelected.has(b.dataset.line));
+        });
+        const stat = panel.querySelector('[data-metro-stat]');
+        if (stat) {
+            stat.textContent = '已选 ' + S.metroSelected.size + '/' + S.metroLineCount + ' 条线 · ' +
+                S.metroStationCount + ' 站（换乘 ' + S.metroTransferCount + '）';
+        }
+    }
+
     /* ---------------- 标记上的常驻名称 ---------------- */
 
     function bindLabels(items, markerMap, permanent) {
@@ -697,6 +1005,8 @@ window.MapBase = (function () {
         drawAreas: drawAreas,
         drawLandmarks: drawLandmarks,
         updatePoiVisibility: updatePoiVisibility,
+        drawMetro: drawMetro,
+        updateMetroVisibility: updateMetroVisibility,
         bindLabels: bindLabels,
         geoDist: geoDist,
         fmtDist: fmtDist,
@@ -828,6 +1138,7 @@ window.onload = function(){
   MapBase.drawRoads({roads: MAIN_ROADS, theme: MAP_THEMES.dark});
   MapBase.drawAreas({areas: AREAS});
   MapBase.drawLandmarks({landmarks: LANDMARKS});
+  MapBase.drawMetro({lines: METRO_LINES, stations: METRO_STATIONS, theme: MAP_THEMES.dark});
 
   VENUES.forEach(v => {
     const t = typeOf(v), meta = TYPE_META[t];
@@ -1119,6 +1430,117 @@ const LANDMARKS = [
 {"name":"豫园","coords":[31.2289,121.488],"kind":"venue"}
 ];
 /* 区域锚点 / 地标注记的绘制已抽到 src/static/map-base.js（MapBase.drawAreas / drawLandmarks） */
+
+
+/* ================= 地铁线路 / 站点（data/map/metro/） =================
+   lines.json 13 条线（6 号线全在浦东、核心区 bbox 内 0 站，按「范围外不收录」跳过）；
+   stations.json 87 个站，故意不带 lines 字段 —— 所属线路与换乘与否由 lines.json 反查派生。
+   chip 数量遍历数组生成，不硬编码。 */
+const METRO_LINES = [
+{"id":"m_1","name":"1号线","color":"#E4002B","path":[[31.2732712,121.4506583],[31.2614875,121.4544335],[31.2520583,121.4523857],[31.2425757,121.4543015],[31.2405396,121.4636428],[31.2340677,121.4708951],[31.2249557,121.4693343],[31.2177902,121.4547198],[31.2151926,121.446465],[31.2064633,121.4419144],[31.1963248,121.4313963],[31.1838659,121.4317243]],"stations":["s_yan_chang_lu","s_zhong_shan_bei_lu","s_shang_hai_huo_che_zhan","s_han_zhong_lu","s_xin_zha_lu","s_ren_min_guang_chang","s_yi_da_hui_zhi_huang_pi_nan_lu","s_shan_xi_nan_lu","s_chang_shu_lu","s_heng_shan_lu","s_xu_jia_hui","s_shang_hai_ti_yu_guan"]},
+{"id":"m_2","name":"2号线","color":"#97D700","path":[[31.2401812,121.4981403],[31.239147,121.4792191],[31.2340677,121.4708951],[31.2318504,121.456011],[31.2253361,121.4422003],[31.2214635,121.4270055],[31.2199244,121.4117156],[31.2131346,121.3991874]],"stations":["s_lu_jia_zui","s_nan_jing_dong_lu","s_ren_min_guang_chang","s_nan_jing_xi_lu","s_jing_an_si","s_jiang_su_lu","s_zhong_shan_gong_yuan","s_lou_shan_guan_lu"]},
+{"id":"m_3","name":"3号线","color":"#FFD100","path":[[31.2725646,121.474796],[31.2612062,121.4757568],[31.25308,121.4711594],[31.2520583,121.4523857],[31.2563362,121.4356266],[31.2486167,121.425799],[31.2415028,121.4137143],[31.2334443,121.4083746],[31.2199244,121.4117156],[31.2107553,121.4123178],[31.1986765,121.4163853],[31.1879465,121.4229946]],"stations":["s_hong_kou_zu_qiu_chang","s_dong_bao_xing_lu","s_bao_shan_lu","s_shang_hai_huo_che_zhan","s_zhong_tan_lu","s_zhen_ping_lu","s_cao_yang_lu","s_jin_sha_jiang_lu","s_zhong_shan_gong_yuan","s_yan_an_xi_lu","s_hong_qiao_lu","s_yi_shan_lu"]},
+{"id":"m_4","name":"4号线","color":"#5F259F","path":[[31.2104442,121.4950777],[31.2035085,121.484599],[31.2011258,121.4706402],[31.1960515,121.4590756],[31.1926031,121.450173],[31.1874075,121.4391017],[31.1838659,121.4317243],[31.1879465,121.4229946],[31.1986765,121.4163853],[31.2107553,121.4123178],[31.2199244,121.4117156],[31.2334443,121.4083746],[31.2415028,121.4137143],[31.2486167,121.425799],[31.2563362,121.4356266],[31.2520583,121.4523857],[31.25308,121.4711594],[31.260903,121.4853467],[31.2628771,121.4962554]],"stations":["s_nan_pu_da_qiao","s_xi_zang_nan_lu","s_lu_ban_lu","s_da_mu_qiao_lu","s_dong_an_lu","s_shang_hai_ti_yu_chang","s_shang_hai_ti_yu_guan","s_yi_shan_lu","s_hong_qiao_lu","s_yan_an_xi_lu","s_zhong_shan_gong_yuan","s_jin_sha_jiang_lu","s_cao_yang_lu","s_zhen_ping_lu","s_zhong_tan_lu","s_shang_hai_huo_che_zhan","s_bao_shan_lu","s_hai_lun_lu","s_lin_ping_lu"]},
+{"id":"m_7","name":"7号线","color":"#FF6900","path":[[31.2756199,121.4183706],[31.2657043,121.4179458],[31.2572552,121.4172532],[31.2486167,121.425799],[31.2418081,121.433661],[31.2350088,121.4384725],[31.2253361,121.4422003],[31.2151926,121.446465],[31.2011427,121.4458251],[31.1926031,121.450173],[31.1856643,121.4527709],[31.1847811,121.4967173]],"stations":["s_da_hua_san_lu","s_xin_cun_lu","s_lan_gao_lu","s_zhen_ping_lu","s_chang_shou_lu","s_chang_ping_lu","s_jing_an_si","s_chang_shu_lu","s_zhao_jia_bang_lu","s_dong_an_lu","s_long_hua_zhong_lu","s_yun_tai_lu"]},
+{"id":"m_8","name":"8号线","color":"#009FDF","path":[[31.1871027,121.4894217],[31.2035085,121.484599],[31.2139173,121.4814746],[31.2208201,121.4784849],[31.2291572,121.474956],[31.2340677,121.4708951],[31.2441977,121.4669863],[31.2550951,121.4643732],[31.2655487,121.4645981],[31.2725646,121.474796],[31.2785073,121.485791],[31.276824,121.4971093]],"stations":["s_zhong_hua_yi_shu_gong","s_xi_zang_nan_lu","s_lu_jia_bang_lu","s_lao_xi_men","s_da_shi_jie","s_ren_min_guang_chang","s_qu_fu_lu","s_zhong_xing_lu","s_xi_zang_bei_lu","s_hong_kou_zu_qiu_chang","s_qu_yang_lu","s_si_ping_lu"]},
+{"id":"m_9","name":"9号线","color":"#71C5E8","path":[[31.1879465,121.4229946],[31.1963248,121.4313963],[31.2011427,121.4458251],[31.2046098,121.4563758],[31.2082185,121.4640135],[31.2112622,121.4720339],[31.2139173,121.4814746],[31.2190057,121.4940871]],"stations":["s_yi_shan_lu","s_xu_jia_hui","s_zhao_jia_bang_lu","s_jia_shan_lu","s_da_pu_qiao","s_ma_dang_lu","s_lu_jia_bang_lu","s_xiao_nan_men"]},
+{"id":"m_10","name":"10号线","color":"#C1A7E2","path":[[31.2010859,121.3980124],[31.1983218,121.4078985],[31.1986765,121.4163853],[31.2040209,121.4304776],[31.2099274,121.439814],[31.2177902,121.4547198],[31.2180814,121.4699504],[31.2208201,121.4784849],[31.2299247,121.4829009],[31.239147,121.4792191],[31.2457632,121.4778324],[31.2537048,121.479494],[31.260903,121.4853467],[31.270398,121.489829],[31.276824,121.4971093]],"stations":["s_yi_li_lu","s_song_yuan_lu","s_hong_qiao_lu","s_jiao_tong_da_xue","s_shang_hai_tu_shu_guan","s_shan_xi_nan_lu","s_yi_da_hui_zhi_xin_tian_di","s_lao_xi_men","s_yu_yuan","s_nan_jing_dong_lu","s_tian_tong_lu","s_si_chuan_bei_lu","s_hai_lun_lu","s_you_dian_xin_cun","s_si_ping_lu"]},
+{"id":"m_11","name":"11号线","color":"#76232F","path":[[31.1963248,121.4313963],[31.2040209,121.4304776],[31.2214635,121.4270055],[31.2324162,121.4189884],[31.2415028,121.4137143],[31.2443645,121.4057363],[31.2527162,121.4026775],[31.264679,121.3958076]],"stations":["s_xu_jia_hui","s_jiao_tong_da_xue","s_jiang_su_lu","s_long_de_lu","s_cao_yang_lu","s_feng_qiao_lu","s_zhen_ru","s_shang_hai_xi_zhan"]},
+{"id":"m_12","name":"12号线","color":"#007B5F","path":[[31.1856643,121.4527709],[31.1960515,121.4590756],[31.2046098,121.4563758],[31.2177902,121.4547198],[31.2318504,121.456011],[31.2425757,121.4543015],[31.2441977,121.4669863],[31.2457632,121.4778324],[31.2521208,121.4939755]],"stations":["s_long_hua_zhong_lu","s_da_mu_qiao_lu","s_jia_shan_lu","s_shan_xi_nan_lu","s_nan_jing_xi_lu","s_han_zhong_lu","s_qu_fu_lu","s_tian_tong_lu","s_guo_ji_ke_yun_zhong_xin"]},
+{"id":"m_13","name":"13号线","color":"#EF95CF","path":[[31.1846627,121.4799211],[31.1992464,121.4771259],[31.2112622,121.4720339],[31.2180814,121.4699504],[31.2218636,121.4598571],[31.2318504,121.456011],[31.2382599,121.4578682],[31.2425757,121.4543015],[31.2461627,121.4398399],[31.2418081,121.433661],[31.236348,121.4260607],[31.2324162,121.4189884],[31.2334443,121.4083746]],"stations":["s_shi_bo_da_dao","s_shi_bo_hui_bo_wu_guan","s_ma_dang_lu","s_yi_da_hui_zhi_xin_tian_di","s_huai_hai_zhong_lu","s_nan_jing_xi_lu","s_zi_ran_bo_wu_guan","s_han_zhong_lu","s_jiang_ning_lu","s_chang_shou_lu","s_wu_ning_lu","s_long_de_lu","s_jin_sha_jiang_lu"]},
+{"id":"m_14","name":"14号线","color":"#827A04","path":[[31.2401812,121.4981403],[31.2299247,121.4829009],[31.2291572,121.474956],[31.2249557,121.4693343],[31.2253361,121.4422003],[31.2289434,121.4318278],[31.236348,121.4260607],[31.2415028,121.4137143],[31.2469663,121.4100514],[31.2527162,121.4026775],[31.2526445,121.3922941]],"stations":["s_lu_jia_zui","s_yu_yuan","s_da_shi_jie","s_yi_da_hui_zhi_huang_pi_nan_lu","s_jing_an_si","s_wu_ding_lu","s_wu_ning_lu","s_cao_yang_lu","s_zhong_ning_lu","s_zhen_ru","s_tong_chuan_lu"]},
+{"id":"m_15","name":"15号线","color":"#BBA786","path":[[31.1866617,121.4092613],[31.1934035,121.4007597],[31.2011347,121.3937312],[31.2131346,121.3991874],[31.2272208,121.3916442],[31.2352329,121.3913345],[31.246366,121.3922023],[31.2526445,121.3922941],[31.264679,121.3958076]],"stations":["s_wu_zhong_lu","s_yao_hong_lu","s_hong_bao_shi_lu","s_lou_shan_guan_lu","s_chang_feng_gong_yuan","s_da_du_he_lu","s_mei_ling_bei_lu","s_tong_chuan_lu","s_shang_hai_xi_zhan"]}
+];
+const METRO_STATIONS = [
+{"id":"s_bao_shan_lu","name":"宝山路","coords":[31.25308,121.4711594]},
+{"id":"s_cao_yang_lu","name":"曹杨路","coords":[31.2415028,121.4137143]},
+{"id":"s_chang_feng_gong_yuan","name":"长风公园","coords":[31.2272208,121.3916442]},
+{"id":"s_chang_ping_lu","name":"昌平路","coords":[31.2350088,121.4384725]},
+{"id":"s_chang_shou_lu","name":"长寿路","coords":[31.2418081,121.433661]},
+{"id":"s_chang_shu_lu","name":"常熟路","coords":[31.2151926,121.446465]},
+{"id":"s_da_du_he_lu","name":"大渡河路","coords":[31.2352329,121.3913345]},
+{"id":"s_da_hua_san_lu","name":"大华三路","coords":[31.2756199,121.4183706]},
+{"id":"s_da_mu_qiao_lu","name":"大木桥路","coords":[31.1960515,121.4590756]},
+{"id":"s_da_pu_qiao","name":"打浦桥","coords":[31.2082185,121.4640135]},
+{"id":"s_da_shi_jie","name":"大世界","coords":[31.2291572,121.474956]},
+{"id":"s_dong_an_lu","name":"东安路","coords":[31.1926031,121.450173]},
+{"id":"s_dong_bao_xing_lu","name":"东宝兴路","coords":[31.2612062,121.4757568]},
+{"id":"s_feng_qiao_lu","name":"枫桥路","coords":[31.2443645,121.4057363]},
+{"id":"s_guo_ji_ke_yun_zhong_xin","name":"国际客运中心","coords":[31.2521208,121.4939755]},
+{"id":"s_hai_lun_lu","name":"海伦路","coords":[31.260903,121.4853467]},
+{"id":"s_han_zhong_lu","name":"汉中路","coords":[31.2425757,121.4543015]},
+{"id":"s_heng_shan_lu","name":"衡山路","coords":[31.2064633,121.4419144]},
+{"id":"s_hong_bao_shi_lu","name":"红宝石路","coords":[31.2011347,121.3937312]},
+{"id":"s_hong_kou_zu_qiu_chang","name":"虹口足球场","coords":[31.2725646,121.474796]},
+{"id":"s_hong_qiao_lu","name":"虹桥路","coords":[31.1986765,121.4163853]},
+{"id":"s_huai_hai_zhong_lu","name":"淮海中路","coords":[31.2218636,121.4598571]},
+{"id":"s_jia_shan_lu","name":"嘉善路","coords":[31.2046098,121.4563758]},
+{"id":"s_jiang_ning_lu","name":"江宁路","coords":[31.2461627,121.4398399]},
+{"id":"s_jiang_su_lu","name":"江苏路","coords":[31.2214635,121.4270055]},
+{"id":"s_jiao_tong_da_xue","name":"交通大学","coords":[31.2040209,121.4304776]},
+{"id":"s_jin_sha_jiang_lu","name":"金沙江路","coords":[31.2334443,121.4083746]},
+{"id":"s_jing_an_si","name":"静安寺","coords":[31.2253361,121.4422003]},
+{"id":"s_lan_gao_lu","name":"岚皋路","coords":[31.2572552,121.4172532]},
+{"id":"s_lao_xi_men","name":"老西门","coords":[31.2208201,121.4784849]},
+{"id":"s_lin_ping_lu","name":"临平路","coords":[31.2628771,121.4962554]},
+{"id":"s_long_de_lu","name":"隆德路","coords":[31.2324162,121.4189884]},
+{"id":"s_long_hua_zhong_lu","name":"龙华中路","coords":[31.1856643,121.4527709]},
+{"id":"s_lou_shan_guan_lu","name":"娄山关路","coords":[31.2131346,121.3991874]},
+{"id":"s_lu_ban_lu","name":"鲁班路","coords":[31.2011258,121.4706402]},
+{"id":"s_lu_jia_bang_lu","name":"陆家浜路","coords":[31.2139173,121.4814746]},
+{"id":"s_lu_jia_zui","name":"陆家嘴","coords":[31.2401812,121.4981403]},
+{"id":"s_ma_dang_lu","name":"马当路","coords":[31.2112622,121.4720339]},
+{"id":"s_mei_ling_bei_lu","name":"梅岭北路","coords":[31.246366,121.3922023]},
+{"id":"s_nan_jing_dong_lu","name":"南京东路","coords":[31.239147,121.4792191]},
+{"id":"s_nan_jing_xi_lu","name":"南京西路","coords":[31.2318504,121.456011]},
+{"id":"s_nan_pu_da_qiao","name":"南浦大桥","coords":[31.2104442,121.4950777]},
+{"id":"s_qu_fu_lu","name":"曲阜路","coords":[31.2441977,121.4669863]},
+{"id":"s_qu_yang_lu","name":"曲阳路","coords":[31.2785073,121.485791]},
+{"id":"s_ren_min_guang_chang","name":"人民广场","coords":[31.2340677,121.4708951]},
+{"id":"s_shan_xi_nan_lu","name":"陕西南路","coords":[31.2177902,121.4547198]},
+{"id":"s_shang_hai_huo_che_zhan","name":"上海火车站","coords":[31.2520583,121.4523857]},
+{"id":"s_shang_hai_ti_yu_chang","name":"上海体育场","coords":[31.1874075,121.4391017]},
+{"id":"s_shang_hai_ti_yu_guan","name":"上海体育馆","coords":[31.1838659,121.4317243]},
+{"id":"s_shang_hai_tu_shu_guan","name":"上海图书馆","coords":[31.2099274,121.439814]},
+{"id":"s_shang_hai_xi_zhan","name":"上海西站","coords":[31.264679,121.3958076]},
+{"id":"s_shi_bo_da_dao","name":"世博大道","coords":[31.1846627,121.4799211]},
+{"id":"s_shi_bo_hui_bo_wu_guan","name":"世博会博物馆","coords":[31.1992464,121.4771259]},
+{"id":"s_si_chuan_bei_lu","name":"四川北路","coords":[31.2537048,121.479494]},
+{"id":"s_si_ping_lu","name":"四平路","coords":[31.276824,121.4971093]},
+{"id":"s_song_yuan_lu","name":"宋园路","coords":[31.1983218,121.4078985]},
+{"id":"s_tian_tong_lu","name":"天潼路","coords":[31.2457632,121.4778324]},
+{"id":"s_tong_chuan_lu","name":"铜川路","coords":[31.2526445,121.3922941]},
+{"id":"s_wu_ding_lu","name":"武定路","coords":[31.2289434,121.4318278]},
+{"id":"s_wu_ning_lu","name":"武宁路","coords":[31.236348,121.4260607]},
+{"id":"s_wu_zhong_lu","name":"吴中路","coords":[31.1866617,121.4092613]},
+{"id":"s_xi_zang_bei_lu","name":"西藏北路","coords":[31.2655487,121.4645981]},
+{"id":"s_xi_zang_nan_lu","name":"西藏南路","coords":[31.2035085,121.484599]},
+{"id":"s_xiao_nan_men","name":"小南门","coords":[31.2190057,121.4940871]},
+{"id":"s_xin_cun_lu","name":"新村路","coords":[31.2657043,121.4179458]},
+{"id":"s_xin_zha_lu","name":"新闸路","coords":[31.2405396,121.4636428]},
+{"id":"s_xu_jia_hui","name":"徐家汇","coords":[31.1963248,121.4313963]},
+{"id":"s_yan_an_xi_lu","name":"延安西路","coords":[31.2107553,121.4123178]},
+{"id":"s_yan_chang_lu","name":"延长路","coords":[31.2732712,121.4506583]},
+{"id":"s_yao_hong_lu","name":"姚虹路","coords":[31.1934035,121.4007597]},
+{"id":"s_yi_da_hui_zhi_huang_pi_nan_lu","name":"一大会址·黄陂南路","coords":[31.2249557,121.4693343]},
+{"id":"s_yi_da_hui_zhi_xin_tian_di","name":"一大会址·新天地","coords":[31.2180814,121.4699504]},
+{"id":"s_yi_li_lu","name":"伊犁路","coords":[31.2010859,121.3980124]},
+{"id":"s_yi_shan_lu","name":"宜山路","coords":[31.1879465,121.4229946]},
+{"id":"s_you_dian_xin_cun","name":"邮电新村","coords":[31.270398,121.489829]},
+{"id":"s_yu_yuan","name":"豫园","coords":[31.2299247,121.4829009]},
+{"id":"s_yun_tai_lu","name":"云台路","coords":[31.1847811,121.4967173]},
+{"id":"s_zhao_jia_bang_lu","name":"肇嘉浜路","coords":[31.2011427,121.4458251]},
+{"id":"s_zhen_ping_lu","name":"镇坪路","coords":[31.2486167,121.425799]},
+{"id":"s_zhen_ru","name":"真如","coords":[31.2527162,121.4026775]},
+{"id":"s_zhong_hua_yi_shu_gong","name":"中华艺术宫","coords":[31.1871027,121.4894217]},
+{"id":"s_zhong_ning_lu","name":"中宁路","coords":[31.2469663,121.4100514]},
+{"id":"s_zhong_shan_bei_lu","name":"中山北路","coords":[31.2614875,121.4544335]},
+{"id":"s_zhong_shan_gong_yuan","name":"中山公园","coords":[31.2199244,121.4117156]},
+{"id":"s_zhong_tan_lu","name":"中潭路","coords":[31.2563362,121.4356266]},
+{"id":"s_zhong_xing_lu","name":"中兴路","coords":[31.2550951,121.4643732]},
+{"id":"s_zi_ran_bo_wu_guan","name":"自然博物馆","coords":[31.2382599,121.4578682]}
+];
+/* 地铁的绘制与线路多选面板已抽到 src/static/map-base.js（MapBase.drawMetro） */
 
 
 /* ================= 筛选 chip ================= */
