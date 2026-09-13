@@ -144,8 +144,21 @@ def render_page(src_rel, for_check=False):
                 ind=ind, name=target, body=serialize(value, ind))
         if kind == "js":
             require(rel)
-            body = indent_block(read_text(os.path.join(ROOT, rel)), ind)
-            return "{}{}".format(ind, body)
+            body = read_text(os.path.join(ROOT, rel))
+            # 内联进 <script> 的代码里出现 </script 会被解析器当成结束标签：整段脚本
+            # 被截断，后面全部变成 HTML 文本。资源里不该有，出现就是有意的注入，拦掉。
+            if re.search(r"</script", body, re.I):
+                raise SystemExit("{}: {} 里含 </script，不能内联进脚本".format(src_rel, rel))
+            return "{}{}".format(ind, indent_block(body, ind))
+        if kind == "css":
+            # 构建期内联静态 CSS（tailwind.css / mobile.css / vendor/leaflet/leaflet.css）。
+            # 之前是 <script src="https://cdn.tailwindcss.com">：浏览器里跑 JIT，
+            # 手机首屏先裸排版再跳样式，离线打开则完全没有样式。
+            require(rel)
+            body = read_text(os.path.join(ROOT, rel))
+            if re.search(r"</style", body, re.I):
+                raise SystemExit("{}: {} 里含 </style，不能内联进样式".format(src_rel, rel))
+            return "{}{}".format(ind, indent_block(body, ind))
         if kind == "merge":
             # 多个数据源逗号分隔，按 merge_venues 规则合成一份（见 src/pages/eat.html）
             if not target:
@@ -235,7 +248,145 @@ def check_artifacts(problems):
         fresh = render_page(src_rel)
         if sha256(fresh) != sha256(content):
             problems.append("{}: 产物与源模板不一致，需要重新构建".format(dist_name))
+
+        check_no_external_assets(content, dist_name, problems)
+        check_inlined_runtime(content, dist_name, problems)
+        check_class_coverage(content, dist_name, problems)
+        check_mobile_shell_markers(content, dist_name, problems)
     print("  产物自检完成（{} 个页面）".format(len(PAGES)))
+
+
+SCRIPT_SRC_RE = re.compile(r'<script[^>]*\ssrc="([^"]+)"')
+LINK_SHEET_RE = re.compile(r'<link[^>]*rel="stylesheet"[^>]*>')
+
+
+def check_no_external_assets(content, dist_name, problems):
+    """零依赖不变量：产物不许再挂任何外链的 JS / CSS。
+
+    这条断言是防「又悄悄加回 CDN」的：改一版主题就顺手加个 <link>，然后手机端在
+    弱网 / 离线时又退回裸排版。Google Fonts 也在排查范围内 —— 大陆访问
+    fonts.googleapis.com 本来就慢（多数时候直接超时），已改成系统字体栈。"""
+    external = [u for u in SCRIPT_SRC_RE.findall(content)
+                if u.startswith(("http://", "https://", "//"))]
+    for tag in LINK_SHEET_RE.findall(content):
+        m = re.search(r'href="([^"]+)"', tag)
+        if m and m.group(1).startswith(("http://", "https://", "//")):
+            external.append(m.group(1))
+    if external:
+        problems.append("{}: 产物里还有外链资源 {}（应为内联零依赖）".format(
+            dist_name, sorted(set(external))[:3]))
+    # 只在「真的会发请求」的位置查 Google Fonts：注释里提到它不算
+    fonts = re.findall(r'(?:href|src)="[^"]*fonts\.(?:googleapis|gstatic)\.com', content)
+    fonts += re.findall(r'url\(\s*[\'"]?https?://fonts\.', content)
+    if fonts:
+        problems.append("{}: 产物里还有 Google Fonts 请求（{} 处），请改用系统字体栈".format(
+            dist_name, len(fonts)))
+
+
+# Leaflet 的 @preserve 版权头（leaflet.js 第一行），版本升级也不会变。
+LEAFLET_BANNER = "a JS library for interactive maps"
+
+
+def check_inlined_runtime(content, dist_name, problems):
+    """反面断言：该内联的运行时是不是真的进来了。
+
+    这条是踩坑之后加的。把 `cdn.tailwindcss.com` / `unpkg` 的 <script src> 删掉、
+    却忘了把对应文件按 @@BUILD:js 标记内联进来时，check_no_external_assets 反而
+    「更绿」—— 产物确实不再依赖外网，但也彻底没有那个库了。这种错误构建期一片
+    安静，浏览器只在运行时丢一句 `L is not defined`，地图整块空白。
+    所以这里正面断言：页面里用了 Leaflet，产物里就必须能看见 Leaflet 的运行时。"""
+    if 'id="leaflet-map"' not in content:
+        return
+    if LEAFLET_BANNER not in content:
+        problems.append(
+            "{}: 页面用了 Leaflet，但产物里找不到 Leaflet 运行时"
+            "（是不是漏了 `@@BUILD:js src/static/vendor/leaflet/leaflet.js@@` 标记？）".format(
+                dist_name))
+
+
+def css_escape(token):
+    """把类名转成 CSS 选择器里的写法（Tailwind 转义规则）：z-[1000] -> z-\\[1000\\]。"""
+    return "".join(c if (c.isalnum() or c in "-_") else "\\" + c for c in token)
+
+
+STYLE_RE = re.compile(r"<style[^>]*>(.*?)</style>", re.S)
+CLASS_ATTR_RE = re.compile(r'class="([^"]*)"')
+# class 属性里一旦出现这些东西，说明它不是一份「静态类名清单」，而是 JS 代码
+# （模板插值 / 字符串拼接，例如 class="tag ${s === 'A' ? 'src-a' : ''}"）
+CLASS_ATTR_CODE_CHARS = set("'\"`${}=?,;+()<>|&\n\t*")
+CLASS_TOKEN_OK_RE = re.compile(r"^[A-Za-z0-9_!#%&*+:./\-\[\]()]+$")
+
+
+def check_class_coverage(content, dist_name, problems):
+    """逐个类名核对产物里内联的 CSS 是否真的定义了它。
+
+    为什么需要这条：Tailwind 的 CSS 是构建期生成的一份静态文件，而类名写在页面里。
+    改了页面却忘了跑 scripts/build_css.sh，类名就不会出现在 CSS 里，表现是「某个
+    元素悄悄没了样式」—— 正是手机端最要命的失败模式，且浏览器不会报任何错。这里把
+    它变成构建期错误。
+
+    判定范围限定在 <style> 里的选择器文本，所以页面自定义的类名（.chip、.rest-item、
+    .m-icon 等）会被认成「已定义」，只有真正没生成的 Tailwind 类名才报错。
+
+    有意不覆盖：JS 里拼出来的类名（class="…${x}…"、className = 'a ' + b）。它们
+    要么带插值要么带拼接，没法可靠地区分「类名」与「变量名」，硬判会全是误报；
+    而这些类名通常同时以静态形式出现在页面里，漏判的代价可以接受。"""
+    css_text = "\n".join(STYLE_RE.findall(content))
+    if not css_text:
+        return
+    unknown = []
+    for attrs in CLASS_ATTR_RE.findall(content):
+        if any(c in CLASS_ATTR_CODE_CHARS for c in attrs):
+            continue
+        for token in attrs.split():
+            if not CLASS_TOKEN_OK_RE.match(token) or not any(c.isalnum() for c in token):
+                continue
+            if ("." + token) in css_text or ("." + css_escape(token)) in css_text:
+                continue
+            unknown.append(token)
+    if unknown:
+        problems.append(
+            "{}: 这些类名在产物 CSS 里找不到定义 {}（新增 Tailwind 类名后要跑 "
+            "./scripts/build_css.sh 重新生成 src/static/tailwind.css）".format(
+                dist_name, sorted(set(unknown))[:6]))
+
+
+def check_mobile_shell_markers(content, dist_name, problems):
+    """手机端外壳的结构不变量。
+
+    两条都是「改一行就静默坏掉、桌面上还看不出来」的坑，所以做成构建期断言：
+
+    1) `data-m-sheet` 不能挂在 `#detail-card` 自己身上。mobile.css 里
+       `html.m-mobile #detail-card { position: relative !important }` 是给「抽屉里的
+       详情卡」用的（抽屉自己是 position:fixed）。一旦两个属性落在同一个元素上，
+       !important 会把抽屉的 fixed 顶掉，闭合态的详情卡就停在视口正中 —— bars 页
+       真踩过这个坑，当时桌面端一切正常，只有手机上多出一块浮窗。
+
+    2) 百度链接不许带 `target="_blank"`。scheme 调起必须同一个 tab 里走
+       `location.href`；`_blank` 在新标签里跑，移动浏览器常按弹窗拦掉，失败后还留下
+       一个空白标签页回不去。
+    """
+    for m in re.finditer(r"<[a-zA-Z][^>]*>", content):
+        tag = m.group(0)
+        if 'id="detail-card"' in tag and "data-m-sheet" in tag:
+            problems.append(
+                "{}: #detail-card 上同时挂了 data-m-sheet —— mobile.css 给它的 "
+                "position:relative !important 会把抽屉的 fixed 顶掉，手机上会多出一块"
+                "浮在视口中间的详情卡。请把 data-m-sheet 挪到外层的容器上".format(dist_name))
+            break
+
+    for link_id in ("detail-nav", "detail-poi"):
+        m = re.search(r"<a[^>]*id=\"{}\"[^>]*>".format(link_id), content)
+        if not m:
+            continue
+        if "_blank" in m.group(0):
+            problems.append(
+                "{}: #{} 还带着 target=\"_blank\" —— App 调起要靠同一个 tab 的 "
+                "location.href，新标签会被当弹窗拦掉".format(dist_name, link_id))
+
+    # 手机端外壳要求「顶栏存在 + 至少一个抽屉」，否则 m-mobile 下页面会变成空白
+    if 'id="m-bar"' in content and "data-m-sheet" not in content:
+        problems.append("{}: 有顶栏 #m-bar 却没有任何 data-m-sheet 抽屉".format(dist_name))
 
 
 def check_landing(problems):

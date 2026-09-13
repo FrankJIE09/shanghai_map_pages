@@ -4,28 +4,28 @@
   "pages": {
     "index.html": {
       "source": "src/pages/index.html",
-      "sha256": "ef4b10c962a2d494b7287805f078965745b53e66deb29b806dd40a36d7eb2b3c",
-      "bytes": 16214
+      "sha256": "a13bae20e5add5fe1d344d49c6698a62b2bf2c57c4c0533fba464c54faf58a39",
+      "bytes": 16835
     },
     "shanghai_bars_livehouse_2026.html": {
       "source": "src/pages/bars.html",
-      "sha256": "77c46bf12a977c1b9dc03a122e2dae0b39415d27e26aa4d818fb2a6c482960a4",
-      "bytes": 231630
+      "sha256": "4b549592af728c5389b801754c1b1007445b13bb0f510f2d42e79bfdc801e2ce",
+      "bytes": 452552
     },
     "shanghai_bichi_saojie_2026.html": {
       "source": "src/pages/bichi.html",
-      "sha256": "e99e9fc8e0281f02427d36fcdeb9a4e14ade9f2d881eab88f23292e1e98516b5",
-      "bytes": 244040
+      "sha256": "5d9b825cff51c1d3e8eea742ab037491a6bd4f5d4e7c75513d43632efa1adfe2",
+      "bytes": 466708
     },
     "shanghai_michelin_2026.html": {
       "source": "src/pages/michelin.html",
-      "sha256": "a35d072ba88e4fc7a616305f1d4565f886982b5ad54aa808a2585dd67e4fb628",
-      "bytes": 256471
+      "sha256": "02f20f044d5cef6a0c746c87ac61ad60aa15f98da6b207c1657be76f01d4089c",
+      "bytes": 478912
     },
     "shanghai_eat_2026.html": {
       "source": "src/pages/eat.html",
-      "sha256": "a91969931584fce0bde73651fa53187fed18fc430d1678620370a7527ff882b7",
-      "bytes": 304520
+      "sha256": "f9e23744725e316a10e56a07561ade8209d10719914820c0c3cc1a420a438754",
+      "bytes": 526959
     }
   }
 }

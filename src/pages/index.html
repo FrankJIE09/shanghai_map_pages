@@ -2,10 +2,10 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#FAF5EB">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>上海探店地图 2026 · 四张地图总入口</title>
 <meta name="description" content="上海探店地图 2026：酒吧 × Livehouse × 夜店、必吃榜 × 扫街榜、米其林指南、餐饮总览，四张可离线打开的单文件地图。">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --paper:#FAF5EB;
@@ -28,7 +28,9 @@
   html{ -webkit-text-size-adjust:100%; }
   body{
     margin:0;
-    font-family:'Inter','Noto Serif SC',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    /* 系统字体栈：原来走 Google Fonts，大陆访问 fonts.googleapis.com 基本超时，
+       手机上等于白等一次网络往返。系统自带中文字体更清晰、零请求。 */
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Source Han Sans SC','Noto Sans CJK SC','Segoe UI',Roboto,sans-serif;
     background-color:var(--paper);
     color:var(--ink);
     /* 宣纸底纹：极淡的网格 + 角落暖色晕开 */
@@ -41,7 +43,8 @@
     background-attachment:fixed;
     line-height:1.6;
   }
-  .handwritten{ font-family:'ZCOOL XiaoWei',serif; }
+  /* 手写标题体：原来用 ZCOOL XiaoWei（Google Fonts），改成系统宋体系栈 */
+  .handwritten{ font-family:'Songti SC','STSong','Source Han Serif SC','Noto Serif CJK SC','SimSun',serif; }
 
   .wrap{ max-width:1120px; margin:0 auto; padding:clamp(28px,5vw,64px) clamp(16px,4vw,32px) 40px; }
 
@@ -92,12 +95,16 @@
     content:''; position:absolute; inset:0 0 auto 0; height:5px;
     background:var(--accent);
   }
-  .card:hover,.card:focus-visible{
+  .card:focus-visible{
     transform:translate(-2px,-2px);
-    box-shadow:6px 6px 0 var(--stroke);
+    box-shadow:6px 6px 0 var(--stroke),0 0 0 3px var(--accent);
     outline:none;
   }
-  .card:focus-visible{ box-shadow:6px 6px 0 var(--stroke),0 0 0 3px var(--accent); }
+  /* 悬停抬升只在真有悬停能力的设备上生效：触屏点过之后 :hover 会留在卡片上，
+     整页卡片一起「浮」着。键盘焦点态仍按上面的 :focus-visible 走。 */
+  @media (hover:hover){
+    .card:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--stroke); }
+  }
   .card:active{ transform:translate(1px,1px); box-shadow:2px 2px 0 var(--stroke); }
 
   .card-top{
@@ -145,7 +152,9 @@
     color:var(--accent); filter:saturate(1.1) brightness(.86);
   }
   .cta::after{ content:'→'; display:inline-block; margin-left:6px; transition:transform .18s ease; }
-  .card:hover .cta::after{ transform:translateX(4px); }
+  @media (hover:hover){
+    .card:hover .cta::after{ transform:translateX(4px); }
+  }
 
   /* ===== 夜间卡片（酒吧） ===== */
   .card--night{
@@ -156,8 +165,10 @@
     background-image:radial-gradient(circle at 88% 6%, rgba(34,211,238,.13), transparent 52%),
                      radial-gradient(circle at 10% 96%, rgba(255,61,129,.14), transparent 54%);
   }
-  .card--night:hover,.card--night:focus-visible{ box-shadow:6px 6px 0 var(--night-hard); }
   .card--night:focus-visible{ box-shadow:6px 6px 0 var(--night-hard),0 0 0 3px var(--accent); }
+  @media (hover:hover){
+    .card--night:hover{ box-shadow:6px 6px 0 var(--night-hard); }
+  }
   .card--night:active{ box-shadow:2px 2px 0 var(--night-hard); }
   .card--night .count{ color:#0E0C14; }
   .card--night .sub{ filter:none; }
@@ -217,7 +228,9 @@
     box-shadow:4px 4px 0 var(--night-hard);
   }
   .card--fold[open]::before{ display:block; }
-  .card--fold[open]:hover{ box-shadow:6px 6px 0 var(--night-hard); }
+  @media (hover:hover){
+    .card--fold[open]:hover{ box-shadow:6px 6px 0 var(--night-hard); }
+  }
   .card--fold[open] .fold-head{ padding:0; align-items:flex-start; }
   .card--fold[open] .fold-name{ font-size:20px; }
 

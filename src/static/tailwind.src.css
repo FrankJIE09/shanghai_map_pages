@@ -1,0 +1,7 @@
+/* Tailwind 静态 CSS 的构建入口：只有三条 @tailwind 指令，真正的类名由
+   tailwind.config.js 的 content 扫描 src/pages/*.html 与 src/static/*.js 决定。
+   产物写到 src/static/tailwind.css（提交进 git），由 build.py 内联进 dist/。
+   重新生成： ./scripts/build_css.sh */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

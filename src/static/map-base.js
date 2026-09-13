@@ -41,6 +41,15 @@ window.MapBase = (function () {
         metroZoom: { lines: 11, stations: 13, allStations: 14, names: 15, pinNames: 16 }
     };
 
+    /** 粗指针（触屏）设备：没有 hover 能力，站名的「悬停显示」要按常驻处理。 */
+    let coarsePointer = null;       // null=还没问过；只问一次，之后复用
+    function isCoarsePointer() {
+        if (coarsePointer === null) {
+            coarsePointer = !!(window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+        }
+        return coarsePointer;
+    }
+
     function getMap() {
         return S.map;
     }
@@ -517,11 +526,16 @@ window.MapBase = (function () {
         // 站名只在 z>=15 可用，且靠 hover 出（密集站点不用 permanent tooltip）；
         // z>=16 改由常驻站名层接管（见 metroNamesPane），此时卸掉 hover tooltip，
         // 避免同一站点同时出现「常驻名 + hover 名」两个标签。
-        setMetroStationNames(z >= Z.names && z < Z.pinNames);
+        //
+        // 触屏没有 hover：z15~16 这一档「悬停出站名」在手机上等于不存在，站名要一直
+        // 等到 z16 才看得见。所以粗指针设备把常驻站名的门槛提前到 Z.names，并跳过
+        // hover 那一档。
+        const pinFrom = isCoarsePointer() ? Math.min(Z.names, Z.pinNames) : Z.pinNames;
+        setMetroStationNames(!isCoarsePointer() && z >= Z.names && z < Z.pinNames);
 
         // 常驻站名：只切 pane 的 display，不逐个 add/removeLayer，避免缩放时闪烁
         const pn = map.getPane('metroNamesPane');
-        if (pn) pn.style.display = (has && z >= Z.pinNames) ? '' : 'none';
+        if (pn) pn.style.display = (has && z >= pinFrom) ? '' : 'none';
     }
 
     function setMetroStationNames(on) {

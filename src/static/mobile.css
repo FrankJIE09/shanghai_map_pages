@@ -1,0 +1,221 @@
+/* ==========================================================================
+   手机端外壳：全屏地图 + 底部抽屉
+   源在 src/static/mobile.css，由 build.py 内联进四个地图页。落地页
+   （src/pages/index.html）没有 [data-m-*] 标记，因此**不内联本文件**——它只需要
+   自己那份手写样式（悬停门控与系统字体栈在它自己的 <style> 里）。
+
+   只在 <html class="m-mobile"> 下生效（见 src/static/mobile-boot.js）。
+   桌面端完全不命中：一个选择器都不匹配，原有的三栏布局与 lg:sticky 详情卡照旧。
+
+   页面需要打的标记（四个地图页）：
+     [data-m-pane="map"]        地图卡片 -> 铺满视口（手机端它就是整个 App 的地图层）
+     [data-m-sheet="xxx"]       抽屉：手机上变成固定底部面板，按需上滑
+     [data-m-hide]              手机上不需要的块（页脚、图例等）
+     #m-bar 里的按钮            data-m-open="xxx" 打开对应抽屉；
+                                data-m-scroll="#sel" 打开后滚动到该元素；
+                                再点一次收起（走 history，返回键行为一致）
+   ========================================================================== */
+
+/* ---------- 触控尺寸修正：与设备宽度无关，平板横屏也生效 ---------- */
+@media (pointer: coarse) {
+    /* 筛选 chip 原样只有 10px 字高、~20px 高，手指点不中。
+       抬到 34px：iOS HIG 建议 44pt、Material 建议 48dp，但这是一排排的筛选胶囊，
+       全部按 44px 会把抽屉撑得很长；34px 是无头实测下误触明显减少、又不至于占满
+       一屏的折中值（30px 一档实测偏小）。 */
+    .chip, .cat-btn, .sort-btn { min-height: 34px; padding-top: 7px; padding-bottom: 7px; }
+    .rest-item, .venue-item { min-height: 44px; }
+
+    /* 「↺ 重置筛选」四个页面都是 id（bars 上是 class="ml-auto"，eat/michelin/bichi
+       上是 class="text-[10px]"，没有共用类名），只能按 id 抬。 */
+    #reset-btn { min-height: 34px; padding-left: 10px; padding-right: 10px; }
+
+    /* 复选框本体只有 13px：放大到 20px，并把外层 label 撑成整行可点。
+       :has() 不被支持时这两条会被浏览器整条丢弃，退回原样，不会更糟。 */
+    input[type="checkbox"], input[type="radio"] { width: 20px; height: 20px; }
+    label:has(> input[type="checkbox"]), label:has(> input[type="radio"]) { min-height: 34px; }
+
+    /* iOS 聚焦 font-size < 16px 的输入框会放大整页，之后缩不回去 */
+    input[type="text"], input[type="search"], input[type="password"],
+    input[type="number"], textarea, select { font-size: 16px !important; }
+
+    /* 触屏上给点击一点反馈；同时禁掉长按选中文字（地图/按钮拖动时很碍事） */
+    .chip, .cat-btn, .sort-btn, .rest-item, .venue-item, .m-btn, .m-sheet-x, #reset-btn,
+    label:has(> input[type="checkbox"]), label:has(> input[type="radio"]) {
+        -webkit-tap-highlight-color: rgba(0, 0, 0, .12);
+        -webkit-user-select: none; user-select: none;
+    }
+}
+
+/* ---------- 顶栏（仅手机端） ---------- */
+#m-bar { display: none; }
+
+html.m-mobile #m-bar {
+    display: flex; align-items: center; gap: 6px;
+    position: fixed; top: 0; left: 0; right: 0; z-index: 2100;
+    box-sizing: border-box;
+    height: calc(48px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) 8px 0;
+    background: rgba(22, 20, 28, .94);
+    color: #F3EFFA;
+    border-bottom: 2px solid rgba(255, 255, 255, .16);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+}
+html.m-mobile #m-bar .m-bar-title {
+    flex: 1 1 auto; min-width: 0;
+    font-size: 13px; font-weight: 700; line-height: 1.2;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+html.m-mobile #m-bar .m-btn {
+    flex: none;
+    display: inline-flex; align-items: center; gap: 4px;
+    min-height: 34px; padding: 0 10px;
+    font-size: 12px; font-weight: 700; line-height: 1;
+    border-radius: 9px; cursor: pointer;
+    background: rgba(255, 255, 255, .10);
+    color: inherit; border: 1.5px solid rgba(255, 255, 255, .22);
+}
+html.m-mobile #m-bar .m-btn[aria-pressed="true"] {
+    background: #FFD166; border-color: #FFD166; color: #23180A;
+}
+
+/* ---------- 全屏地图 ---------- */
+html.m-mobile {
+    height: 100%;
+}
+html.m-mobile body {
+    /* 页面本身不滚动：滚动全部发生在抽屉里。dvh 让 iOS 地址栏收起/展开时高度正确 */
+    height: 100dvh;
+    overflow: hidden;
+    padding: 0 !important;             /* 抵消 Tailwind 的 pb-12 / pb-14 */
+    overscroll-behavior: none;
+    /* fixed 背景在移动端是持续重绘的已知开销来源，手机上退回普通滚动 */
+    background-attachment: scroll;
+}
+html.m-mobile header,
+html.m-mobile footer { display: none !important; }
+html.m-mobile [data-m-hide] { display: none !important; }
+/* 页脚在 bars 页是「数据说明」抽屉，不能跟着上面那条一起被隐掉。
+   特异性 (0,2,1) 高于 html.m-mobile footer 的 (0,1,2)，且排在后面。 */
+html.m-mobile [data-m-sheet] { display: block !important; }
+
+html.m-mobile [data-m-pane="map"] {
+    position: fixed; inset: 0; z-index: 0;
+    margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none;
+}
+/* 地图左上角那两块说明（「上北」标 + 显示条数提示）要让开顶栏 */
+html.m-mobile [data-m-pane="map"] > .absolute {
+    top: calc(56px + env(safe-area-inset-top));
+    left: 8px;
+}
+html.m-mobile #leaflet-map {
+    height: 100dvh !important;
+    min-height: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+}
+/* Leaflet 自带控件与右上角 🛣️ / 📍 / 🚇 都要让开顶栏 */
+html.m-mobile .leaflet-top { top: calc(52px + env(safe-area-inset-top)); }
+html.m-mobile .leaflet-left { left: 6px; }
+html.m-mobile .leaflet-right { right: 6px; }
+html.m-mobile .leaflet-bottom { bottom: calc(8px + env(safe-area-inset-bottom)); }
+html.m-mobile .leaflet-control-zoom a { width: 34px; height: 34px; line-height: 34px; font-size: 20px; }
+
+/* ---------- 底部抽屉 ---------- */
+html.m-mobile [data-m-sheet] {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 1500;
+    max-height: 76dvh;
+    margin: 0; padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -8px 26px rgba(0, 0, 0, .38);
+    transform: translateY(112%);
+    transition: transform .28s cubic-bezier(.22, .8, .28, 1);
+    will-change: transform;
+}
+html.m-mobile[data-m-open="list"] [data-m-sheet="list"],
+html.m-mobile[data-m-open="filter"] [data-m-sheet="filter"],
+html.m-mobile[data-m-open="info"] [data-m-sheet="info"],
+html.m-mobile[data-m-open="legend"] [data-m-sheet="legend"],
+html.m-mobile[data-m-open="detail"] [data-m-sheet="detail"],
+html.m-mobile[data-m-open="panel"] [data-m-sheet="panel"] { transform: translateY(0); }
+
+/* 抽屉里的名录不再自己滚动（外层抽屉已经在滚），否则会套两层滚动 */
+html.m-mobile #rest-list,
+html.m-mobile #venue-list {
+    max-height: none !important;
+    overflow: visible !important;
+}
+/* 详情卡在抽屉里不需要 sticky，也不需要最小高度。
+   注意：只有「详情卡被包在抽屉里」的页面（bichi / michelin / eat，以及 bars 现在
+   把 data-m-sheet 挂在外面那层 section 上）才适用；如果哪天又把 data-m-sheet 直接
+   挂到 #detail-card 上，这条 !important 会把 position: fixed 顶掉，闭合态的抽屉
+   会停在视口中央。 */
+html.m-mobile #detail-card {
+    position: relative !important;
+    min-height: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding-top: 4px;
+}
+
+/* 抽屉顶部抓手 + 标题 + 关闭（由 mobile-shell.js 注入，桌面端隐藏） */
+.m-sheet-top { display: none; }
+html.m-mobile .m-sheet-top { display: block; }
+.m-sheet-top {
+    position: sticky; top: 0; z-index: 5;
+    padding: 6px 12px 8px;
+    background: inherit;
+    border-bottom: 1px dashed rgba(128, 128, 128, .45);
+}
+.m-sheet-grip {
+    width: 42px; height: 4px; margin: 0 auto 6px;
+    border-radius: 9999px; background: currentColor; opacity: .28;
+}
+.m-sheet-head { display: flex; align-items: center; gap: 8px; }
+.m-sheet-name { flex: 1 1 auto; min-width: 0; font-size: 12px; font-weight: 700; letter-spacing: .02em; }
+.m-sheet-x {
+    flex: none; display: inline-flex; align-items: center; justify-content: center;
+    /* 34x34 是 iOS HIG 的触控目标下限，30 太小容易点空 */
+    width: 34px; height: 34px; border-radius: 9999px; cursor: pointer;
+    font-size: 15px; font-weight: 700; line-height: 1;
+    background: transparent; color: inherit;
+    border: 1.5px solid currentColor; opacity: .7;
+}
+.m-sheet-x:active { opacity: 1; }
+
+/* 详情卡底部的「分享」按钮（由 mobile-shell.js 注入到 #detail-links） */
+#detail-share {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 8px 0; border-radius: 10px;
+    font-size: 12px; font-weight: 700;
+    color: inherit; text-decoration: none;
+    background: transparent;
+    border: 1.5px dashed currentColor; opacity: .75;
+}
+#detail-share:active { opacity: 1; }
+
+/* ---------- 轻提示 ---------- */
+.m-toast {
+    position: fixed; left: 50%; z-index: 3000;
+    bottom: calc(24px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    max-width: 86vw; padding: 9px 15px;
+    border-radius: 9999px;
+    font-size: 12px; font-weight: 700; line-height: 1.4;
+    background: rgba(20, 18, 26, .95); color: #F5F3FA;
+    border: 1px solid rgba(255, 255, 255, .2);
+    opacity: 0; pointer-events: none;
+    transition: opacity .2s ease;
+}
+.m-toast.is-on { opacity: 1; }
+
+html.m-mobile [data-m-sheet] { -webkit-user-select: none; user-select: none; }
+html.m-mobile [data-m-sheet] p,
+html.m-mobile [data-m-sheet] li,
+html.m-mobile [data-m-sheet] h1,
+html.m-mobile [data-m-sheet] h2,
+html.m-mobile [data-m-sheet] h3,
+html.m-mobile [data-m-sheet] h4 { -webkit-user-select: text; user-select: text; }

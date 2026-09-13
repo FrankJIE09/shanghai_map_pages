@@ -2,12 +2,25 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16141C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="上海探店地图">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>上海酒吧 × Livehouse  2026 · 夜行探店地图</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+/* ===== 内置依赖（构建期内联，源在 src/static/，见 build.py 的 css / js 标记）=====
+   Leaflet / Tailwind / 手机端外壳都不再从 CDN 拉：弱网与离线可用，手机上也不会
+   再出现「先裸排版、样式晚一步跳出来」。Leaflet 的 CSS 必须排在本页样式之前，
+   本页样式要能覆盖它的默认值。 */
+/* @@BUILD:css src/static/vendor/leaflet/leaflet.css@@ */
+/* @@BUILD:end@@ */
+</style>
+<script>
+/* 首屏前判定窄屏 / 粗指针，把标记打到 <html> 上（源在 src/static/mobile-boot.js） */
+/* @@BUILD:js src/static/mobile-boot.js@@ */
+/* @@BUILD:end@@ */
+</script>
 <style>
   :root{
     --bg:#14121A;
@@ -21,7 +34,9 @@
     --cyan:#22D3EE;
   }
   body{
-    font-family:'Inter','Noto Serif SC',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    /* 系统字体栈：原来走 Google Fonts，大陆访问 fonts.googleapis.com 基本超时，
+       手机上等于白等一次网络往返。系统自带的中文字体反而更清晰、零请求。 */
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Source Han Sans SC','Noto Sans CJK SC','Segoe UI',Roboto,sans-serif;
     background-color:var(--bg);
     color:var(--ink);
     background-image:
@@ -29,7 +44,9 @@
       radial-gradient(circle at 88% 92%, rgba(34,211,238,.10), transparent 45%);
     background-attachment:fixed;
   }
-  .handwritten-title{ font-family:'ZCOOL XiaoWei',serif; }
+  /* 手写标题体：原来是 ZCOOL XiaoWei（Google Fonts），改成系统宋体系栈，
+     保留「楷/宋」的手写质感，同时不再有网络字体请求与 FOUT。 */
+  .handwritten-title{ font-family:'Songti SC','STSong','Source Han Serif SC','Noto Serif CJK SC','SimSun',serif; }
   /* 手绘纸张风 · 夜间版：2px 描边 + 4px 硬阴影 */
   .sketch-card{
     background:var(--panel);
@@ -37,7 +54,6 @@
     box-shadow:4px 4px 0 var(--hard);
     transition:all .2s ease;
   }
-  .sketch-card:hover{ transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--hard); }
   .paper-panel{ background:var(--panel2); border:2px solid var(--stroke); box-shadow:3px 3px 0 var(--hard); }
 
   /* 夜间底图：不额外加暖色滤镜，只压暗一点 */
@@ -52,7 +68,6 @@
     box-shadow:2px 2px 0 var(--hard);
     border-radius:50%; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease;
   }
-  .m-icon:hover{ transform:scale(1.18) rotate(-5deg); }
   .m-icon.is-active{ transform:scale(1.24); box-shadow:0 0 0 3px var(--tc,#FF3D81),3px 3px 0 var(--hard); }
   .m-icon.is-active::after{ content:''; position:absolute; inset:-9px; border-radius:50%; border:2px dashed var(--tc); animation:spin 6s linear infinite; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
@@ -147,10 +162,8 @@
 
   /* ===== 筛选按钮 ===== */
   .cat-btn{ transition:all .15s ease; border:1.5px solid var(--stroke); background:var(--panel2); color:var(--ink-dim); }
-  .cat-btn:hover{ color:var(--ink); }
   .cat-btn.active{ background-color:var(--pink)!important; color:#12010A!important; border-color:var(--pink)!important; font-weight:700; }
   .chip{ transition:all .15s ease; border:1.5px solid var(--stroke); background:var(--panel2); color:var(--ink-dim); }
-  .chip:hover{ color:var(--ink); }
   .chip.active{ background-color:var(--cyan)!important; color:#04140F!important; border-color:var(--cyan)!important; font-weight:700; }
   .type-chip.active{ background-color:var(--tc)!important; border-color:var(--tc)!important; color:#0A0810!important; }
   .price-chip{ background-color:var(--pc); border-color:var(--pcb); color:var(--pct); }
@@ -163,7 +176,6 @@
 
   /* ===== 名录条目 ===== */
   .venue-item{ transition:all .15s ease; border:1.5px solid #322C44; background:var(--panel2); }
-  .venue-item:hover{ background:#2C2739; border-color:var(--cyan)!important; }
   .venue-item.active{ background:#FF3D81!important; border-color:#FF3D81!important; }
   .venue-item.active .vi-name{ color:#12010A!important; }
   .venue-item.active .vi-sub{ color:#3A0A1E!important; }
@@ -187,13 +199,57 @@
   .src-d{ color:#0A0810; background:#C9BFA8; border-color:#C9BFA8; }
   .src-ref{ color:#12010A; background:#D3C4FF; border-color:#D3C4FF; }
   a.src-link{ text-decoration:underline; text-underline-offset:2px; }
-  a.src-link:hover{ color:var(--cyan); }
   .stat-line b{ color:var(--cyan); font-weight:700; }
   details summary{ cursor:pointer; }
   details summary::-webkit-details-marker{ color:var(--pink); }
+
+  /* ============================================================
+     所有 hover 效果：只在真有悬停能力的设备上生效。
+     触屏浏览器在点过之后会把 :hover 留在元素上（「样式粘住」），
+     所以这些规则不能裸放在外面。
+     ============================================================ */
+  @media (hover:hover){
+    .sketch-card:hover{ transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--hard); }
+    .m-icon:hover{ transform:scale(1.18) rotate(-5deg); }
+    .cat-btn:hover{ color:var(--ink); }
+    .chip:hover{ color:var(--ink); }
+    .venue-item:hover{ background:#2C2739; border-color:var(--cyan)!important; }
+    a.src-link:hover{ color:var(--cyan); }
+  }
+</style>
+<style>
+/* ===== Tailwind 静态工具类（构建期生成，源在 src/static/tailwind.css）=====
+   为什么不继续用 cdn.tailwindcss.com：那是浏览器里跑 JIT，先下 ~100KB JS 再扫描
+   DOM 现场生成样式，手机上表现为「先裸排版、再突然跳成正常样式」，离线打开则
+   完全没有样式。这里换成构建期生成的一份静态 CSS（约 19KB，运行时零 JS）。
+
+   顺序有意排在本页样式**之后**：原来 Play CDN 是运行时把 <style> 追加到 head
+   末尾的，所以工具类在同等权重下会覆盖本页样式，这里保持同样的语义。
+
+   ⚠️ 新增 Tailwind 类名后要跑 ./scripts/build_css.sh 重新生成，
+      build.py --check 会逐类名核对，漏了会直接报错。 */
+/* @@BUILD:css src/static/tailwind.css@@ */
+/* @@BUILD:end@@ */
+</style>
+<style>
+/* ===== 手机端外壳：全屏地图 + 底部抽屉（源在 src/static/mobile.css）=====
+   只在 <html class="m-mobile"> 下生效，桌面端一个选择器都不命中。排在最末尾，
+   这样它能覆盖工具类与本页样式。 */
+/* @@BUILD:css src/static/mobile.css@@ */
+/* @@BUILD:end@@ */
 </style>
 </head>
 <body class="min-h-screen pb-14">
+
+<!-- 手机端顶栏（桌面端 display:none）：全屏地图上的唯一常驻控件条。
+     抽屉的开关都在这里，跟着 [data-m-open] / [data-m-scroll] 由 mobile-shell.js 接线。 -->
+<div id="m-bar">
+  <span class="m-bar-title">🌃 酒吧 × Livehouse</span>
+  <button type="button" class="m-btn" data-m-open="list" aria-pressed="false">📋 名录</button>
+  <button type="button" class="m-btn" data-m-open="filter" aria-pressed="false">⚙️ 筛选</button>
+  <button type="button" class="m-btn" data-m-open="info" aria-pressed="false">📖 说明</button>
+  <button type="button" class="m-btn" id="m-btn-share" aria-label="分享">🔗</button>
+</div>
 
 <header class="w-full py-7 px-4 relative overflow-hidden border-b-4 border-[#4A4360]"
         style="background:linear-gradient(120deg,#231B2E 0%,#1A1622 55%,#12202A 100%)">
@@ -222,8 +278,9 @@
 </header>
 
 <!-- ===== 2. 筛选栏 ===== -->
+<!-- 手机端：这整张卡变成一个「筛选」抽屉（data-m-sheet），由顶栏 ⚙️ 筛选 打开 -->
 <section class="max-w-7xl mx-auto px-4 mt-5">
-  <div class="sketch-card rounded-2xl p-3 md:p-4">
+  <div class="sketch-card rounded-2xl p-3 md:p-4" data-m-sheet="filter" data-m-title="⚙️ 筛选">
     <div class="flex flex-wrap items-center gap-1.5">
       <span class="text-[10px] font-bold shrink-0" style="color:var(--ink-dim)">类型:</span>
       <div id="type-chips" class="flex flex-wrap gap-1.5"></div>
@@ -277,8 +334,10 @@
 </section>
 
 <!-- ===== 3. 地图 ===== -->
+<!-- 手机端：这张卡铺满整个视口，就是 App 的地图层（data-m-pane="map"）；
+     左下那行操作提示在手机上由 mobile.css 隐藏到抽屉之外也没关系，保留原样。 -->
 <section class="max-w-7xl mx-auto px-4 mt-4">
-  <div class="sketch-card p-2 rounded-2xl relative">
+  <div class="sketch-card p-2 rounded-2xl relative" data-m-pane="map">
     <div class="absolute top-4 left-4 flex flex-col items-start gap-1 z-[1000] select-none pointer-events-none">
       <div class="text-[11px] font-bold px-2.5 py-1 rounded shadow-md" style="background:#22D3EE;color:#04140F">🗺️ 夜行地图 · 上北 ⬆️</div>
       <div id="map-hint" class="text-[9px] px-2 py-0.5 rounded border font-semibold"
@@ -294,8 +353,9 @@
 </section>
 
 <!-- ===== 4. 列表 + 详情 ===== -->
+<!-- 手机端：左栏（名录 + 统计）整体变成一个「名录」抽屉；详情卡是另一个抽屉 -->
 <main class="max-w-7xl mx-auto px-4 mt-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
-  <section class="lg:col-span-7 flex flex-col gap-3">
+  <section class="lg:col-span-7 flex flex-col gap-3" data-m-sheet="list" data-m-title="📋 分组名录">
     <div class="sketch-card rounded-2xl overflow-hidden">
       <div class="px-3 py-2.5 flex items-center justify-between border-b-2 border-[#322C44]" style="background:var(--panel2)">
         <h3 class="font-bold text-sm handwritten-title">🎟️ 分组名录 <span class="text-[11px] font-sans font-normal" style="color:var(--ink-dim)">（按类型分组，组内按所选方式排序）</span></h3>
@@ -311,7 +371,7 @@
     </div>
   </section>
 
-  <section class="lg:col-span-5">
+  <section class="lg:col-span-5" data-m-sheet="detail" data-m-title="📍 场所详情">
     <div id="detail-card" class="sketch-card rounded-2xl p-5 min-h-[240px] relative lg:sticky lg:top-4">
       <div class="absolute top-2 right-3 text-4xl opacity-20" id="detail-icon">🌃</div>
       <span id="detail-type" class="text-[9px] font-bold tracking-widest px-2 py-0.5 rounded" style="background:#22D3EE;color:#04140F">请在地图或名录点选场所</span>
@@ -337,13 +397,16 @@
         <span class="text-xs font-bold block" style="color:var(--ink)">🔗 来源（按等级标注）· 核实日期 <span id="detail-updated"></span></span>
         <ul id="detail-src" class="text-[11px] mt-1.5 flex flex-col gap-1"></ul>
       </div>
-      <!-- 底部两个链接由 src/static/venue-links.js 生成（导航 / 店铺页），
-           无选中场所时整行隐藏；见 showDetail()。 -->
+      <!-- 底部链接由 src/static/venue-links.js 生成（导航 / 店铺页），第三个「分享」
+           由 src/static/mobile-shell.js 注入；无选中场所时整行隐藏；见 selectVenue()。
+           注意：这里**不能**写 target="_blank" —— 百度 App 是用 baidumap:// scheme
+           调起的，必须同 tab 导航；_blank 在移动浏览器里常被当弹窗拦掉，失败后还会
+           留一个空白标签页。 -->
       <div id="detail-links" class="hidden mt-3 flex-col gap-1.5" style="flex-direction:column">
-        <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
+        <a id="detail-nav" href="#"
            class="flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2"
            style="border-color:var(--cyan);background:var(--cyan);color:#04140F">🧭 在百度地图打开</a>
-        <a id="detail-poi" href="#" target="_blank" rel="noopener noreferrer"
+        <a id="detail-poi" href="#"
            class="flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2"
            style="border-color:var(--cyan);background:transparent;color:var(--cyan)">🏪 百度店铺页</a>
       </div>
@@ -352,7 +415,8 @@
 </main>
 
 <!-- ===== 5. 脚注 ===== -->
-<footer class="max-w-7xl mx-auto px-4 mt-8">
+<!-- 手机端：脚注（来源分层 / 停业沿革 / 免责声明）变成一个「说明」抽屉 -->
+<footer class="max-w-7xl mx-auto px-4 mt-8" data-m-sheet="info" data-m-title="📖 数据说明">
   <div class="sketch-card rounded-2xl p-5 text-[11px] leading-relaxed" style="color:var(--ink-dim)">
     <h4 class="font-bold text-sm mb-2 handwritten-title" style="color:var(--pink)">📚 数据来源分层说明（六类图例）</h4>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5">
@@ -410,12 +474,18 @@
 </footer>
 
 <script>
+/* ================= 内置依赖：Leaflet 运行时（构建期内联，源在 src/static/vendor/leaflet/） ================= */
+/* @@BUILD:js src/static/vendor/leaflet/leaflet.js@@ */
+/* @@BUILD:end@@ */
+
 /* ================= 共用地图底座（构建期内联，源在 src/static/） ================= */
 /* @@BUILD:js src/static/theme.js@@ */
 /* @@BUILD:end@@ */
 /* @@BUILD:js src/static/map-base.js@@ */
 /* @@BUILD:end@@ */
 /* @@BUILD:js src/static/venue-links.js@@ */
+/* @@BUILD:end@@ */
+/* @@BUILD:js src/static/mobile-shell.js@@ */
 /* @@BUILD:end@@ */
 
 /* ============================================================
@@ -531,6 +601,12 @@ window.onload = function(){
   updateMarkers();
   renderStat();
   initLocate();
+
+  /* 手机端外壳（全屏地图 + 底部抽屉 + 返回键 + 深链 + 分享）放最后初始化：
+     深链恢复会直接调用 selectVenue，得等地图与数据都就绪。 */
+  if (window.MobileShell) {
+    MobileShell.init({select: selectVenue, title: document.title});
+  }
 };
 
 /* ================= 主要道路骨架（与 bichi / michelin 同一套 MAIN_ROADS，227 条）================= */
@@ -890,6 +966,10 @@ function selectVenue(key, fromMap){
   document.querySelectorAll('.venue-item').forEach(b => b.classList.toggle('active', b.dataset.key === key));
 
   map.flyTo(v.coords, Math.max(map.getZoom(), 15), {duration:.7});
+
+  /* 手机端：把详情抽屉推上来，并同步 #v=<key> 深链（桌面端只更新深链）。
+     见 src/static/mobile-shell.js —— 返回键会先收抽屉，再退出网页。 */
+  if (window.MobileShell) MobileShell.onSelect(key);
 }
 
 /* ================= 定位（我的位置） ================= */

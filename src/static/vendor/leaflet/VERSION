@@ -1,0 +1,4 @@
+Leaflet 1.9.4
+来源 https://unpkg.com/leaflet@1.9.4/dist
+由 scripts/vendor_leaflet.sh 生成：leaflet.css 的三张图片已内联为 data URI，
+leaflet.js 已去掉 sourceMappingURL。
