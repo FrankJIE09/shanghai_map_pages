@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>diag-loading</title>
+<style>body{font:12px monospace;margin:6px}iframe{width:1280px;height:800px;border:1px solid #999}</style>
+<body>
+<pre id="out">running…</pre>
+<iframe id="f" scrolling="no"></iframe>
+<script>
+// 同源 iframe 加载一张地图页，把关键 DOM 计数与「点开关后」的状态写进 document.title，
+// 用于「新构建 dist vs 原文件」逐项对比（浏览器快照读不到 Leaflet 的文字，只能这样取数）。
+// 用法：_diag.html#shanghai_bars_livehouse_2026.html
+const target = decodeURIComponent(location.hash.slice(1)) || 'shanghai_bars_livehouse_2026.html';
+const f = document.getElementById('f');
+const log = [];
+
+function paneState(d, name) {
+  // Leaflet createPane(name) 会做 name.replace('Pane','')，class 变成 "leaflet-pane leaflet-<name>-pane"
+  const p = d.querySelector('.leaflet-pane.leaflet-' + name.replace('Pane', '') + '-pane');
+  if (!p) return 'missing';
+  return p.style.display === 'none' ? 'none' : 'shown';
+}
+function roadPaths(d) { return d.querySelectorAll('.leaflet-roads-pane svg path').length; }
+
+// 在 iframe 页面自己的作用域里求值。页面顶层的 `let map` 属于全局词法环境，
+// 后续注入的 <script> 能直接引用它（但外部拿不到 w.map，属性上并不存在）。
+function evalInPage(d, w, expr) {
+  const s = d.createElement('script');
+  s.textContent = 'window.__ev = (function(){ try { return JSON.stringify(' + expr + '); } catch (e) { return "ERR " + e.message; } })();';
+  d.body.appendChild(s);
+  const out = w.__ev;
+  s.remove();
+  delete w.__ev;
+  return out;
+}
+
+function tileInfo(d) {
+  const img = d.querySelector('.leaflet-tile-pane img');
+  const src = img ? img.src : '';
+  const m = src.match(/cartocdn\.com\/([a-z_]+)\/(\d+)\//);
+  const a = d.querySelector('.leaflet-control-attribution');
+  const attr = a ? a.textContent.replace(/\s+/g, ' ').trim().slice(0, 46) : 'no-attr';
+  return (m ? m[1] + '/firstTileZ' + m[2] : 'n/a') + ' attr[' + attr + ']';
+}
+function listSelOf(d) { return d.querySelector('#venue-list') ? '#venue-list' : '#rest-list'; }
+
+function snap(tag) {
+  const d = f.contentDocument;
+  const q = s => d.querySelectorAll(s).length;
+  return [
+    tag,
+    'polylines=' + roadPaths(d),
+    'road_labels=' + q('.road-name'),
+    'road_major=' + q('.road-name-major'),
+    'areas=' + q('.area-label'),
+    'origin=' + q('.area-label.origin'),
+    'pois=' + q('.poi-name'),
+    'icons=' + q('.m-icon'),
+    'bars=' + q('.leaflet-bar'),
+    'tile=' + tileInfo(d),
+    'mapstate=' + evalInPage(d, f.contentWindow, '({z: map.getZoom(), size: map.getSize().x + "x" + map.getSize().y, c: map.getCenter().lat.toFixed(4) + "," + map.getCenter().lng.toFixed(4), b: map.getBounds().toBBoxString().split(",").map(function(n){return (+n).toFixed(3);}).join(","), minz: map.getMinZoom(), maxz: map.getMaxZoom()})'),
+    'paneRoadA=' + paneState(d, 'roadLabelsPaneA'),
+    'paneRoadB=' + paneState(d, 'roadLabelsPaneB'),
+    'paneArea=' + paneState(d, 'areaLabelsPane'),
+    'panePoi=' + paneState(d, 'landmarksPane'),
+    'list=' + q(listSelOf(d) + ' > *'),
+    'count=' + JSON.stringify(((d.getElementById('list-count') || {}).textContent || 'n/a').trim()),
+    'panes=' + JSON.stringify(Array.from(d.querySelectorAll('.leaflet-map-pane .leaflet-pane')).map(e => e.className.replace('leaflet-pane ', '').replace('leaflet-', '').replace('-pane', ''))),
+    'tiles=' + d.querySelectorAll('.leaflet-tile-pane img').length,
+  ].join(' ');
+}
+
+function clickToggle(d, title) {
+  const a = d.querySelector('.leaflet-bar a[title="' + title + '"]');
+  if (!a) return false;
+  a.click();
+  return true;
+}
+
+function finish(tag) {
+  document.title = 'DIAG[' + tag + '] ' + log.join('  ##  ');
+  document.getElementById('out').textContent = log.join('\n\n');
+}
+
+function run() {
+  const d = f.contentDocument;
+  if (!d) { document.title = 'DIAGERR no contentDocument'; return; }
+  try {
+    log.push(snap('initial'));
+    if (clickToggle(d, '显示 / 隐藏道路骨架')) log.push(snap('roads_off'));
+    if (clickToggle(d, '显示 / 隐藏道路骨架')) log.push(snap('roads_on'));
+    if (clickToggle(d, '显示 / 隐藏地标参照')) log.push(snap('poi_off'));
+    if (clickToggle(d, '显示 / 隐藏地标参照')) log.push(snap('poi_on'));
+  } catch (e) {
+    log.push('ERR ' + e.message);
+  }
+  finish('t' + new Date().getTime() % 100000);
+  // 再测一次：fitBounds 的落点依赖容器尺寸，首次测量可能撞上布局未稳，晚测可判断是否只是竞态
+  setTimeout(function () {
+    try {
+      log.push(snap('late'));
+      document.getElementById('out').textContent = log.join('\n\n');
+      document.title = 'DIAG[' + (new Date().getTime() % 100000) + '] ' + log.join('  ##  ');
+    } catch (e) { /* 忽略 */ }
+  }, 3500);
+}
+
+f.addEventListener('load', function () { setTimeout(run, 1500); });
+f.src = target;
+setTimeout(function () { if (document.title === 'diag-loading') run(); }, 6000);
+</script>
+</body>

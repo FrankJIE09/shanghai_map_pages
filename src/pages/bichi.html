@@ -400,6 +400,12 @@
 </footer>
 
 <script>
+    /* ================= 共用地图底座（构建期内联，源在 src/static/） ================= */
+    /* @@BUILD:js src/static/theme.js@@ */
+    /* @@BUILD:end@@ */
+    /* @@BUILD:js src/static/map-base.js@@ */
+    /* @@BUILD:end@@ */
+
     /* ================= 数据（由 shanghai_wutong_streets.html 抽取） ================= */
     /* @@BUILD:json data/venues/bichi.json -> ALL_STORES@@ */
     const ALL_STORES = [ /* 构建生成：勿手改，改数据请改 data/venues/bichi.json */ ];
@@ -439,13 +445,6 @@
     let activeKey = null;
     const state = { lists: [], cuisine: 'all', district: 'all', price: [], q: '', onlyNew: false, onlyMichelin: false, sortByDist: false };
     let labelsPermanent = false;
-    let roadsGroup = null;     // 道路线
-    let roadLabelsA = null;    // 核心干道路名（z≥13）
-    let roadLabelsB = null;    // 主要干道路名（z≥15）
-    let roadsVisible = true;
-    let areasGroup = null;
-    let landmarksGroup = null;
-    let poiVisible = true;
 
     /* ================= 工具 ================= */
     function districtOf(r) {
@@ -492,24 +491,25 @@
 
     /* ================= 地图 ================= */
     window.onload = function () {
-        map = L.map('leaflet-map', {
-            center: [31.2304, 121.4737],
-            zoom: 12,
-            minZoom: 10,
-            maxZoom: 18,
-            zoomControl: true
+        map = MapBase.createMap('leaflet-map', {
+            theme: MAP_THEMES.light,
+            view: {
+                center: [31.2304, 121.4737],
+                zoom: 12,
+                minZoom: 10,
+                maxZoom: 18,
+                zoomControl: true
+            }
         });
 
-        // 引入 CartoDB 无标静音底图（与 shanghai_wutong_streets.html 保持一致）
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png?key=cb1_3h6n_1_0d49d482d013e94f5ae62bb2', {
-            attribution: '&copy; CartoDB No-Labels Map Projection',
-            subdomains: 'abcd',
-            maxZoom: 20
-        }).addTo(map);
-
-        drawRoads();
-        drawAreas();
-        drawLandmarks();
+        MapBase.drawRoads({ roads: MAIN_ROADS, theme: MAP_THEMES.light });
+        MapBase.drawAreas({ areas: AREAS, grouped: true });
+        MapBase.drawLandmarks({
+            landmarks: LANDMARKS,
+            grouped: true,
+            theme: MAP_THEMES.light,
+            poiMinZoom: { area: 10, landmark: 12 }
+        });
 
         ALL_STORES.forEach(r => {
             const meta = CAT_META[r.category];
@@ -524,7 +524,7 @@
             markerMap[r.key] = mk;
         });
 
-        bindLabels();
+        MapBase.bindLabels(ALL_STORES, markerMap, labelsPermanent);
         initLocate();
 
         const bounds = L.latLngBounds(ALL_STORES.map(r => r.coords));
@@ -537,190 +537,11 @@
         updateMarkers();
     };
 
-    /* ================= 主要道路绘制（三级） ================= */
-    const ROAD_STYLE = {
-        1: { color: '#6E6558', weight: 3.4, opacity: 0.85 },  // 核心干道
-        2: { color: '#8C8377', weight: 2.2, opacity: 0.62 },  // 主要干道
-        3: { color: '#A79E92', weight: 1.3, opacity: 0.40 }   // 较长道路
-    };
-
-    function drawRoads() {
-        map.createPane('roadsPane');
-        map.getPane('roadsPane').style.zIndex = 350;
-        map.createPane('roadLabelsPaneA');
-        map.getPane('roadLabelsPaneA').style.zIndex = 355;
-        map.getPane('roadLabelsPaneA').style.pointerEvents = 'none';
-        map.createPane('roadLabelsPaneB');
-        map.getPane('roadLabelsPaneB').style.zIndex = 354;
-        map.getPane('roadLabelsPaneB').style.pointerEvents = 'none';
-
-        roadsGroup = L.layerGroup();
-        roadLabelsA = L.layerGroup();
-        roadLabelsB = L.layerGroup();
-
-        MAIN_ROADS.forEach(r => {
-            const st = ROAD_STYLE[r.tier] || ROAD_STYLE[3];
-            L.polyline(r.path, {
-                pane: 'roadsPane',
-                color: st.color,
-                weight: st.weight,
-                opacity: st.opacity,
-                lineCap: 'round',
-                lineJoin: 'round',
-                interactive: false
-            }).addTo(roadsGroup);
-
-            // 一级路名常驻（放大后），二级路名需更高缩放级别
-            if (r.tier === 1 || r.tier === 2) {
-                const mid = r.path[Math.floor(r.path.length / 2)];
-                const mk = L.marker(mid, {
-                    pane: r.tier === 1 ? 'roadLabelsPaneA' : 'roadLabelsPaneB',
-                    interactive: false,
-                    keyboard: false,
-                    icon: L.divIcon({
-                        className: '',
-                        html: `<span class="road-name${r.tier === 1 ? ' road-name-major' : ''}">${r.name}</span>`,
-                        iconSize: [0, 0],
-                        iconAnchor: [0, 0]
-                    })
-                });
-                (r.tier === 1 ? roadLabelsA : roadLabelsB).addLayer(mk);
-            }
-        });
-
-        roadsGroup.addTo(map);
-        roadLabelsA.addTo(map);
-        roadLabelsB.addTo(map);
-        updateRoadLabelVisibility();
-        map.on('zoomend', updateRoadLabelVisibility);
-
-        // 右上角开关
-        const RoadsToggle = L.Control.extend({
-            options: { position: 'topright' },
-            onAdd: function () {
-                const wrap = L.DomUtil.create('div', 'leaflet-bar');
-                const btn = L.DomUtil.create('a', '', wrap);
-                btn.href = '#';
-                btn.title = '显示 / 隐藏道路骨架';
-                btn.innerHTML = '🛣️';
-                btn.style.cssText = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:15px;text-decoration:none;background:#FCF9F2;';
-                L.DomEvent.on(btn, 'click', function (e) {
-                    L.DomEvent.stop(e);
-                    roadsVisible = !roadsVisible;
-                    [roadsGroup, roadLabelsA, roadLabelsB].forEach(function (g) {
-                        if (roadsVisible) { g.addTo(map); } else { map.removeLayer(g); }
-                    });
-                    btn.style.background = roadsVisible ? '#FCF9F2' : '#D9D2C6';
-                    updateRoadLabelVisibility();
-                });
-                return wrap;
-            }
-        });
-        map.addControl(new RoadsToggle());
-    }
-
-    function updateRoadLabelVisibility() {
-        const pa = map.getPane('roadLabelsPaneA');
-        const pb = map.getPane('roadLabelsPaneB');
-        const z = map.getZoom();
-        if (pa) pa.style.display = (roadsVisible && z >= 13) ? '' : 'none';
-        if (pb) pb.style.display = (roadsVisible && z >= 15) ? '' : 'none';
-    }
+    /* 道路骨架的绘制、路名显隐与右上角开关已抽到 src/static/map-base.js（MapBase.drawRoads） */
 
 
-    /* ================= 区域锚点 / 地标参照 ================= */
-    function drawAreas() {
-        map.createPane('areaLabelsPane');
-        map.getPane('areaLabelsPane').style.zIndex = 370;
-        map.getPane('areaLabelsPane').style.pointerEvents = 'none';
-
-        areasGroup = L.layerGroup();
-        AREAS.forEach(a => {
-            const cls = a.kind === 'origin' ? 'area-label origin' : 'area-label';
-            L.marker(a.coords, {
-                pane: 'areaLabelsPane',
-                interactive: false,
-                keyboard: false,
-                icon: L.divIcon({
-                    className: '',
-                    html: `<span class="${cls}">${a.name}</span>`,
-                    iconSize: [0, 0],
-                    iconAnchor: [0, 0]
-                })
-            }).addTo(areasGroup);
-        });
-        areasGroup.addTo(map);
-    }
-
-    function drawLandmarks() {
-        map.createPane('landmarksPane');
-        map.getPane('landmarksPane').style.zIndex = 365;
-        map.getPane('landmarksPane').style.pointerEvents = 'none';
-
-        landmarksGroup = L.layerGroup();
-        LANDMARKS.forEach(p => {
-            const k = p.kind;
-            L.marker(p.coords, {
-                pane: 'landmarksPane',
-                interactive: false,
-                keyboard: false,
-                icon: L.divIcon({
-                    className: '',
-                    html: `<div class="poi-mark"><span class="poi-dot ${k}"></span><span class="poi-name ${k}">${p.name}</span></div>`,
-                    iconSize: [0, 0],
-                    iconAnchor: [0, 0]
-                })
-            }).addTo(landmarksGroup);
-        });
-        landmarksGroup.addTo(map);
-        updatePoiVisibility();
-        map.on('zoomend', updatePoiVisibility);
-
-        const PoiToggle = L.Control.extend({
-            options: { position: 'topright' },
-            onAdd: function () {
-                const wrap = L.DomUtil.create('div', 'leaflet-bar');
-                const btn = L.DomUtil.create('a', '', wrap);
-                btn.href = '#';
-                btn.title = '显示 / 隐藏地标参照';
-                btn.innerHTML = '📍';
-                btn.style.cssText = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:15px;text-decoration:none;background:#FCF9F2;';
-                L.DomEvent.on(btn, 'click', function (e) {
-                    L.DomEvent.stop(e);
-                    poiVisible = !poiVisible;
-                    [areasGroup, landmarksGroup].forEach(function (g) {
-                        if (!g) return;
-                        if (poiVisible) { g.addTo(map); } else { map.removeLayer(g); }
-                    });
-                    btn.style.background = poiVisible ? '#FCF9F2' : '#D9D2C6';
-                    updatePoiVisibility();
-                });
-                return wrap;
-            }
-        });
-        map.addControl(new PoiToggle());
-    }
-
-    function updatePoiVisibility() {
-        const pa = map.getPane('areaLabelsPane');
-        const pl = map.getPane('landmarksPane');
-        const z = map.getZoom();
-        if (pa) pa.style.display = (poiVisible && z >= 10) ? '' : 'none';
-        if (pl) pl.style.display = (poiVisible && z >= 12) ? '' : 'none';
-    }
-
-    function bindLabels() {
-        ALL_STORES.forEach(r => {
-            const mk = markerMap[r.key];
-            if (mk.getTooltip && mk.getTooltip()) mk.unbindTooltip();
-            mk.bindTooltip(r.name, {
-                permanent: labelsPermanent,
-                direction: 'top',
-                offset: [0, -12],
-                className: 'm-tip'
-            });
-        });
-    }
+    /* 区域锚点 / 地标注记的绘制、🛣️/📍 开关、标记常驻名称
+       已抽到 src/static/map-base.js（MapBase.drawAreas / drawLandmarks / bindLabels） */
 
     /* ================= 动态生成筛选 chip ================= */
     /* 头部胶囊 / 榜单按钮数量 / 脚注总数（数据驱动，避免手改数字） */
@@ -934,7 +755,7 @@
             if (mine.length) {
                 let best = mine[0], bd = distOf(best);
                 mine.forEach(r => { const d = distOf(r); if (d != null && d < bd) { bd = d; best = r; } });
-                extra = bd == null ? ' · 📍 已定位' : ` · 📍 已定位 · 最近 ${best.name} ${fmtDist(bd)}`;
+                extra = bd == null ? ' · 📍 已定位' : ` · 📍 已定位 · 最近 ${best.name} ${MapBase.fmtDist(bd)}`;
             } else {
                 extra = ' · 📍 已定位';
             }
@@ -978,7 +799,7 @@
                     ? `<span class="ml-1 text-[9px] font-bold rounded px-1" style="color:#8A6A00;border:1px solid #B8860B;background:#FEF7E0">米★${r.michelin}</span>`
                     : (r.michelin === -1 ? `<span class="ml-1 text-[9px] font-bold rounded px-1" style="color:#8A6A00;border:1px solid #B8860B;background:#FEF7E0">必</span>` : '');
                 const dm = distOf(r);
-                const distTag = dm == null ? '' : ` · <span class="dist-tag">📍${fmtDist(dm)}</span>`;
+                const distTag = dm == null ? '' : ` · <span class="dist-tag">📍${MapBase.fmtDist(dm)}</span>`;
                 btn.innerHTML = `
                     <span class="ri-star text-sm leading-5 shrink-0" style="color:${meta.color}">${meta.badge}</span>
                     <span class="min-w-0 flex-1">
@@ -1010,7 +831,7 @@
         chips.push(r.bichi ? '🍜 必吃榜' : '🛣️ 扫街榜');
         if (r.michelin !== 0) chips.push('⭐ ' + MICHELIN_LABEL[r.michelin]);
         const dm = distOf(r);
-        if (dm != null) chips.unshift(`📍 距你约 ${fmtDist(dm)}（${bearingOf(r)}）`);
+        if (dm != null) chips.unshift(`📍 距你约 ${MapBase.fmtDist(dm)}（${MapBase.bearingOf(userLatLng, r)}）`);
         chips.forEach(t => {
             const s = document.createElement('span');
             s.className = `inline-block text-[10px] font-semibold mr-1.5 mb-1.5 px-2 py-0.5 rounded border ${meta.bg} ${meta.text} ${meta.border}`;
@@ -1052,32 +873,10 @@
 
     const GEO_OPTS = { enableHighAccuracy: true, timeout: 12000, maximumAge: 20000 };
 
-    /* 球面距离（米） */
-    function geoDist(a, b) {
-        const R = 6371000, rad = d => d * Math.PI / 180;
-        const dLat = rad(b[0] - a[0]), dLng = rad(b[1] - a[1]);
-        const la1 = rad(a[0]), la2 = rad(b[0]);
-        const h = Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
-        return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
-    }
-    /* 我 → 门店的直线距离（未定位返回 null） */
+    /* 球面距离 / 距离格式化 / 8 向方位已抽到 src/static/map-base.js
+       （MapBase.geoDist / fmtDist / bearingOf）。distOf 保留为薄封装，因为它绑定页面自己的 userLatLng。 */
     function distOf(r) {
-        return (userLatLng && r && r.coords) ? geoDist(userLatLng, r.coords) : null;
-    }
-    function fmtDist(m) {
-        if (m == null) return '';
-        if (m < 1000) return `${Math.round(m / 10) * 10} m`;
-        return `${(m / 1000).toFixed(m < 10000 ? 1 : 0)} km`;
-    }
-    /* 我 → 门店的 8 向方位 */
-    function bearingOf(r) {
-        if (!userLatLng || !r || !r.coords) return '';
-        const rad = d => d * Math.PI / 180;
-        const y = Math.sin(rad(r.coords[1] - userLatLng[1])) * Math.cos(rad(r.coords[0]));
-        const x = Math.cos(rad(userLatLng[0])) * Math.sin(rad(r.coords[0])) -
-                  Math.sin(rad(userLatLng[0])) * Math.cos(rad(r.coords[0])) * Math.cos(rad(r.coords[1] - userLatLng[1]));
-        const deg = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-        return ['正北', '东北', '正东', '东南', '正南', '西南', '正西', '西北'][Math.round(deg / 45) % 8];
+        return (userLatLng && r && r.coords) ? MapBase.geoDist(userLatLng, r.coords) : null;
     }
 
     function setGeoBtn(on, busy) {
@@ -1116,7 +915,7 @@
     function applyUserPos(pos, recenter) {
         const c = pos.coords;
         const next = [c.latitude, c.longitude];
-        const moved = userLatLng ? geoDist(userLatLng, next) : Infinity;
+        const moved = userLatLng ? MapBase.geoDist(userLatLng, next) : Infinity;
         userLatLng = next;
 
         if (!userMarker) {
@@ -1149,7 +948,7 @@
         setGeoBtn(true, false);
         const acc = applyUserPos(pos, true);
         syncSortBtn();
-        flashHint(`📍 已定位（精度约 ${fmtDist(acc)}）· 名录已显示距离`, false);
+        flashHint(`📍 已定位（精度约 ${MapBase.fmtDist(acc)}）· 名录已显示距离`, false);
     }
     function onGeoErr(err) {
         geoBusy = false;

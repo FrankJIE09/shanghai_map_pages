@@ -373,6 +373,345 @@
 </footer>
 
 <script>
+/* ================= 共用地图底座（构建期内联，源在 src/static/） ================= */
+/* 地图主题：三页底图与道路配色的唯一来源。
+   暗色给 bars（夜行地图），亮色给 bichi / michelin（日间美食地图）。
+   attribution 逐字沿用各页原有文案，避免上游署名变化。 */
+window.MAP_THEMES = {
+    dark: {
+        tile: {
+            url: 'https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png?key=cb1_3h6n_1_0d49d482d013e94f5ae62bb2',
+            options: {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO (dark)',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }
+        },
+        // 夜间底图上用低饱和冷灰，干道亮、支路暗
+        road: {
+            1: { color: '#8B84A8', weight: 3.2, opacity: 0.72 },  // 核心干道
+            2: { color: '#6E6784', weight: 2.0, opacity: 0.52 },  // 主要干道
+            3: { color: '#5A5470', weight: 1.2, opacity: 0.36 }   // 较长道路
+        },
+        btn: { on: '#241F30', off: '#171422', fg: '#EDE9F5' }
+    },
+    light: {
+        tile: {
+            url: 'https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png?key=cb1_3h6n_1_0d49d482d013e94f5ae62bb2',
+            options: {
+                attribution: '&copy; CartoDB No-Labels Map Projection',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }
+        },
+        // 浅色底图上用暖灰，越粗越深
+        road: {
+            1: { color: '#6E6558', weight: 3.4, opacity: 0.85 },  // 核心干道
+            2: { color: '#8C8377', weight: 2.2, opacity: 0.62 },  // 主要干道
+            3: { color: '#A79E92', weight: 1.3, opacity: 0.40 }   // 较长道路
+        },
+        btn: { on: '#FCF9F2', off: '#D9D2C6' }
+    }
+};
+/* 共用地图底座：底图、道路骨架、区域/地标注记、球面几何。
+   三页共用同一套 MAIN_ROADS（227 条），此前后者在三个 HTML 里各存一份，
+   合计约 281 KB 纯冗余。
+
+   依赖：Leaflet、window.MAP_THEMES（见 theme.js）。
+   用法见各页 window.onload。 */
+window.MapBase = (function () {
+    'use strict';
+
+    /* 内部状态：原先散落在各页的全局变量集中到这里 */
+    const S = {
+        map: null,
+        roadsGroup: null,
+        roadLabelsA: null,
+        roadLabelsB: null,
+        areasGroup: null,
+        landmarksGroup: null,
+        roadsVisible: true,
+        poiVisible: true,
+        roadStyle: null,
+        btn: null,
+        poiMinZoom: { area: 10, landmark: 12 }
+    };
+
+    function getMap() {
+        return S.map;
+    }
+
+    /* ---------------- 底图 ---------------- */
+
+    function createMap(elId, opts) {
+        const o = opts || {};
+        const theme = o.theme || window.MAP_THEMES.light;
+        const m = L.map(elId, Object.assign({
+            center: [31.2304, 121.4737],
+            zoom: 12,
+            minZoom: 10,
+            maxZoom: 18,
+            zoomControl: true
+        }, o.view));
+        L.tileLayer(theme.tile.url, theme.tile.options).addTo(m);
+        S.map = m;
+        return m;
+    }
+
+    /* ---------------- 道路骨架 + 路名 ---------------- */
+
+    function btnCss(theme, on) {
+        const b = (theme && theme.btn) || {};
+        return 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;' +
+            'font-size:15px;text-decoration:none;background:' + (on ? b.on : b.off) +
+            (b.fg ? ';color:' + b.fg : '') + ';';
+    }
+
+    function drawRoads(opts) {
+        const o = opts || {};
+        const roads = o.roads || [];
+        const theme = o.theme || window.MAP_THEMES.light;
+        const map = S.map;
+        S.roadStyle = theme.road;
+        S.btn = theme.btn;
+
+        map.createPane('roadsPane');
+        map.getPane('roadsPane').style.zIndex = 350;
+        map.createPane('roadLabelsPaneA');
+        map.getPane('roadLabelsPaneA').style.zIndex = 355;
+        map.getPane('roadLabelsPaneA').style.pointerEvents = 'none';
+        map.createPane('roadLabelsPaneB');
+        map.getPane('roadLabelsPaneB').style.zIndex = 354;
+        map.getPane('roadLabelsPaneB').style.pointerEvents = 'none';
+
+        S.roadsGroup = L.layerGroup();
+        S.roadLabelsA = L.layerGroup();
+        S.roadLabelsB = L.layerGroup();
+
+        roads.forEach(function (r) {
+            const st = S.roadStyle[r.tier] || S.roadStyle[3];
+            L.polyline(r.path, {
+                pane: 'roadsPane',
+                color: st.color,
+                weight: st.weight,
+                opacity: st.opacity,
+                lineCap: 'round',
+                lineJoin: 'round',
+                interactive: false
+            }).addTo(S.roadsGroup);
+
+            // 一级路名常驻（放大后），二级路名需更高缩放级别
+            if (r.tier === 1 || r.tier === 2) {
+                const mid = r.path[Math.floor(r.path.length / 2)];
+                const mk = L.marker(mid, {
+                    pane: r.tier === 1 ? 'roadLabelsPaneA' : 'roadLabelsPaneB',
+                    interactive: false,
+                    keyboard: false,
+                    icon: L.divIcon({
+                        className: '',
+                        html: '<span class="road-name' + (r.tier === 1 ? ' road-name-major' : '') + '">' + r.name + '</span>',
+                        iconSize: [0, 0],
+                        iconAnchor: [0, 0]
+                    })
+                });
+                (r.tier === 1 ? S.roadLabelsA : S.roadLabelsB).addLayer(mk);
+            }
+        });
+
+        S.roadsGroup.addTo(map);
+        S.roadLabelsA.addTo(map);
+        S.roadLabelsB.addTo(map);
+        updateRoadLabelVisibility();
+        map.on('zoomend', updateRoadLabelVisibility);
+
+        // 右上角开关
+        const RoadsToggle = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function () {
+                const wrap = L.DomUtil.create('div', 'leaflet-bar');
+                const btn = L.DomUtil.create('a', '', wrap);
+                btn.href = '#';
+                btn.title = '显示 / 隐藏道路骨架';
+                btn.innerHTML = '🛣️';
+                btn.style.cssText = btnCss(theme, true);
+                L.DomEvent.on(btn, 'click', function (e) {
+                    L.DomEvent.stop(e);
+                    S.roadsVisible = !S.roadsVisible;
+                    [S.roadsGroup, S.roadLabelsA, S.roadLabelsB].forEach(function (g) {
+                        if (S.roadsVisible) { g.addTo(map); } else { map.removeLayer(g); }
+                    });
+                    btn.style.cssText = btnCss(theme, S.roadsVisible);
+                    updateRoadLabelVisibility();
+                });
+                return wrap;
+            }
+        });
+        map.addControl(new RoadsToggle());
+    }
+
+    function updateRoadLabelVisibility() {
+        const map = S.map;
+        const pa = map.getPane('roadLabelsPaneA');
+        const pb = map.getPane('roadLabelsPaneB');
+        const z = map.getZoom();
+        if (pa) pa.style.display = (S.roadsVisible && z >= 13) ? '' : 'none';
+        if (pb) pb.style.display = (S.roadsVisible && z >= 15) ? '' : 'none';
+    }
+
+    /* ---------------- 区域锚点 / 地标参照 ---------------- */
+
+    function drawAreas(opts) {
+        const o = opts || {};
+        const map = S.map;
+        map.createPane('areaLabelsPane');
+        map.getPane('areaLabelsPane').style.zIndex = 370;
+        map.getPane('areaLabelsPane').style.pointerEvents = 'none';
+
+        const container = o.grouped ? (S.areasGroup = L.layerGroup()) : map;
+        (o.areas || []).forEach(function (a) {
+            const cls = a.kind === 'origin' ? 'area-label origin' : 'area-label';
+            L.marker(a.coords, {
+                pane: 'areaLabelsPane',
+                interactive: false,
+                keyboard: false,
+                icon: L.divIcon({
+                    className: '',
+                    html: '<span class="' + cls + '">' + a.name + '</span>',
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0]
+                })
+            }).addTo(container);
+        });
+        if (o.grouped) S.areasGroup.addTo(map);
+    }
+
+    function drawLandmarks(opts) {
+        const o = opts || {};
+        const map = S.map;
+        const theme = o.theme || window.MAP_THEMES.light;
+        if (o.poiMinZoom) S.poiMinZoom = o.poiMinZoom;
+
+        map.createPane('landmarksPane');
+        map.getPane('landmarksPane').style.zIndex = 365;
+        map.getPane('landmarksPane').style.pointerEvents = 'none';
+
+        const container = o.grouped ? (S.landmarksGroup = L.layerGroup()) : map;
+        (o.landmarks || []).forEach(function (p) {
+            const k = p.kind;
+            L.marker(p.coords, {
+                pane: 'landmarksPane',
+                interactive: false,
+                keyboard: false,
+                icon: L.divIcon({
+                    className: '',
+                    html: '<div class="poi-mark"><span class="poi-dot ' + k + '"></span>' +
+                        '<span class="poi-name ' + k + '">' + p.name + '</span></div>',
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0]
+                })
+            }).addTo(container);
+        });
+        if (!o.grouped) return;
+
+        S.landmarksGroup.addTo(map);
+        updatePoiVisibility();
+        map.on('zoomend', updatePoiVisibility);
+
+        const PoiToggle = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function () {
+                const wrap = L.DomUtil.create('div', 'leaflet-bar');
+                const btn = L.DomUtil.create('a', '', wrap);
+                btn.href = '#';
+                btn.title = '显示 / 隐藏地标参照';
+                btn.innerHTML = '📍';
+                btn.style.cssText = btnCss(theme, true);
+                L.DomEvent.on(btn, 'click', function (e) {
+                    L.DomEvent.stop(e);
+                    S.poiVisible = !S.poiVisible;
+                    [S.areasGroup, S.landmarksGroup].forEach(function (g) {
+                        if (!g) return;
+                        if (S.poiVisible) { g.addTo(map); } else { map.removeLayer(g); }
+                    });
+                    btn.style.cssText = btnCss(theme, S.poiVisible);
+                    updatePoiVisibility();
+                });
+                return wrap;
+            }
+        });
+        map.addControl(new PoiToggle());
+    }
+
+    function updatePoiVisibility() {
+        const map = S.map;
+        const pa = map.getPane('areaLabelsPane');
+        const pl = map.getPane('landmarksPane');
+        const z = map.getZoom();
+        if (pa) pa.style.display = (S.poiVisible && z >= S.poiMinZoom.area) ? '' : 'none';
+        if (pl) pl.style.display = (S.poiVisible && z >= S.poiMinZoom.landmark) ? '' : 'none';
+    }
+
+    /* ---------------- 标记上的常驻名称 ---------------- */
+
+    function bindLabels(items, markerMap, permanent) {
+        (items || []).forEach(function (r) {
+            const mk = markerMap[r.key];
+            if (!mk) return;
+            if (mk.getTooltip && mk.getTooltip()) mk.unbindTooltip();
+            mk.bindTooltip(r.name, {
+                permanent: !!permanent,
+                direction: 'top',
+                offset: [0, -12],
+                className: 'm-tip'
+            });
+        });
+    }
+
+    /* ---------------- 球面几何 ---------------- */
+
+    /** 两点球面距离（米）。a、b 均为 [lat, lng]。 */
+    function geoDist(a, b) {
+        const R = 6371000, rad = d => d * Math.PI / 180;
+        const dLat = rad(b[0] - a[0]), dLng = rad(b[1] - a[1]);
+        const la1 = rad(a[0]), la2 = rad(b[0]);
+        const h = Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
+        return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+    }
+
+    function fmtDist(m) {
+        if (m == null) return '';
+        if (m < 1000) return `${Math.round(m / 10) * 10} m`;
+        return `${(m / 1000).toFixed(m < 10000 ? 1 : 0)} km`;
+    }
+
+    /** 从 userPos 看向 target.coords 的 8 向方位。 */
+    function bearingOf(userPos, target) {
+        if (!userPos || !target || !target.coords) return '';
+        const rad = d => d * Math.PI / 180;
+        const y = Math.sin(rad(target.coords[1] - userPos[1])) * Math.cos(rad(target.coords[0]));
+        const x = Math.cos(rad(userPos[0])) * Math.sin(rad(target.coords[0])) -
+            Math.sin(rad(userPos[0])) * Math.cos(rad(target.coords[0])) *
+            Math.cos(rad(target.coords[1] - userPos[1]));
+        const deg = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+        return ['正北', '东北', '正东', '东南', '正南', '西南', '正西', '西北'][Math.round(deg / 45) % 8];
+    }
+
+    return {
+        state: S,
+        getMap: getMap,
+        createMap: createMap,
+        drawRoads: drawRoads,
+        updateRoadLabelVisibility: updateRoadLabelVisibility,
+        drawAreas: drawAreas,
+        drawLandmarks: drawLandmarks,
+        updatePoiVisibility: updatePoiVisibility,
+        bindLabels: bindLabels,
+        geoDist: geoDist,
+        fmtDist: fmtDist,
+        bearingOf: bearingOf
+    };
+})();
+
 /* ============================================================
    数据：每家一条。type 为 8 类之一；category/分组/档位/是否过 02:00
    均在加载后统一计算（不写进数据）。
@@ -483,26 +822,20 @@ function stopLabel(v){
 
 /* ================= 状态 ================= */
 let map, activeKey = null, listSort = 'name';
-let roadsGroup = null;     // 道路线
-let roadLabelsA = null;    // 核心干道路名（z≥13）
-let roadLabelsB = null;    // 主要干道路名（z≥15）
-let roadsVisible = true;
 const markerMap = {};
 const state = {types:[], genre:'all', price:[], booking:[], idcheck:[], onlyLive:false, onlyLate:false,
                showUneasy:true, showClosed:true, q:''};
 
 /* ================= 地图 ================= */
 window.onload = function(){
-  map = L.map('leaflet-map', {
-    center:[31.2304,121.4737], zoom:12, minZoom:10, maxZoom:18, zoomControl:true
+  map = MapBase.createMap('leaflet-map', {
+    theme: MAP_THEMES.dark,
+    view: {center:[31.2304,121.4737], zoom:12, minZoom:10, maxZoom:18, zoomControl:true}
   });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png?key=cb1_3h6n_1_0d49d482d013e94f5ae62bb2', {
-    attribution:'&copy; OpenStreetMap contributors &copy; CARTO (dark)', subdomains:'abcd', maxZoom:20
-  }).addTo(map);
 
-  drawRoads();
-  drawAreas();
-  drawLandmarks();
+  MapBase.drawRoads({roads: MAIN_ROADS, theme: MAP_THEMES.dark});
+  MapBase.drawAreas({areas: AREAS});
+  MapBase.drawLandmarks({landmarks: LANDMARKS});
 
   VENUES.forEach(v => {
     const t = typeOf(v), meta = TYPE_META[t];
@@ -761,87 +1094,8 @@ const MAIN_ROADS = [
 {"id":"r_91115","name":"通州路","tier":3,"vertical":false,"path":[[31.25787,121.49366],[31.25831,121.49338],[31.25835,121.49335],[31.2584,121.4933],[31.25851,121.49316],[31.25861,121.49303],[31.25916,121.49237],[31.25963,121.49171],[31.25984,121.49143],[31.25995,121.49127],[31.2611,121.48884],[31.26114,121.48874]]}
 ];
 
-/* 道路线型：夜间底图上用低饱和冷灰，干道亮、支路暗 */
-const ROAD_STYLE = {
-  1: { color:'#8B84A8', weight:3.2, opacity:0.72 },  // 核心干道
-  2: { color:'#6E6784', weight:2.0, opacity:0.52 },  // 主要干道
-  3: { color:'#5A5470', weight:1.2, opacity:0.36 }   // 较长道路
-};
+/* 道路骨架的绘制、路名显隐与右上角开关已抽到 src/static/map-base.js（MapBase.drawRoads） */
 
-/* ================= 主要道路骨架 ================= */
-function drawRoads(){
-  map.createPane('roadsPane');
-  map.getPane('roadsPane').style.zIndex = 350;
-  map.createPane('roadLabelsPaneA');
-  map.getPane('roadLabelsPaneA').style.zIndex = 355;
-  map.getPane('roadLabelsPaneA').style.pointerEvents = 'none';
-  map.createPane('roadLabelsPaneB');
-  map.getPane('roadLabelsPaneB').style.zIndex = 354;
-  map.getPane('roadLabelsPaneB').style.pointerEvents = 'none';
-
-  roadsGroup = L.layerGroup();
-  roadLabelsA = L.layerGroup();
-  roadLabelsB = L.layerGroup();
-
-  MAIN_ROADS.forEach(r => {
-    const st = ROAD_STYLE[r.tier] || ROAD_STYLE[3];
-    L.polyline(r.path, {
-      pane:'roadsPane', color:st.color, weight:st.weight, opacity:st.opacity,
-      lineCap:'round', lineJoin:'round', interactive:false
-    }).addTo(roadsGroup);
-
-    // 一级路名常驻（放大后），二级路名需更高缩放级别
-    if (r.tier === 1 || r.tier === 2) {
-      const mid = r.path[Math.floor(r.path.length / 2)];
-      const mk = L.marker(mid, {
-        pane: r.tier === 1 ? 'roadLabelsPaneA' : 'roadLabelsPaneB',
-        interactive:false, keyboard:false,
-        icon: L.divIcon({
-          className:'',
-          html:`<span class="road-name${r.tier === 1 ? ' road-name-major' : ''}">${r.name}</span>`,
-          iconSize:[0,0], iconAnchor:[0,0]
-        })
-      });
-      (r.tier === 1 ? roadLabelsA : roadLabelsB).addLayer(mk);
-    }
-  });
-
-  roadsGroup.addTo(map);
-  roadLabelsA.addTo(map);
-  roadLabelsB.addTo(map);
-  updateRoadLabelVisibility();
-  map.on('zoomend', updateRoadLabelVisibility);
-
-  // 右上角开关
-  const RoadsToggle = L.Control.extend({
-    options:{ position:'topright' },
-    onAdd: function(){
-      const wrap = L.DomUtil.create('div', 'leaflet-bar');
-      const btn = L.DomUtil.create('a', '', wrap);
-      btn.href = '#'; btn.title = '显示 / 隐藏道路骨架'; btn.innerHTML = '🛣️';
-      btn.style.cssText = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:15px;text-decoration:none;background:#241F30;color:#EDE9F5;';
-      L.DomEvent.on(btn, 'click', function(e){
-        L.DomEvent.stop(e);
-        roadsVisible = !roadsVisible;
-        [roadsGroup, roadLabelsA, roadLabelsB].forEach(function(g){
-          if (roadsVisible) { g.addTo(map); } else { map.removeLayer(g); }
-        });
-        btn.style.background = roadsVisible ? '#241F30' : '#171422';
-        updateRoadLabelVisibility();
-      });
-      return wrap;
-    }
-  });
-  map.addControl(new RoadsToggle());
-}
-
-function updateRoadLabelVisibility(){
-  const pa = map.getPane('roadLabelsPaneA');
-  const pb = map.getPane('roadLabelsPaneB');
-  const z = map.getZoom();
-  if (pa) pa.style.display = (roadsVisible && z >= 13) ? '' : 'none';
-  if (pb) pb.style.display = (roadsVisible && z >= 15) ? '' : 'none';
-}
 
 /* ================= 区域锚点 / 地标参照 ================= */
 const AREAS = [
@@ -874,26 +1128,8 @@ const LANDMARKS = [
 {"name":"东方明珠","coords":[31.2419,121.4953],"kind":"tower"},
 {"name":"豫园","coords":[31.2289,121.488],"kind":"venue"}
 ];
-function drawAreas(){
-  map.createPane('areaLabelsPane');
-  map.getPane('areaLabelsPane').style.zIndex = 370;
-  map.getPane('areaLabelsPane').style.pointerEvents = 'none';
-  AREAS.forEach(a => {
-    L.marker(a.coords, {pane:'areaLabelsPane', interactive:false, keyboard:false,
-      icon:L.divIcon({className:'', html:`<span class="area-label${a.kind==='origin'?' origin':''}">${a.name}</span>`, iconSize:[0,0], iconAnchor:[0,0]})
-    }).addTo(map);
-  });
-}
-function drawLandmarks(){
-  map.createPane('landmarksPane');
-  map.getPane('landmarksPane').style.zIndex = 365;
-  map.getPane('landmarksPane').style.pointerEvents = 'none';
-  LANDMARKS.forEach(p => {
-    L.marker(p.coords, {pane:'landmarksPane', interactive:false, keyboard:false,
-      icon:L.divIcon({className:'', html:`<div class="poi-mark"><span class="poi-dot ${p.kind}"></span><span class="poi-name ${p.kind}">${p.name}</span></div>`, iconSize:[0,0], iconAnchor:[0,0]})
-    }).addTo(map);
-  });
-}
+/* 区域锚点 / 地标注记的绘制已抽到 src/static/map-base.js（MapBase.drawAreas / drawLandmarks） */
+
 
 /* ================= 筛选 chip ================= */
 const GENRES = [...new Set(VENUES.map(v => v.genre))].sort((a,b) => a.localeCompare(b,'zh'));
@@ -1231,28 +1467,8 @@ function selectVenue(key, fromMap){
 /* ================= 定位（我的位置） ================= */
 let userMarker = null, userCircle = null, userLatLng = null, watchId = null;
 const GEO_OPTS = {enableHighAccuracy:true, timeout:12000, maximumAge:20000};
-function geoDist(a,b){
-  const R = 6371000, rad = d => d * Math.PI / 180;
-  const dLat = rad(b[0]-a[0]), dLng = rad(b[1]-a[1]);
-  const la1 = rad(a[0]), la2 = rad(b[0]);
-  const h = Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)**2;
-  return 2*R*Math.asin(Math.min(1, Math.sqrt(h)));
-}
-function distOf(v){ return (userLatLng && v && v.coords) ? geoDist(userLatLng, v.coords) : null; }
-function fmtDist(m){
-  if (m == null) return '';
-  if (m < 1000) return `${Math.round(m/10)*10} m`;
-  return `${(m/1000).toFixed(m < 10000 ? 1 : 0)} km`;
-}
-function bearingOf(v){
-  if (!userLatLng) return '';
-  const rad = d => d*Math.PI/180;
-  const y = Math.sin(rad(v.coords[1]-userLatLng[1]))*Math.cos(rad(v.coords[0]));
-  const x = Math.cos(rad(userLatLng[0]))*Math.sin(rad(v.coords[0])) -
-            Math.sin(rad(userLatLng[0]))*Math.cos(rad(v.coords[0]))*Math.cos(rad(v.coords[1]-userLatLng[1]));
-  const deg = (Math.atan2(y,x)*180/Math.PI+360)%360;
-  return ['正北','东北','正东','东南','正南','西南','正西','西北'][Math.round(deg/45)%8];
-}
+/* 球面距离 / 距离格式化 / 8 向方位已抽到 src/static/map-base.js
+   （MapBase.geoDist / fmtDist / bearingOf）。bars 页面本身不显示距离，故不再定义本地副本。 */
 function flashHint(msg, isErr){
   const el = document.getElementById('map-hint');
   if (!el) return;

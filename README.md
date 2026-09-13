@@ -58,6 +58,25 @@ const VENUES = [ /* 构建生成，勿手改 */ ];
 /* @@BUILD:end@@ */
 ```
 
+## 变更后如何验证
+
+重构过地图底座之后，要确认产物与重构前「渲染结果一致」，不能只看代码。`scripts/parity_diag.html` 就是为此准备的探针：
+
+它把一张地图页塞进同源 iframe，点一遍 🛣️ / 📍 开关，把两轮开关后的 DOM 计数与 Leaflet 真实状态（缩放、中心、bounds、pane 可见性）写进 `document.title`，供人或脚本读取。
+
+```bash
+mkdir -p /tmp/a /tmp/b
+cp dist/*.html scripts/parity_diag.html /tmp/a/          # 旧版本
+cp dist/*.html scripts/parity_diag.html /tmp/b/          # 新版本
+(cd /tmp/a && python3 -m http.server 8766 &)
+(cd /tmp/b && python3 -m http.server 8765 &)
+# 浏览器打开 http://localhost:8766/parity_diag.html#shanghai_michelin_2026.html
+# 与     http://localhost:8765/parity_diag.html#shanghai_michelin_2026.html
+# 对比两边页面标题里的这几十个计数：应逐字相同
+```
+
+关注这些量：`polylines` / `road_labels` / `areas` / `pois` / `icons` / `list`，以及开关前后的增减与 `mapstate`。**不要用 `firstTileZ` 判断缩放**——Leaflet 会保留 `fitBounds` 之前的旧瓦片，DOM 里第一个瓦片的 z 可能是初始值，而 `mapstate.z` 才是真实缩放。
+
 ## 本地预览
 
 直接用浏览器打开 `dist/*.html` 即可（`file://` 也能正常工作）。
