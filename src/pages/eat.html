@@ -331,7 +331,7 @@
                     <p id="detail-tip" class="text-xs text-amber-950 font-medium mt-1 leading-relaxed"></p>
                 </div>
                 <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
-                   class="hidden mt-3 w-full items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2 border-[#1F402B] bg-[#1F402B] text-[#FAF5EB] hover:bg-[#2C5A3C]">🧭 在高德地图打开</a>
+                   class="hidden mt-3 w-full items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2 border-[#1F402B] bg-[#1F402B] text-[#FAF5EB] hover:bg-[#2C5A3C]">🧭 在百度地图打开</a>
             </div>
         </div>
 
@@ -908,7 +908,7 @@
         return geo ? geo.distOf(r) : null;
     }
 
-    /* 详情卡里的高德打开 / 导航按钮 */
+    /* 详情卡里的百度打开 / 导航按钮 */
     function updateNavLink(r) {
         const nav = document.getElementById('detail-nav');
         if (!nav) return;
@@ -917,9 +917,9 @@
         const name = encodeURIComponent(r.name);
         const me = geo && geo.pos();
         nav.href = me
-            ? `https://uri.amap.com/navigation?from=${me[1]},${me[0]},我的位置&to=${lng},${lat},${name}&mode=walk&coordinate=wgs84&callnative=0`
-            : `https://uri.amap.com/marker?position=${lng},${lat}&name=${name}&coordinate=wgs84&callnative=0`;
-        nav.textContent = me ? '🧭 高德步行导航到店' : '🧭 在高德地图打开';
+            ? `https://api.map.baidu.com/direction?origin=latlng:${me[0]},${me[1]}|name:我的位置&destination=latlng:${lat},${lng}|name:${name}&mode=walking&region=上海&output=html&coord_type=wgs84&src=webapp.shanghai-map-pages`
+            : `https://api.map.baidu.com/marker?location=${lat},${lng}&title=${name}&content=${name}&output=html&coord_type=wgs84&src=webapp.shanghai-map-pages`;
+        nav.textContent = me ? '🧭 百度步行导航到店' : '🧭 在百度地图打开';
         nav.style.display = 'flex';
     }
 

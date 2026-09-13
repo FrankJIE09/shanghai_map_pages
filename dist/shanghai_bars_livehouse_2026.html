@@ -301,7 +301,7 @@
       </div>
       <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
          class="hidden mt-3 w-full items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2"
-         style="border-color:var(--cyan);background:var(--cyan);color:#04140F">🧭 在高德地图打开</a>
+         style="border-color:var(--cyan);background:var(--cyan);color:#04140F">🧭 在百度地图打开</a>
     </div>
   </section>
 </main>
@@ -1435,7 +1435,7 @@ function selectVenue(key, fromMap){
 
   const nav = document.getElementById('detail-nav');
   const [lat,lng] = v.coords;
-  nav.href = `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(v.name)}&coordinate=wgs84&callnative=0`;
+  nav.href = `https://api.map.baidu.com/marker?location=${lat},${lng}&title=${encodeURIComponent(v.name)}&content=${encodeURIComponent(v.name)}&output=html&coord_type=wgs84&src=webapp.shanghai-map-pages`;
   nav.style.display = 'flex';
 
   Object.keys(markerMap).forEach(k => {
