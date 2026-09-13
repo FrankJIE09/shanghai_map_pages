@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上海酒吧 × Livehouse × 夜店 2026 · 夜行探店地图</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14121A;
+    --panel:#1D1A25;
+    --panel2:#232030;
+    --ink:#EDE9F5;
+    --ink-dim:#A79FB8;
+    --stroke:#4A4360;
+    --hard:#0A0810;
+    --pink:#FF3D81;
+    --cyan:#22D3EE;
+  }
+  body{
+    font-family:'Inter','Noto Serif SC',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background-color:var(--bg);
+    color:var(--ink);
+    background-image:
+      radial-gradient(circle at 12% 8%, rgba(255,61,129,.10), transparent 42%),
+      radial-gradient(circle at 88% 92%, rgba(34,211,238,.10), transparent 45%);
+    background-attachment:fixed;
+  }
+  .handwritten-title{ font-family:'ZCOOL XiaoWei',serif; }
+  /* 手绘纸张风 · 夜间版：2px 描边 + 4px 硬阴影 */
+  .sketch-card{
+    background:var(--panel);
+    border:2px solid var(--stroke);
+    box-shadow:4px 4px 0 var(--hard);
+    transition:all .2s ease;
+  }
+  .sketch-card:hover{ transform:translate(-1px,-1px); box-shadow:5px 5px 0 var(--hard); }
+  .paper-panel{ background:var(--panel2); border:2px solid var(--stroke); box-shadow:3px 3px 0 var(--hard); }
+
+  /* 夜间底图：不额外加暖色滤镜，只压暗一点 */
+  .night-map .leaflet-tile-pane{ filter:brightness(.92) contrast(1.06) saturate(.95); }
+  .leaflet-tooltip-pane{ z-index:650; }
+  .leaflet-container{ background:#0E0C14; }
+
+  /* ===== 地标图标 ===== */
+  .m-icon{
+    position:relative; display:flex; align-items:center; justify-content:center;
+    background:#241F30; border:2px solid var(--tc,#FF3D81);
+    box-shadow:2px 2px 0 var(--hard);
+    border-radius:50%; cursor:pointer; transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .m-icon:hover{ transform:scale(1.18) rotate(-5deg); }
+  .m-icon.is-active{ transform:scale(1.24); box-shadow:0 0 0 3px var(--tc,#FF3D81),3px 3px 0 var(--hard); }
+  .m-icon.is-active::after{ content:''; position:absolute; inset:-9px; border-radius:50%; border:2px dashed var(--tc); animation:spin 6s linear infinite; }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .m-badge{
+    position:absolute; bottom:-6px; right:-6px;
+    min-width:16px; height:16px; padding:0 3px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:9px; line-height:1; font-weight:700;
+    color:#0A0810; background:var(--tc,#FF3D81);
+    border:1.5px solid var(--hard); border-radius:9999px;
+    pointer-events:none;
+  }
+  .m-warn{
+    position:absolute; top:-7px; left:-7px; font-size:11px; line-height:1;
+    pointer-events:none; filter:drop-shadow(1px 1px 0 var(--hard));
+  }
+  .m-tip{
+    font-size:10px!important; font-weight:700; padding:2px 6px!important;
+    background:#0A0810!important; color:var(--ink)!important;
+    border:1.5px solid var(--stroke)!important; box-shadow:2px 2px 0 var(--hard)!important;
+    border-radius:4px!important;
+  }
+  .m-tip::before{ border-top-color:var(--stroke)!important; }
+  .leaflet-popup-content-wrapper,.leaflet-popup-tip{ background:var(--panel); color:var(--ink); }
+
+  /* ===== 主要道路骨架（夜间版）===== */
+  .road-name{
+    display:inline-block; transform:translate(-50%,-50%); white-space:nowrap;
+    font-size:9px; font-weight:700; color:#C9C2DC;
+    background:rgba(20,18,26,.80);
+    border:1px solid rgba(139,132,168,.42);
+    border-radius:3px; padding:0 3px; letter-spacing:.02em;
+    pointer-events:none;
+  }
+  .road-name-major{ font-size:10px; color:#EDE9F5; border-color:rgba(167,159,184,.60); }
+
+  /* ===== 区域锚点 / 地标参照 ===== */
+  .area-label{
+    display:inline-block; transform:translate(-50%,-50%); white-space:nowrap;
+    font-size:10px; font-weight:700; color:var(--cyan);
+    padding:0 4px; border-radius:3px; background:rgba(20,18,26,.72);
+    pointer-events:none; letter-spacing:.02em;
+  }
+  .area-label.origin{ color:var(--pink); }
+  .poi-mark{ display:flex; flex-direction:column; align-items:center; transform:translate(-50%,-50%); pointer-events:none; line-height:1.1; }
+  .poi-dot{ width:7px; height:7px; border:1.5px solid var(--stroke); flex-shrink:0; }
+  .poi-dot.park{ background:#4C7A5A; border-radius:50%; }
+  .poi-dot.tower,.poi-dot.venue,.poi-dot.mall{ background:#6E6784; border-radius:1px; }
+  .poi-dot.transit{ width:0; height:0; border:none; box-shadow:none; border-left:5px solid transparent; border-right:5px solid transparent; border-bottom:8px solid #5B8FB9; background:transparent; }
+  .poi-name{ margin-top:2px; font-size:10px; font-weight:600; white-space:nowrap; padding:0 3px; border-radius:2px; background:rgba(20,18,26,.72); }
+  .poi-name.park{ color:#7FB894; } .poi-name.tower,.poi-name.venue,.poi-name.mall{ color:#B3AACB; } .poi-name.transit{ color:#7FB6D9; }
+
+  /* ===== 筛选按钮 ===== */
+  .cat-btn{ transition:all .15s ease; border:1.5px solid var(--stroke); background:var(--panel2); color:var(--ink-dim); }
+  .cat-btn:hover{ color:var(--ink); }
+  .cat-btn.active{ background-color:var(--pink)!important; color:#12010A!important; border-color:var(--pink)!important; font-weight:700; }
+  .chip{ transition:all .15s ease; border:1.5px solid var(--stroke); background:var(--panel2); color:var(--ink-dim); }
+  .chip:hover{ color:var(--ink); }
+  .chip.active{ background-color:var(--cyan)!important; color:#04140F!important; border-color:var(--cyan)!important; font-weight:700; }
+  .type-chip.active{ background-color:var(--tc)!important; border-color:var(--tc)!important; color:#0A0810!important; }
+  .price-chip{ background-color:var(--pc); border-color:var(--pcb); color:var(--pct); }
+  .chip.price-chip.active{ background-color:var(--pca)!important; color:#150A02!important; border-color:var(--pca)!important; }
+  .price-chip[data-tier="1"]{ --pc:#241F2C; --pcb:#4A4360; --pct:#B7AEC7; --pca:#8B7FB0; }
+  .price-chip[data-tier="2"]{ --pc:#2A2136; --pcb:#7A4A8F; --pct:#E3C7F2; --pca:#C77FE8; }
+  .price-chip[data-tier="3"]{ --pc:#33203C; --pcb:#B0419C; --pct:#F7CDEE; --pca:#FF5FC4; }
+  .price-chip[data-tier="4"]{ --pc:#3A1C33; --pcb:#FF3D81; --pct:#FFD3E4; --pca:#FF3D81; }
+  .price-chip[data-tier="all"]{ --pc:#241F2C; --pcb:#4A4360; --pct:#B7AEC7; --pca:#22D3EE; }
+
+  /* ===== 名录条目 ===== */
+  .venue-item{ transition:all .15s ease; border:1.5px solid #322C44; background:var(--panel2); }
+  .venue-item:hover{ background:#2C2739; border-color:var(--cyan)!important; }
+  .venue-item.active{ background:#FF3D81!important; border-color:#FF3D81!important; }
+  .venue-item.active .vi-name{ color:#12010A!important; }
+  .venue-item.active .vi-sub{ color:#3A0A1E!important; }
+  .venue-item.active .vi-tag{ border-color:#12010A!important; color:#12010A!important; background:rgba(255,255,255,.25)!important; }
+
+  .no-scrollbar::-webkit-scrollbar{ display:none; }
+  .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
+  .thin-scroll::-webkit-scrollbar{ width:7px; }
+  .thin-scroll::-webkit-scrollbar-thumb{ background:#4A4360; border-radius:4px; }
+  .thin-scroll::-webkit-scrollbar-track{ background:#1A1723; }
+
+  .tag{ display:inline-block; font-size:9px; font-weight:700; line-height:1.4; padding:1px 5px; border-radius:3px; border:1px solid; }
+  .tag-warn{ color:#FFD166; border-color:#8A6A00; background:rgba(255,209,102,.10); }
+  .tag-stop{ color:#FF8FA3; border-color:#8E1F35; background:rgba(255,61,129,.12); }
+  .tag-id{ color:#8FE3FF; border-color:#1E6E86; background:rgba(34,211,238,.10); }
+  .tag-book{ color:#D9C2FF; border-color:#5B4491; background:rgba(167,139,250,.10); }
+  .tag-live{ color:#FFB3D1; border-color:#8E1F5C; background:rgba(255,61,129,.10); }
+  .tag-late{ color:#BDF5C8; border-color:#2C6E45; background:rgba(52,211,153,.10); }
+  .src-a{ color:#12010A; background:#FF3D81; border-color:#FF3D81; }
+  .src-b{ color:#04140F; background:#22D3EE; border-color:#22D3EE; }
+  .src-c{ color:#0A0810; background:#A7E17F; border-color:#A7E17F; }
+  .src-d{ color:#0A0810; background:#C9BFA8; border-color:#C9BFA8; }
+  .src-ref{ color:#12010A; background:#D3C4FF; border-color:#D3C4FF; }
+  a.src-link{ text-decoration:underline; text-underline-offset:2px; }
+  a.src-link:hover{ color:var(--cyan); }
+  .stat-line b{ color:var(--cyan); font-weight:700; }
+  details summary{ cursor:pointer; }
+  details summary::-webkit-details-marker{ color:var(--pink); }
+</style>
+</head>
+<body class="min-h-screen pb-14">
+
+<header class="w-full py-7 px-4 relative overflow-hidden border-b-4 border-[#4A4360]"
+        style="background:linear-gradient(120deg,#231B2E 0%,#1A1622 55%,#12202A 100%)">
+  <div class="absolute right-4 top-1 opacity-[0.09] pointer-events-none">
+    <svg width="150" height="150" viewBox="0 0 24 24" fill="#FF3D81">
+      <path d="M12 3a4 4 0 0 0-4 4v5a4 4 0 0 0 8 0V7a4 4 0 0 0-4-4Zm-7 9a7 7 0 0 0 6 6.92V22h2v-3.08A7 7 0 0 0 19 12h-2a5 5 0 0 1-10 0H5Z"/>
+    </svg>
+  </div>
+  <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4 relative">
+    <div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded-sm -rotate-1" style="background:#22D3EE;color:#04140F">精酿 · 鸡尾酒 · 威士忌 · 爵士 · Livehouse · 剧场 · 电音 · 夜店</span>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded-sm rotate-1" style="background:#FF3D81;color:#12010A">数据截至 2026-09-12</span>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold handwritten-title tracking-wider mt-2">
+        🌃 上海酒吧 × Livehouse × 夜店 2026
+        <span class="text-base md:text-xl font-sans font-light" style="color:var(--cyan)">夜行探店地图</span>
+      </h1>
+      <p class="text-xs md:text-sm mt-2 font-light leading-relaxed max-w-4xl" style="color:var(--ink-dim)">
+        一张图串起上海入夜后的四件事：<b style="color:var(--pink)">喝一杯</b>（精酿 / 鸡尾酒 / 威士忌）、<b style="color:#A78BFA">听爵士</b>、<b style="color:var(--cyan)">看现场</b>（Livehouse / 音乐剧场）、<b style="color:#34D399">蹦到天亮</b>（电音俱乐部 / 大型夜店）。
+        <b style="color:var(--ink)">场馆与地址为长期信息；演出以秀动 / 大麦实时排期为准。</b>
+      </p>
+    </div>
+    <div class="flex gap-2 shrink-0 flex-wrap" id="pill-box"></div>
+  </div>
+</header>
+
+<!-- ===== 2. 筛选栏 ===== -->
+<section class="max-w-7xl mx-auto px-4 mt-5">
+  <div class="sketch-card rounded-2xl p-3 md:p-4">
+    <div class="flex flex-wrap items-center gap-1.5">
+      <span class="text-[10px] font-bold shrink-0" style="color:var(--ink-dim)">类型:</span>
+      <div id="type-chips" class="flex flex-wrap gap-1.5"></div>
+      <button id="reset-btn" class="ml-auto text-[10px] px-2.5 py-1 rounded font-bold border-2" style="border-color:var(--stroke);background:var(--panel2);color:var(--ink)">↺ 重置筛选</button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-2.5 mt-3 pt-3 border-t border-[#322C44]">
+      <div>
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-bold" style="color:var(--ink-dim)">音乐风格:</span>
+          <button id="clear-genre" class="text-[10px] underline hidden" style="color:var(--ink-dim)">清除</button>
+        </div>
+        <div id="genre-chips" class="flex flex-wrap gap-1 mt-1"></div>
+      </div>
+      <div>
+        <span class="text-[10px] font-bold" style="color:var(--ink-dim)">人均四档 <span class="font-normal opacity-60">(可多选 · 沿用 45 / 120 / 250 分档)</span>:</span>
+        <div id="price-chips" class="flex flex-wrap gap-1 mt-1"></div>
+      </div>
+      <div>
+        <span class="text-[10px] font-bold" style="color:var(--ink-dim)">预约要求 <span class="font-normal opacity-60">(可多选)</span>:</span>
+        <div id="booking-chips" class="flex flex-wrap gap-1 mt-1"></div>
+      </div>
+      <div>
+        <span class="text-[10px] font-bold" style="color:var(--ink-dim)">实名要求 <span class="font-normal opacity-60">(可多选 · 单场演出级)</span>:</span>
+        <div id="idcheck-chips" class="flex flex-wrap gap-1 mt-1"></div>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <label class="flex items-center gap-1.5 text-[11px] cursor-pointer" style="color:var(--ink)">
+          <input type="checkbox" id="only-live" class="accent-[#FF3D81]"> 🎤 只看有现场演出
+        </label>
+        <label class="flex items-center gap-1.5 text-[11px] cursor-pointer" style="color:var(--ink)">
+          <input type="checkbox" id="only-late" class="accent-[#22D3EE]"> 🌙 只看打烊晚于 02:00
+        </label>
+        <div class="flex items-center gap-1.5">
+          <span class="text-[10px] font-bold shrink-0" style="color:var(--ink-dim)">排序:</span>
+          <button id="sort-avg-desc" class="sort-btn chip px-2 py-0.5 text-[10px] rounded">人均 ↓</button>
+          <button id="sort-avg-asc" class="sort-btn chip px-2 py-0.5 text-[10px] rounded">人均 ↑</button>
+          <button id="sort-name" class="sort-btn chip px-2 py-0.5 text-[10px] rounded active">名称</button>
+        </div>
+      </div>
+      <div class="flex flex-col gap-1.5">
+        <input type="text" id="search-input" placeholder="🔍 店名 / 风格 / 地址 / 地铁（如：爵士、巨鹿路、陕西南路）"
+               class="w-full text-xs px-3 py-2 rounded-lg focus:outline-none border-2"
+               style="background:var(--panel2);border-color:var(--stroke);color:var(--ink)">
+        <div class="text-[10px] flex flex-wrap gap-x-3" style="color:var(--ink-dim)">
+          <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="show-uneasy" class="accent-[#FFD166]" checked> 显示 ⚠️ 待核实条目</label>
+          <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="show-closed" class="accent-[#FF8FA3]" checked> 显示 ⛔ 停业/暂停条目</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3. 地图 ===== -->
+<section class="max-w-7xl mx-auto px-4 mt-4">
+  <div class="sketch-card p-2 rounded-2xl relative">
+    <div class="absolute top-4 left-4 flex flex-col items-start gap-1 z-[1000] select-none pointer-events-none">
+      <div class="text-[11px] font-bold px-2.5 py-1 rounded shadow-md" style="background:#22D3EE;color:#04140F">🗺️ 夜行地图 · 上北 ⬆️</div>
+      <div id="map-hint" class="text-[9px] px-2 py-0.5 rounded border font-semibold"
+           style="background:rgba(20,18,26,.92);border-color:var(--stroke);color:var(--ink)">加载中…</div>
+    </div>
+    <div id="leaflet-map" class="w-full rounded-xl night-map z-10 border border-[#322C44]" style="height:64vh;min-height:460px"></div>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-2 pt-2 pb-1 text-[10px]" style="color:var(--ink-dim)">
+      <span>点击地图图标 → 高亮该店并弹出详情（不跳转列表）；点击列表 → 地图定位到该店</span>
+      <span>·</span>
+      <span>⚠️ = 仅有 C/D 级来源，地址或状态待核实</span>
+      <span>·</span>
+      <span>⛔ = 已停业 / 暂停营业</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. 列表 + 详情 ===== -->
+<main class="max-w-7xl mx-auto px-4 mt-5 grid grid-cols-1 lg:grid-cols-12 gap-5">
+  <section class="lg:col-span-7 flex flex-col gap-3">
+    <div class="sketch-card rounded-2xl overflow-hidden">
+      <div class="px-3 py-2.5 flex items-center justify-between border-b-2 border-[#322C44]" style="background:var(--panel2)">
+        <h3 class="font-bold text-sm handwritten-title">🎟️ 分组名录 <span class="text-[11px] font-sans font-normal" style="color:var(--ink-dim)">（按类型分组，组内按所选方式排序）</span></h3>
+        <span id="list-count" class="text-[10px]" style="color:var(--ink-dim)"></span>
+      </div>
+      <div id="venue-list" class="max-h-[720px] overflow-y-auto thin-scroll p-2.5 flex flex-col gap-2"></div>
+      <div id="empty-tip" class="hidden text-center text-xs py-10" style="color:var(--ink-dim)">没有符合条件的场所，试试放宽筛选 🎈</div>
+    </div>
+
+    <div class="sketch-card rounded-xl p-4">
+      <h4 class="font-bold text-sm mb-2 handwritten-title" style="color:var(--cyan)">📊 统计</h4>
+      <div id="stat-line" class="text-[11px] leading-relaxed" style="color:var(--ink-dim)"></div>
+    </div>
+  </section>
+
+  <section class="lg:col-span-5">
+    <div id="detail-card" class="sketch-card rounded-2xl p-5 min-h-[240px] relative lg:sticky lg:top-4">
+      <div class="absolute top-2 right-3 text-4xl opacity-20" id="detail-icon">🌃</div>
+      <span id="detail-type" class="text-[9px] font-bold tracking-widest px-2 py-0.5 rounded" style="background:#22D3EE;color:#04140F">请在地图或名录点选场所</span>
+      <h3 id="detail-title" class="text-2xl font-bold mt-2 handwritten-title">上海夜行探店地图 2026</h3>
+      <div id="detail-meta" class="mt-2"></div>
+      <div id="detail-tags" class="mt-2 flex flex-wrap gap-1"></div>
+      <p id="detail-desc" class="text-[11px] mt-2 leading-relaxed" style="color:var(--ink-dim)">
+        收录精酿、鸡尾酒/威士忌、爵士现场、Livehouse/音乐剧场、电音俱乐部与大型夜店共 8 类；点选任一图标可查看来源等级、核实日期、预约与实名要求。
+      </p>
+      <div id="detail-addr-box" class="hidden mt-3 p-2.5 rounded-lg" style="background:rgba(34,211,238,.07);border:1px solid #1E6E86">
+        <span class="text-xs font-bold block" style="color:var(--cyan)">📍 地址:</span>
+        <p id="detail-addr" class="text-xs font-medium mt-1 leading-relaxed" style="color:var(--ink)"></p>
+      </div>
+      <div id="detail-metro-box" class="hidden mt-2 p-2.5 rounded-lg" style="background:rgba(167,139,250,.08);border:1px solid #5B4491">
+        <span class="text-xs font-bold block" style="color:#C4B5FD">🚇 最近地铁:</span>
+        <p id="detail-metro" class="text-xs font-medium mt-1 leading-relaxed" style="color:var(--ink)"></p>
+      </div>
+      <div id="detail-note-box" class="hidden mt-2 p-2.5 rounded-lg" style="background:rgba(255,209,102,.08);border:1px solid #8A6A00">
+        <span class="text-xs font-bold block" style="color:#FFD166">🧠 备注 / 待核实:</span>
+        <p id="detail-note" class="text-xs font-medium mt-1 leading-relaxed" style="color:var(--ink)"></p>
+      </div>
+      <div id="detail-src-box" class="mt-3 p-2.5 rounded-lg" style="background:var(--panel2);border:1px solid var(--stroke)">
+        <span class="text-xs font-bold block" style="color:var(--ink)">🔗 来源（按等级标注）· 核实日期 <span id="detail-updated"></span></span>
+        <ul id="detail-src" class="text-[11px] mt-1.5 flex flex-col gap-1"></ul>
+      </div>
+      <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
+         class="hidden mt-3 w-full items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2"
+         style="border-color:var(--cyan);background:var(--cyan);color:#04140F">🧭 在高德地图打开</a>
+    </div>
+  </section>
+</main>
+
+<!-- ===== 5. 脚注 ===== -->
+<footer class="max-w-7xl mx-auto px-4 mt-8">
+  <div class="sketch-card rounded-2xl p-5 text-[11px] leading-relaxed" style="color:var(--ink-dim)">
+    <h4 class="font-bold text-sm mb-2 handwritten-title" style="color:var(--pink)">📚 数据来源分层说明（六类图例）</h4>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5">
+      <div><span class="tag src-a">A</span> <b style="color:var(--ink)">Asia's 50 Best Bars 官方名单</b> —— 2026 主榜于 2026-07-28 在澳门永利皇宫颁发；51–100 扩展榜于 2026-07-14 公布。</div>
+      <div><span class="tag src-b">B</span> <b style="color:var(--ink)">秀动 ShowStart / 大麦场馆页 / 场馆官网与公众号</b> —— 地址、容量、排期与票价的首选来源。</div>
+      <div><span class="tag src-c">C</span> <b style="color:var(--ink)">SmartShanghai、That's Shanghai、澎湃（含上观新闻）、高德 POI</b> 与 <b style="color:var(--ink)">大众点评 / 美团店铺页</b>（人均、营业时间的一手来源）。</div>
+      <div><span class="tag src-d">D</span> <b style="color:var(--ink)">聚合站</b>（城市惠、品牌100、会小二）—— <b style="color:#FFD166">仅作线索</b>，不单独作为入库依据。</div>
+      <div><span class="tag src-ref">🗂</span> <b style="color:var(--ink)">其他参考</b>（活动网、去哪儿、Untappd、NOMFLUENCE、行业媒体等）—— 用于交叉印证，不单独定案。</div>
+      <div><span class="tag tag-warn">⚠️</span> <b style="color:var(--ink)">待核实</b> —— 该条目无 A 或 B 级来源，或存在地址/时间两说。</div>
+    </div>
+    <p class="mt-3">
+      <b style="color:var(--ink)">入库规则：</b>每家 ≥2 个独立来源，且至少 1 个 A 或 B 级来源方可入库；仅有 C/D 级时强制标注「⚠️ 待核实」。来源优先级：Asia's 50 Best Bars 官方名单 / 秀动·大麦票务页 / 场馆官网与公众号 &gt; SmartShanghai·That's Shanghai·澎湃 &gt; 高德 POI &gt; 聚合站（仅参考）。
+    </p>
+
+    <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:var(--cyan)">🕰️ 停业与沿革（不作为 2026 收录依据，仅作对照）</h4>
+    <ul class="flex flex-col gap-1.5 list-disc pl-5">
+      <li><b style="color:var(--ink)">育音堂（凯旋路店）</b>：凯旋路 851 号，已于 <b>2024-07 停业</b>，本页<b>不收录</b>；沿用其品牌的是昭化路 658 号 C·PARK 的「育音堂音乐青年小镇」。</li>
+      <li><b style="color:var(--ink)">育音堂音乐公园</b>（愚园路 1398 号米域 B1-02，后名「育音堂偶像公园」）：官方公告自 <b>2026-09-01 起正式暂停营业</b>，场地整体转让合作中。本页保留该条目供对照，并标 <span class="tag tag-stop">⛔ 暂停营业</span>。</li>
+      <li><b style="color:var(--ink)">老卵俱乐部 Specters</b>：由愚园路 753 号嘉春园区 D 栋迁至 <b>昭化路 658 号海粟文化广场 D 栋地下一层 LG-21</b>（C·PARK，2025 年底迁址），愚园路旧址已停用。</li>
+      <li><b style="color:var(--ink)">万代南梦宫上海文化中心</b>（宜昌路 179 号）：自 <b>2026-04-01 起更名为「星在文化中心」</b>，本页以「星在文化中心（原万代南梦宫）」收录。</li>
+      <li><b style="color:var(--ink)">Shanghai WOW! BEST 50</b>：公开资料显示仅办至 <b>2022 年度（第 10 届，2023-02 颁奖）</b>，2026 版未获证实，<b>不作为 2026 收录依据</b>，仅在此记录获奖沿革。</li>
+      <li><b style="color:var(--ink)">开巴 Kaiba</b>（武定路 479 号等）：<b>2018-04 全部门店关停</b>（百威英博决定关停，好奇心日报 2018-04-27、36氪）。原聚合站页面为旧数据，本页保留该条目供对照并标 <span class="tag tag-stop">⛔ 已停业</span>。</li>
+      <li><b style="color:var(--ink)">DAGA BrewPub</b>（复兴西路 100 号）：<b>约 2019–2020 年停业</b>（SmartShanghai、That's Shanghai、Untappd 均标 closed），原址后由「毛辣果 Maolago」接手。标 <span class="tag tag-stop">⛔ 已停业</span>。</li>
+      <li><b style="color:var(--ink)">M2</b>（淮海中路 283 号香港广场 4F / 淮海中路 1 号 6F）：<b>均已停业</b> —— 香港广场店约 2017 年底由 MYST 接替；淮海中路 1 号店 2019 秋改名 Wann，Wann 亦已停业（SmartShanghai）。标 <span class="tag tag-stop">⛔ 已停业</span>。</li>
+      <li><b style="color:var(--ink)">Bar Rouge</b>（中山东一路 18 号外滩 18 号 7 楼）：<b>2022-07-29 告别派对、2022-12-01 正式闭店</b>，现址为 KEV（SmartShanghai）。标 <span class="tag tag-stop">⛔ 已停业</span>。</li>
+    </ul>
+
+    <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:#FF8FA3">🧭 点评状态误标（已排除，仍按营业收录）</h4>
+    <ul class="flex flex-col gap-1.5 list-disc pl-5">
+      <li><b style="color:var(--ink)">MAO Livehouse（上海）</b>：大众点评店铺页标「已关门」，但与事实不符 —— <b>2026-09-19、09-26、10-24、10-31 等均有已开票演出</b>，本页按正常营业收录。</li>
+      <li><b style="color:var(--ink)">ARK LIVE HOUSE（今潮 8 弄）</b>：点评标「已关门」，与 2026 上半年演出事实不符；驻演《Little Jack 小杰克》于 <b>2026-06-28 收官</b>后未查到新排期，是否续办待核实。</li>
+      <li><b style="color:var(--ink)">EXIT Club</b>（幸福路 298 号）：据 SmartShanghai 2026-09 报道，该址 2026 年 8 月大部分时间关闭、拟更名 <b>Doop</b> 重开；截至 2026-09-12 票务仍以「Exit Club」售票，更名是否生效待核实。</li>
+    </ul>
+
+    <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:#FFD166">⚠️ 待核实条目清单</h4>
+    <ul id="uneasy-list" class="flex flex-col gap-1 list-disc pl-5"></ul>
+
+    <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:#A78BFA">🪪 关于实名与门票（重要）</h4>
+    <p>
+      实名规则是<b style="color:var(--ink)">「单场演出级」数据，不是场馆属性</b>：本页 <code>id_check</code> 只填场馆的<b style="color:var(--ink)">通常做法</b>，<b style="color:var(--ink)">请以具体场次购票须知为准</b>。
+      秀动购票须知中常见的原文包括「<b style="color:var(--ink)">须持本人身份证原件，入场时进行人像比对</b>」「<b style="color:var(--ink)">门票不可转赠、不可退换</b>」，实际执行随主办方与场次变化。
+      门票区间取自票务页公开票价，仅代表采集时点的在售区间，不代表全时段。
+    </p>
+
+    <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:var(--pink)">📌 免责声明</h4>
+    <ul class="flex flex-col gap-1.5 list-disc pl-5">
+      <li><b style="color:var(--ink)">演出为时效信息，以秀动 / 大麦实时排期为准。</b>场馆与地址为长期信息；排期、票价、实名与入场规则均可能随时调整。</li>
+      <li><b style="color:var(--ink)">人均与打烊时间主来源为大众点评店铺页</b>（页面内嵌的商户数据字段，2026-09-12 逐家读取），其余来源见各条目徽章。大众点评未收录店铺页的场馆（如 Tap19、Much Beer、Neo Topia、蜚声 PHASE 等）一律保留「人均待核实」，<b style="color:var(--ink)">不跨店套用、不按同类推算</b>。</li>
+      <li>页面<b>不编造人均、营业时间与容量</b>；查不到公开数值的一律显示「人均待核实」/「待核实」，不做估算。人均档位（&lt;45 · 45–120 · 120–250 · ≥250）由具体人均数值自动划分。</li>
+      <li>标注 <span class="tag tag-stop">⛔ 已停业</span> 的条目（开巴、DAGA、M2、Bar Rouge）与 <span class="tag tag-stop">⛔ 暂停营业</span> 的育音堂音乐公园<b style="color:var(--ink)">仅供对照</b>，其人均与营业时间已清零，请勿按此安排行程。</li>
+      <li>坐标为 WGS-84 街道近似点位（多数门店按门牌地址取街道近似点，误差约 ±150–400 m），已在条目备注中标明「坐标近似」；请以到店导航为准。</li>
+      <li>夜店/俱乐部的入场规则（着装要求、卡座低消、现场是否售票、年龄与身份核验）随活动变化，出发前请以官方渠道为准。</li>
+      <li>本页为个人整理的认路与探店参考，<b>非广告、不构成消费建议</b>；理性饮酒，未成年人不得饮酒，请勿酒后驾车。</li>
+    </ul>
+    <p class="mt-4 text-center">
+      共收录 <b id="foot-total" style="color:var(--cyan)">0</b> 家 · 数据截至 <b style="color:var(--ink)">2026-09-12</b> · 🌃 上海夜行探店地图 2026
+    </p>
+  </div>
+</footer>
+
+<script>
+/* ============================================================
+   数据：每家一条。type 为 8 类之一；category/分组/档位/是否过 02:00
+   均在加载后统一计算（不写进数据）。
+   src_tier: A/B/C/D/🗂 ；uneasy=true 表示仅有 C/D 级来源或存在两说
+   ============================================================ */
+/* @@BUILD:json data/venues/bars.json -> VENUES@@ */
+const VENUES = [ /* 构建生成：勿手改，改数据请改 data/venues/bars.json */ ];
+/* @@BUILD:end@@ */
+
+/* ================= 派生分类（type → 大类，不写进数据） ================= */
+const TYPE_META = {
+  '精酿':    {icon:'🍺', color:'#F5A524', badge:'酿', group:'bar'},
+  '鸡尾酒':  {icon:'🍸', color:'#FF3D81', badge:'鸡', group:'bar'},
+  '威士忌':  {icon:'🥃', color:'#E0A96D', badge:'威', group:'bar'},
+  '爵士现场':{icon:'🎷', color:'#A78BFA', badge:'爵', group:'jazz'},
+  'Livehouse':{icon:'🎸', color:'#22D3EE', badge:'L', group:'show'},
+  '音乐剧场':{icon:'🎭', color:'#F472B6', badge:'剧', group:'show'},
+  '电音俱乐部':{icon:'🎧', color:'#34D399', badge:'电', group:'club'},
+  '大型夜店':{icon:'🪩', color:'#60A5FA', badge:'夜', group:'club'}
+};
+const GROUP_META = {
+  bar:  {label:'喝一杯', color:'#FF3D81', desc:'精酿 / 鸡尾酒 / 威士忌'},
+  jazz: {label:'听爵士', color:'#A78BFA', desc:'现场爵士乐'},
+  show: {label:'看现场', color:'#22D3EE', desc:'现场演出场馆'},
+  club: {label:'蹦到天亮', color:'#34D399', desc:'舞池与夜店'}
+};
+const TYPE_ORDER = ['精酿','鸡尾酒','威士忌','爵士现场','Livehouse','音乐剧场','电音俱乐部','大型夜店'];
+const BOOKING_ORDER = ['免预约','建议预约','必须预约','不接受预约'];
+const ID_LABEL = {none:'无需实名', '实名一证一票':'实名一证一票', '身份证强实名(人脸核验)':'身份证强实名(人脸核验)'};
+const TIER_LABEL = {A:'A · Asia\'s 50 Best 官方', B:'B · 秀动/大麦/场馆官方', C:'C · SmartShanghai/澎湃/高德/大众点评', D:'D · 聚合站（仅线索）', '🗂':'🗂 其他参考'};
+
+/* ================= 工具 ================= */
+function typeOf(v){ return TYPE_META[v.type] ? v.type : '鸡尾酒'; }
+function colorOf(v){ return TYPE_META[typeOf(v)].color; }
+function iconOf(v){ return TYPE_META[typeOf(v)].icon; }
+const PRICE_BANDS = [45,120,250];
+function priceTier(v){
+  if (typeof v.avg !== 'number' || v.avg <= 0) return 0;   // 0 = 人均待核实
+  if (v.avg < PRICE_BANDS[0]) return 1;
+  if (v.avg < PRICE_BANDS[1]) return 2;
+  if (v.avg < PRICE_BANDS[2]) return 3;
+  return 4;
+}
+const PRICE_TIERS = [
+  {tier:1, label:'平价', range:'<45'},
+  {tier:2, label:'亲民', range:'45–120'},
+  {tier:3, label:'中档', range:'120–250'},
+  {tier:4, label:'高端', range:'≥250'}
+];
+function avgText(v){
+  return (typeof v.avg === 'number' && v.avg > 0) ? `人均约 ¥${v.avg}` : '人均待核实';
+}
+/* 打烊时间：夜间场所的 00:00–11:00 视为跨夜，折算为 24+ 小时 */
+function closeMinutes(c){
+  if (!c || !/^\d{1,2}:\d{2}$/.test(c)) return null;
+  const [h,m] = c.split(':').map(Number);
+  return (h < 12 ? h + 24 : h) * 60 + m;
+}
+const LATE_THRESHOLD = closeMinutes('02:00');   // 1560
+function isLate(v){
+  const cm = closeMinutes(v.close);
+  return cm !== null && cm > LATE_THRESHOLD;
+}
+function closeText(v){ return v.close ? ('打烊 ' + v.close) : '打烊待核实'; }
+/* 营业状态：suspended=暂停营业，closed=已停业 */
+function isStopped(v){ return v.status === 'suspended' || v.status === 'closed'; }
+function stopLabel(v){
+  if (v.status === 'suspended') return '⛔ 暂停营业';
+  if (v.status === 'closed') return '⛔ 已停业';
+  return '';
+}
+
+/* ================= 状态 ================= */
+let map, activeKey = null, listSort = 'name';
+let roadsGroup = null;     // 道路线
+let roadLabelsA = null;    // 核心干道路名（z≥13）
+let roadLabelsB = null;    // 主要干道路名（z≥15）
+let roadsVisible = true;
+const markerMap = {};
+const state = {types:[], genre:'all', price:[], booking:[], idcheck:[], onlyLive:false, onlyLate:false,
+               showUneasy:true, showClosed:true, q:''};
+
+/* ================= 地图 ================= */
+window.onload = function(){
+  map = L.map('leaflet-map', {
+    center:[31.2304,121.4737], zoom:12, minZoom:10, maxZoom:18, zoomControl:true
+  });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png?key=cb1_3h6n_1_0d49d482d013e94f5ae62bb2', {
+    attribution:'&copy; OpenStreetMap contributors &copy; CARTO (dark)', subdomains:'abcd', maxZoom:20
+  }).addTo(map);
+
+  drawRoads();
+  drawAreas();
+  drawLandmarks();
+
+  VENUES.forEach(v => {
+    const t = typeOf(v), meta = TYPE_META[t];
+    const warn = v.uneasy ? '<span class="m-warn">⚠️</span>' : '';
+    const stop = isStopped(v) ? '<span class="m-warn" style="left:auto;right:-6px;top:auto;bottom:-6px">⛔</span>' : '';
+    const icon = L.divIcon({
+      html:`<div class="m-icon" data-key="${v.key}" style="--tc:${meta.color};width:32px;height:32px;font-size:15px;" title="${v.name}">${meta.icon}${warn}${stop}<span class="m-badge" style="--tc:${meta.color}">${meta.badge}</span></div>`,
+      className:'', iconSize:[32,32], iconAnchor:[16,16]
+    });
+    const mk = L.marker(v.coords, {icon, zIndexOffset:600}).addTo(map);
+    mk.on('click', () => selectVenue(v.key, true));
+    markerMap[v.key] = mk;
+  });
+
+  const bounds = L.latLngBounds(VENUES.map(v => v.coords));
+  map.fitBounds(bounds, {padding:[50,50], maxZoom:13});
+
+  buildChips();
+  updateCounts();
+  renderList();
+  updateMarkers();
+  renderStat();
+  initLocate();
+  renderUneasyList();
+};
+
+/* ================= 主要道路骨架（与 bichi / michelin 同一套 MAIN_ROADS，227 条）================= */
+// 数据来源：shanghai_wutong_streets.html 的 STREETS，按 tier 分级渲染
+/* @@BUILD:json data/map/roads.json -> MAIN_ROADS@@ */
+const MAIN_ROADS = [ /* 构建生成：勿手改，改数据请改 data/map/roads.json */ ];
+/* @@BUILD:end@@ */
+
+/* 道路线型：夜间底图上用低饱和冷灰，干道亮、支路暗 */
+const ROAD_STYLE = {
+  1: { color:'#8B84A8', weight:3.2, opacity:0.72 },  // 核心干道
+  2: { color:'#6E6784', weight:2.0, opacity:0.52 },  // 主要干道
+  3: { color:'#5A5470', weight:1.2, opacity:0.36 }   // 较长道路
+};
+
+/* ================= 主要道路骨架 ================= */
+function drawRoads(){
+  map.createPane('roadsPane');
+  map.getPane('roadsPane').style.zIndex = 350;
+  map.createPane('roadLabelsPaneA');
+  map.getPane('roadLabelsPaneA').style.zIndex = 355;
+  map.getPane('roadLabelsPaneA').style.pointerEvents = 'none';
+  map.createPane('roadLabelsPaneB');
+  map.getPane('roadLabelsPaneB').style.zIndex = 354;
+  map.getPane('roadLabelsPaneB').style.pointerEvents = 'none';
+
+  roadsGroup = L.layerGroup();
+  roadLabelsA = L.layerGroup();
+  roadLabelsB = L.layerGroup();
+
+  MAIN_ROADS.forEach(r => {
+    const st = ROAD_STYLE[r.tier] || ROAD_STYLE[3];
+    L.polyline(r.path, {
+      pane:'roadsPane', color:st.color, weight:st.weight, opacity:st.opacity,
+      lineCap:'round', lineJoin:'round', interactive:false
+    }).addTo(roadsGroup);
+
+    // 一级路名常驻（放大后），二级路名需更高缩放级别
+    if (r.tier === 1 || r.tier === 2) {
+      const mid = r.path[Math.floor(r.path.length / 2)];
+      const mk = L.marker(mid, {
+        pane: r.tier === 1 ? 'roadLabelsPaneA' : 'roadLabelsPaneB',
+        interactive:false, keyboard:false,
+        icon: L.divIcon({
+          className:'',
+          html:`<span class="road-name${r.tier === 1 ? ' road-name-major' : ''}">${r.name}</span>`,
+          iconSize:[0,0], iconAnchor:[0,0]
+        })
+      });
+      (r.tier === 1 ? roadLabelsA : roadLabelsB).addLayer(mk);
+    }
+  });
+
+  roadsGroup.addTo(map);
+  roadLabelsA.addTo(map);
+  roadLabelsB.addTo(map);
+  updateRoadLabelVisibility();
+  map.on('zoomend', updateRoadLabelVisibility);
+
+  // 右上角开关
+  const RoadsToggle = L.Control.extend({
+    options:{ position:'topright' },
+    onAdd: function(){
+      const wrap = L.DomUtil.create('div', 'leaflet-bar');
+      const btn = L.DomUtil.create('a', '', wrap);
+      btn.href = '#'; btn.title = '显示 / 隐藏道路骨架'; btn.innerHTML = '🛣️';
+      btn.style.cssText = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:15px;text-decoration:none;background:#241F30;color:#EDE9F5;';
+      L.DomEvent.on(btn, 'click', function(e){
+        L.DomEvent.stop(e);
+        roadsVisible = !roadsVisible;
+        [roadsGroup, roadLabelsA, roadLabelsB].forEach(function(g){
+          if (roadsVisible) { g.addTo(map); } else { map.removeLayer(g); }
+        });
+        btn.style.background = roadsVisible ? '#241F30' : '#171422';
+        updateRoadLabelVisibility();
+      });
+      return wrap;
+    }
+  });
+  map.addControl(new RoadsToggle());
+}
+
+function updateRoadLabelVisibility(){
+  const pa = map.getPane('roadLabelsPaneA');
+  const pb = map.getPane('roadLabelsPaneB');
+  const z = map.getZoom();
+  if (pa) pa.style.display = (roadsVisible && z >= 13) ? '' : 'none';
+  if (pb) pb.style.display = (roadsVisible && z >= 15) ? '' : 'none';
+}
+
+/* ================= 区域锚点 / 地标参照 ================= */
+/* @@BUILD:json data/map/areas/downtown.json -> AREAS@@ */
+const AREAS = [ /* 构建生成：勿手改，改数据请改 data/map/areas/downtown.json */ ];
+/* @@BUILD:end@@ */
+/* @@BUILD:json data/map/landmarks/downtown.json -> LANDMARKS@@ */
+const LANDMARKS = [ /* 构建生成：勿手改，改数据请改 data/map/landmarks/downtown.json */ ];
+/* @@BUILD:end@@ */
+function drawAreas(){
+  map.createPane('areaLabelsPane');
+  map.getPane('areaLabelsPane').style.zIndex = 370;
+  map.getPane('areaLabelsPane').style.pointerEvents = 'none';
+  AREAS.forEach(a => {
+    L.marker(a.coords, {pane:'areaLabelsPane', interactive:false, keyboard:false,
+      icon:L.divIcon({className:'', html:`<span class="area-label${a.kind==='origin'?' origin':''}">${a.name}</span>`, iconSize:[0,0], iconAnchor:[0,0]})
+    }).addTo(map);
+  });
+}
+function drawLandmarks(){
+  map.createPane('landmarksPane');
+  map.getPane('landmarksPane').style.zIndex = 365;
+  map.getPane('landmarksPane').style.pointerEvents = 'none';
+  LANDMARKS.forEach(p => {
+    L.marker(p.coords, {pane:'landmarksPane', interactive:false, keyboard:false,
+      icon:L.divIcon({className:'', html:`<div class="poi-mark"><span class="poi-dot ${p.kind}"></span><span class="poi-name ${p.kind}">${p.name}</span></div>`, iconSize:[0,0], iconAnchor:[0,0]})
+    }).addTo(map);
+  });
+}
+
+/* ================= 筛选 chip ================= */
+const GENRES = [...new Set(VENUES.map(v => v.genre))].sort((a,b) => a.localeCompare(b,'zh'));
+function buildChips(){
+  // 类型（8 类 + 全部），数量派生
+  const tw = document.getElementById('type-chips');
+  tw.innerHTML = '';
+  const allB = document.createElement('button');
+  allB.type = 'button'; allB.className = 'chip cat-btn px-2 py-1 text-[10px] rounded active';
+  allB.dataset.type = 'all'; allB.textContent = '全部';
+  tw.appendChild(allB);
+  TYPE_ORDER.forEach(t => {
+    const m = TYPE_META[t], n = VENUES.filter(v => typeOf(v) === t).length;
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.type = t;
+    b.className = 'chip cat-btn type-chip px-2 py-1 text-[10px] rounded';
+    b.style.setProperty('--tc', m.color);
+    b.innerHTML = `${m.icon} ${t} <span class="opacity-70 font-bold">${n}</span>`;
+    tw.appendChild(b);
+  });
+
+  // 风格
+  const gw = document.getElementById('genre-chips'); gw.innerHTML = '';
+  const gAll = document.createElement('button');
+  gAll.type = 'button'; gAll.dataset.genre = 'all';
+  gAll.className = 'chip px-2 py-0.5 text-[10px] rounded active'; gAll.textContent = '不限';
+  gw.appendChild(gAll);
+  GENRES.forEach(g => {
+    const n = VENUES.filter(v => v.genre === g).length;
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.genre = g;
+    b.className = 'chip px-2 py-0.5 text-[10px] rounded';
+    b.innerHTML = `${g} <span class="opacity-70">${n}</span>`;
+    gw.appendChild(b);
+  });
+
+  // 人均四档 + 待核实
+  const pw = document.getElementById('price-chips'); pw.innerHTML = '';
+  const pAll = document.createElement('button');
+  pAll.type = 'button'; pAll.dataset.tier = 'all';
+  pAll.className = 'chip price-chip px-2 py-0.5 text-[10px] rounded active'; pAll.textContent = '不限';
+  pw.appendChild(pAll);
+  PRICE_TIERS.forEach(t => {
+    const n = VENUES.filter(v => priceTier(v) === t.tier).length;
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.tier = String(t.tier);
+    b.className = 'chip price-chip px-2 py-0.5 text-[10px] rounded';
+    b.innerHTML = `<b>${t.label}</b> <span class="opacity-70">${t.range}</span> <span class="opacity-50">${n}</span>`;
+    pw.appendChild(b);
+  });
+  const unk = VENUES.filter(v => priceTier(v) === 0).length;
+  const pUnk = document.createElement('button');
+  pUnk.type = 'button'; pUnk.dataset.tier = '0';
+  pUnk.className = 'chip px-2 py-0.5 text-[10px] rounded';
+  pUnk.innerHTML = `人均待核实 <span class="opacity-70">${unk}</span>`;
+  pw.appendChild(pUnk);
+
+  // 预约要求
+  const bw = document.getElementById('booking-chips'); bw.innerHTML = '';
+  BOOKING_ORDER.forEach(bk => {
+    const n = VENUES.filter(v => v.booking === bk).length;
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.booking = bk;
+    b.className = 'chip px-2 py-0.5 text-[10px] rounded';
+    b.innerHTML = `${bk} <span class="opacity-70">${n}</span>`;
+    bw.appendChild(b);
+  });
+
+  // 实名要求
+  const iw = document.getElementById('idcheck-chips'); iw.innerHTML = '';
+  Object.keys(ID_LABEL).forEach(k => {
+    const n = VENUES.filter(v => v.id_check === k).length;
+    const b = document.createElement('button');
+    b.type = 'button'; b.dataset.idcheck = k;
+    b.className = 'chip px-2 py-0.5 text-[10px] rounded';
+    b.innerHTML = `${ID_LABEL[k]} <span class="opacity-70">${n}</span>`;
+    iw.appendChild(b);
+  });
+
+  syncChips();
+}
+function syncChips(){
+  const none = state.types.length === 0;
+  document.querySelectorAll('#type-chips .chip').forEach(b =>
+    b.classList.toggle('active', b.dataset.type === 'all' ? none : state.types.includes(b.dataset.type)));
+  document.querySelectorAll('#genre-chips .chip').forEach(b =>
+    b.classList.toggle('active', b.dataset.genre === state.genre));
+  document.querySelectorAll('#price-chips .chip').forEach(b => {
+    const t = b.dataset.tier;
+    b.classList.toggle('active', t === 'all' ? state.price.length === 0 : state.price.includes(Number(t)));
+  });
+  document.querySelectorAll('#booking-chips .chip').forEach(b =>
+    b.classList.toggle('active', state.booking.includes(b.dataset.booking)));
+  document.querySelectorAll('#idcheck-chips .chip').forEach(b =>
+    b.classList.toggle('active', state.idcheck.includes(b.dataset.idcheck)));
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.toggle('active',
+    (b.id === 'sort-name' && listSort === 'name') ||
+    (b.id === 'sort-avg-desc' && listSort === 'avgDesc') ||
+    (b.id === 'sort-avg-asc' && listSort === 'avgAsc')));
+  document.getElementById('clear-genre').classList.toggle('hidden', state.genre === 'all');
+}
+
+/* ================= 交互 ================= */
+document.addEventListener('click', function(e){
+  if (e.target.closest('#reset-btn')) {
+    Object.assign(state, {types:[], genre:'all', price:[], booking:[], idcheck:[], onlyLive:false, onlyLate:false, q:''});
+    document.getElementById('search-input').value = '';
+    document.getElementById('only-live').checked = false;
+    document.getElementById('only-late').checked = false;
+    listSort = 'name';
+    syncChips(); renderList(); updateMarkers(); renderStat(); return;
+  }
+  if (e.target.closest('#clear-genre')) { state.genre = 'all'; syncChips(); renderList(); updateMarkers(); renderStat(); return; }
+
+  const btn = e.target.closest('.sort-btn');
+  if (btn) {
+    listSort = btn.id === 'sort-avg-desc' ? 'avgDesc' : btn.id === 'sort-avg-asc' ? 'avgAsc' : 'name';
+    syncChips(); renderList(); return;
+  }
+  const tChip = e.target.closest('#type-chips .chip');
+  if (tChip) {
+    if (tChip.dataset.type === 'all') state.types = [];
+    else {
+      const t = tChip.dataset.type, i = state.types.indexOf(t);
+      if (i >= 0) state.types.splice(i,1); else state.types.push(t);
+    }
+    syncChips(); renderList(); updateMarkers(); renderStat(); return;
+  }
+  const gChip = e.target.closest('#genre-chips .chip');
+  if (gChip) { state.genre = gChip.dataset.genre; syncChips(); renderList(); updateMarkers(); renderStat(); return; }
+  const pChip = e.target.closest('#price-chips .chip');
+  if (pChip) {
+    if (pChip.dataset.tier === 'all') state.price = [];
+    else {
+      const t = Number(pChip.dataset.tier), i = state.price.indexOf(t);
+      if (i >= 0) state.price.splice(i,1); else state.price.push(t);
+    }
+    syncChips(); renderList(); updateMarkers(); renderStat(); return;
+  }
+  const bChip = e.target.closest('#booking-chips .chip');
+  if (bChip) {
+    const k = bChip.dataset.booking, i = state.booking.indexOf(k);
+    if (i >= 0) state.booking.splice(i,1); else state.booking.push(k);
+    syncChips(); renderList(); updateMarkers(); renderStat(); return;
+  }
+  const iChip = e.target.closest('#idcheck-chips .chip');
+  if (iChip) {
+    const k = iChip.dataset.idcheck, i = state.idcheck.indexOf(k);
+    if (i >= 0) state.idcheck.splice(i,1); else state.idcheck.push(k);
+    syncChips(); renderList(); updateMarkers(); renderStat(); return;
+  }
+  const item = e.target.closest('.venue-item');
+  if (item) { selectVenue(item.dataset.key, false); return; }
+});
+document.getElementById('only-live').addEventListener('change', e => { state.onlyLive = e.target.checked; renderList(); updateMarkers(); renderStat(); });
+document.getElementById('only-late').addEventListener('change', e => { state.onlyLate = e.target.checked; renderList(); updateMarkers(); renderStat(); });
+document.getElementById('show-uneasy').addEventListener('change', e => { state.showUneasy = e.target.checked; renderList(); updateMarkers(); renderStat(); });
+document.getElementById('show-closed').addEventListener('change', e => { state.showClosed = e.target.checked; renderList(); updateMarkers(); renderStat(); });
+document.getElementById('search-input').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); renderList(); updateMarkers(); renderStat(); });
+
+/* ================= 过滤 ================= */
+function match(v){
+  if (state.types.length && !state.types.includes(typeOf(v))) return false;
+  if (state.genre !== 'all' && v.genre !== state.genre) return false;
+  if (state.price.length && !state.price.includes(priceTier(v))) return false;
+  if (state.booking.length && !state.booking.includes(v.booking)) return false;
+  if (state.idcheck.length && !state.idcheck.includes(v.id_check)) return false;
+  if (state.onlyLive && !v.live) return false;
+  if (state.onlyLate && !isLate(v)) return false;
+  if (!state.showUneasy && v.uneasy) return false;
+  if (!state.showClosed && isStopped(v)) return false;
+  if (state.q) {
+    const hay = [v.name, v.type, v.genre, v.addr, v.district, v.metro, v.vibe, v.capacity || '', v.note || ''].join(' ').toLowerCase();
+    if (!hay.includes(state.q)) return false;
+  }
+  return true;
+}
+function sortGroup(arr){
+  const byName = (a,b) => a.name.localeCompare(b.name,'zh');
+  if (listSort === 'avgDesc') return arr.sort((a,b) => (b.avg ?? -1) - (a.avg ?? -1));
+  if (listSort === 'avgAsc')  return arr.sort((a,b) => (a.avg ?? 1e9) - (b.avg ?? 1e9));
+  return arr.sort(byName);
+}
+
+/* ================= 图标显隐 ================= */
+function updateMarkers(){
+  let shown = 0;
+  VENUES.forEach(v => {
+    const ok = match(v), mk = markerMap[v.key];
+    const el = mk && mk.getElement();
+    if (el) el.style.display = ok ? '' : 'none';
+    if (ok) shown++;
+  });
+  document.getElementById('map-hint').textContent = `显示 ${shown} / ${VENUES.length} 家 · 点击图标看详情并跳到列表`;
+}
+
+/* ================= 名录（按类型分组） ================= */
+function renderList(){
+  const box = document.getElementById('venue-list');
+  box.innerHTML = '';
+  const rows = VENUES.filter(match);
+  document.getElementById('list-count').textContent = `${rows.length} / ${VENUES.length} 家`;
+  if (!rows.length) { document.getElementById('empty-tip').classList.remove('hidden'); return; }
+  document.getElementById('empty-tip').classList.add('hidden');
+
+  TYPE_ORDER.forEach(t => {
+    const g = rows.filter(v => typeOf(v) === t);
+    if (!g.length) return;
+    const meta = TYPE_META[t], gm = GROUP_META[meta.group];
+    const head = document.createElement('div');
+    head.className = 'flex items-center gap-2 mt-1.5 mb-0.5 px-1';
+    head.innerHTML = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded" style="background:${meta.color};color:#0A0810">${meta.icon} ${meta.badge}</span>
+      <span class="text-[12px] font-bold" style="color:var(--ink)">${t}</span>
+      <span class="text-[10px]" style="color:var(--ink-dim)">${g.length} 家</span>
+      <span class="text-[9px] ml-auto" style="color:${gm.color}">${gm.label} · ${gm.desc}</span>`;
+    box.appendChild(head);
+
+    sortGroup(g).forEach(v => {
+      const cm = TYPE_META[typeOf(v)];
+      const btn = document.createElement('button');
+      btn.type = 'button'; btn.dataset.key = v.key;
+      btn.className = 'venue-item text-left w-full px-3 py-2 rounded-lg flex items-start gap-2.5' + (activeKey === v.key ? ' active' : '');
+      const tags = [];
+      if (v.uneasy) tags.push('<span class="tag tag-warn vi-tag">⚠️ 待核实</span>');
+      if (isStopped(v)) tags.push(`<span class="tag tag-stop vi-tag">${stopLabel(v)}</span>`);
+      if (v.live) tags.push('<span class="tag tag-live vi-tag">🎤 现场</span>');
+      if (isLate(v)) tags.push('<span class="tag tag-late vi-tag">🌙 过 02:00</span>');
+      if (v.id_check !== 'none') tags.push(`<span class="tag tag-id vi-tag">🪪 ${v.id_check}</span>`);
+      if (v.booking === '必须预约') tags.push('<span class="tag tag-book vi-tag">🔒 必须预约</span>');
+      const srcBadges = v.src_tier.map(s => `<span class="tag ${s === 'A' ? 'src-a' : s === 'B' ? 'src-b' : s === 'C' ? 'src-c' : s === 'D' ? 'src-d' : 'src-ref'} vi-tag">${s}</span>`).join('');
+      btn.innerHTML = `
+        <span class="text-base leading-6 shrink-0" style="color:${cm.color}">${cm.icon}</span>
+        <span class="min-w-0 flex-1">
+          <span class="vi-name block text-xs font-bold truncate" style="color:var(--ink)">${v.name}</span>
+          <span class="vi-sub block text-[9px] truncate mt-0.5" style="color:var(--ink-dim)">
+            ${v.genre} · ${v.district} · <b style="color:${cm.color}">${avgText(v)}</b> · ${closeText(v)}
+          </span>
+          <span class="block mt-1 flex flex-wrap gap-1">${tags.join('')}${srcBadges}</span>
+        </span>`;
+      box.appendChild(btn);
+    });
+  });
+}
+
+/* ================= 详情 ================= */
+function selectVenue(key, fromMap){
+  const v = VENUES.find(x => x.key === key);
+  if (!v) return;
+  activeKey = key;
+  const t = typeOf(v), meta = TYPE_META[t], gm = GROUP_META[meta.group];
+
+  document.getElementById('detail-type').textContent = `${meta.icon} ${t} · ${gm.label}`;
+  document.getElementById('detail-type').style.background = meta.color;
+  document.getElementById('detail-title').textContent = v.name;
+  document.getElementById('detail-icon').textContent = meta.icon;
+  document.getElementById('detail-updated').textContent = v.updated;
+
+  const metaEl = document.getElementById('detail-meta');
+  metaEl.innerHTML = '';
+  [v.genre, v.district, avgText(v), closeText(v), v.open_days,
+   v.live ? '🎤 有现场演出' : '无现场演出',
+   v.capacity ? `👥 ${v.capacity}` : null,
+   `氛围：${v.vibe}`,
+   v.ticket ? `🎫 门票 ${v.ticket}` : null].filter(Boolean).forEach(txt => {
+    const s = document.createElement('span');
+    s.className = 'inline-block text-[10px] font-semibold mr-1.5 mb-1.5 px-2 py-0.5 rounded';
+    s.style.cssText = `border:1px solid ${meta.color};color:${meta.color};background:rgba(255,255,255,.04)`;
+    s.textContent = txt;
+    metaEl.appendChild(s);
+  });
+
+  const tg = document.getElementById('detail-tags');
+  tg.innerHTML = '';
+  const addTag = (cls, txt) => { const s = document.createElement('span'); s.className = 'tag ' + cls; s.textContent = txt; tg.appendChild(s); };
+  addTag('tag-book', '预约：' + v.booking);
+  addTag('tag-id', '实名：' + ID_LABEL[v.id_check]);
+  if (v.uneasy) addTag('tag-warn', '⚠️ 待核实');
+  if (isStopped(v)) addTag('tag-stop', stopLabel(v));
+  if (isLate(v)) addTag('tag-late', '🌙 打烊晚于 02:00');
+  if (v.id_check !== 'none') {
+    const s = document.createElement('span');
+    s.className = 'tag'; s.style.cssText = 'color:#FFD166;border-color:#8A6A00';
+    s.textContent = '＊以具体场次购票须知为准';
+    tg.appendChild(s);
+  }
+
+  document.getElementById('detail-desc').innerHTML =
+    `<b style="color:${meta.color}">${meta.icon} ${t}</b> · ${gm.desc}。`;
+  const addrBox = document.getElementById('detail-addr-box');
+  document.getElementById('detail-addr').textContent = (v.district || '') + ' ' + (v.addr || '');
+  addrBox.classList.remove('hidden');
+  document.getElementById('detail-metro').textContent = v.metro || '待核实';
+  document.getElementById('detail-metro-box').classList.remove('hidden');
+  const noteBox = document.getElementById('detail-note-box');
+  if (v.note) { document.getElementById('detail-note').textContent = v.note; noteBox.classList.remove('hidden'); }
+  else noteBox.classList.add('hidden');
+
+  const ul = document.getElementById('detail-src');
+  ul.innerHTML = '';
+  v.src_url.forEach((u, i) => {
+    const tier = v.src_tier[i] || v.src_tier[0] || '🗂';
+    const cls = tier === 'A' ? 'src-a' : tier === 'B' ? 'src-b' : tier === 'C' ? 'src-c' : tier === 'D' ? 'src-d' : 'src-ref';
+    const li = document.createElement('li');
+    li.className = 'flex items-start gap-1.5';
+    li.innerHTML = `<span class="tag ${cls} shrink-0">${tier}</span>
+      <a class="src-link break-all" style="color:var(--ink-dim)" target="_blank" rel="noopener noreferrer" href="${u}">${u.replace(/^https?:\/\//,'').slice(0,72)}${u.replace(/^https?:\/\//,'').length > 72 ? '…' : ''}</a>`;
+    ul.appendChild(li);
+  });
+  const uniqTiers = (v.src_tier || []).filter((s,i,arr) => arr.indexOf(s) === i);
+  if (uniqTiers.length) {
+    const li = document.createElement('li');
+    li.className = 'text-[10px] mt-0.5';
+    li.style.color = 'var(--ink-dim)';
+    li.textContent = '等级含义：' + uniqTiers.map(s => TIER_LABEL[s] || s).join(' ｜ ');
+    ul.appendChild(li);
+  }
+
+  const nav = document.getElementById('detail-nav');
+  const [lat,lng] = v.coords;
+  nav.href = `https://uri.amap.com/marker?position=${lng},${lat}&name=${encodeURIComponent(v.name)}&coordinate=wgs84&callnative=0`;
+  nav.style.display = 'flex';
+
+  Object.keys(markerMap).forEach(k => {
+    const el = markerMap[k].getElement();
+    if (!el) return;
+    const inner = el.querySelector('.m-icon');
+    if (inner) inner.classList.toggle('is-active', k === key);
+  });
+  // 名录高亮（不自动滚动，避免打断当前浏览位置）
+  document.querySelectorAll('.venue-item').forEach(b => b.classList.toggle('active', b.dataset.key === key));
+
+  map.flyTo(v.coords, Math.max(map.getZoom(), 15), {duration:.7});
+}
+
+/* ================= 定位（我的位置） ================= */
+let userMarker = null, userCircle = null, userLatLng = null, watchId = null;
+const GEO_OPTS = {enableHighAccuracy:true, timeout:12000, maximumAge:20000};
+function geoDist(a,b){
+  const R = 6371000, rad = d => d * Math.PI / 180;
+  const dLat = rad(b[0]-a[0]), dLng = rad(b[1]-a[1]);
+  const la1 = rad(a[0]), la2 = rad(b[0]);
+  const h = Math.sin(dLat/2)**2 + Math.cos(la1)*Math.cos(la2)*Math.sin(dLng/2)**2;
+  return 2*R*Math.asin(Math.min(1, Math.sqrt(h)));
+}
+function distOf(v){ return (userLatLng && v && v.coords) ? geoDist(userLatLng, v.coords) : null; }
+function fmtDist(m){
+  if (m == null) return '';
+  if (m < 1000) return `${Math.round(m/10)*10} m`;
+  return `${(m/1000).toFixed(m < 10000 ? 1 : 0)} km`;
+}
+function bearingOf(v){
+  if (!userLatLng) return '';
+  const rad = d => d*Math.PI/180;
+  const y = Math.sin(rad(v.coords[1]-userLatLng[1]))*Math.cos(rad(v.coords[0]));
+  const x = Math.cos(rad(userLatLng[0]))*Math.sin(rad(v.coords[0])) -
+            Math.sin(rad(userLatLng[0]))*Math.cos(rad(v.coords[0]))*Math.cos(rad(v.coords[1]-userLatLng[1]));
+  const deg = (Math.atan2(y,x)*180/Math.PI+360)%360;
+  return ['正北','东北','正东','东南','正南','西南','正西','西北'][Math.round(deg/45)%8];
+}
+function flashHint(msg, isErr){
+  const el = document.getElementById('map-hint');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = isErr ? '#FF8FA3' : '#8FE3FF';
+  clearTimeout(flashHint._t);
+  flashHint._t = setTimeout(() => { el.style.color = ''; updateMarkers(); }, 5000);
+}
+function applyUserPos(pos, recenter){
+  const c = pos.coords, next = [c.latitude, c.longitude];
+  userLatLng = next;
+  if (!userMarker) {
+    userMarker = L.circleMarker(userLatLng, {radius:8, color:'#22D3EE', weight:2.5, fillColor:'#22D3EE', fillOpacity:1, zIndexOffset:2000})
+      .addTo(map).bindTooltip('我的位置', {permanent:true, direction:'top', offset:[0,-10], className:'m-tip'});
+  } else userMarker.setLatLng(userLatLng);
+  const acc = Math.max(20, c.accuracy || 50);
+  if (!userCircle) userCircle = L.circle(userLatLng, {radius:acc, color:'#22D3EE', weight:1.2, opacity:.5, fillColor:'#22D3EE', fillOpacity:.10, interactive:false}).addTo(map);
+  else userCircle.setLatLng(userLatLng).setRadius(acc);
+  if (recenter) map.flyTo(userLatLng, Math.max(map.getZoom(),14), {duration:.8});
+}
+function locateMe(){
+  if (!navigator.geolocation) { flashHint('❌ 当前浏览器不支持定位', true); return; }
+  if (userLatLng) { map.flyTo(userLatLng, Math.max(map.getZoom(),14), {duration:.8}); return; }
+  navigator.geolocation.getCurrentPosition(
+    p => { applyUserPos(p, true); syncSortBtns(); flashHint('📍 已定位（距离与“近→远”排序可用）', false); },
+    err => flashHint(err && err.code === 1 ? '🚫 定位被拒绝：请允许位置授权后重试' : '⚠️ 暂时拿不到位置，请稍后重试', true),
+    GEO_OPTS);
+  if (watchId == null) watchId = navigator.geolocation.watchPosition(p => applyUserPos(p, false), () => {}, GEO_OPTS);
+}
+function clearLocation(){
+  if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+  if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
+  if (userCircle) { map.removeLayer(userCircle); userCircle = null; }
+  userLatLng = null;
+  syncSortBtns(); flashHint('已清除定位', false);
+}
+function syncSortBtns(){}
+function initLocate(){
+  const C = L.Control.extend({
+    options:{position:'topright'},
+    onAdd(){
+      const wrap = L.DomUtil.create('div','leaflet-bar');
+      const css = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;text-decoration:none;background:#232030;color:#EDE9F5;';
+      const btn = L.DomUtil.create('a','',wrap);
+      btn.href='#'; btn.innerHTML='🧭'; btn.title='定位到我的位置（需浏览器授权）'; btn.style.cssText = css+'font-size:15px;';
+      L.DomEvent.on(btn,'click', e => { L.DomEvent.stop(e); locateMe(); });
+      const clr = L.DomUtil.create('a','',wrap);
+      clr.href='#'; clr.innerHTML='✕'; clr.title='清除定位'; clr.style.cssText = css+'font-size:13px;color:#FF8FA3;';
+      L.DomEvent.on(clr,'click', e => { L.DomEvent.stop(e); clearLocation(); });
+      return wrap;
+    }
+  });
+  map.addControl(new C());
+}
+
+/* ================= 顶部胶囊 & 统计 ================= */
+function updateCounts(){
+  const box = document.getElementById('pill-box');
+  box.innerHTML = '';
+  const groupOrder = ['bar','jazz','show','club'];
+  groupOrder.forEach(g => {
+    const gm = GROUP_META[g];
+    const n = VENUES.filter(v => TYPE_META[typeOf(v)].group === g).length;
+    const s = document.createElement('span');
+    s.className = 'px-3 py-1 rounded-full text-xs font-bold border-2';
+    s.style.cssText = `background:${gm.color};color:#0A0810;border-color:#0A0810`;
+    s.textContent = `${gm.label} ${n}`;
+    s.title = gm.desc;
+    box.appendChild(s);
+  });
+  const warnN = VENUES.filter(v => v.uneasy).length;
+  const s = document.createElement('span');
+  s.className = 'px-3 py-1 rounded-full text-xs font-bold border-2';
+  s.style.cssText = 'background:#FFD166;color:#2A1D00;border-color:#0A0810';
+  s.textContent = `⚠️ 待核实 ${warnN}`;
+  box.appendChild(s);
+  document.getElementById('foot-total').textContent = VENUES.length;
+}
+function renderStat(){
+  const rows = VENUES.filter(match);
+  const byType = TYPE_ORDER.map(t => `${t} ${rows.filter(v => typeOf(v) === t).length}`).join(' · ');
+  const byGroup = ['bar','jazz','show','club']
+    .map(g => `${GROUP_META[g].label} <b>${rows.filter(v => TYPE_META[typeOf(v)].group === g).length}</b>`).join(' · ');
+  const byDist = {};
+  rows.forEach(v => { byDist[v.district] = (byDist[v.district] || 0) + 1; });
+  const distStr = Object.entries(byDist).sort((a,b) => b[1]-a[1]).map(([k,n]) => `${k} ${n}`).join(' · ');
+  const priced = rows.filter(v => typeof v.avg === 'number' && v.avg > 0);
+  const mean = priced.length ? Math.round(priced.reduce((s,v) => s + v.avg, 0) / priced.length) : null;
+  const priceStr = PRICE_TIERS.map(t => `${t.label} ${t.range}元 ${rows.filter(v => priceTier(v) === t.tier).length}`).join(' · ');
+  const liveN = rows.filter(v => v.live).length;
+  const lateN = rows.filter(v => isLate(v)).length;
+  const warnN = rows.filter(v => v.uneasy).length;
+  const closedN = rows.filter(v => isStopped(v)).length;
+  const bookMust = rows.filter(v => v.booking === '必须预约').length;
+  const idN = rows.filter(v => v.id_check !== 'none').length;
+
+  document.getElementById('stat-line').innerHTML =
+    `当前筛选出 <b>${rows.length}</b> / ${VENUES.length} 家。${byGroup}。<br>` +
+    `按类型：${byType}。<br>` +
+    `行政区分布：${distStr || '—'}。风格 <b>${GENRES.length}</b> 类。<br>` +
+    `人均分布（按具体数值分档）：${priceStr}；${rows.length - priced.length} 家人均待核实。<br>` +
+    (mean === null ? '人均：本次筛选内无已采集数值。' : `<b>本次筛选内人均 ≈ ¥${mean}</b>（${priced.length} 家已采集）。`) +
+    `<br>现场演出 <b>${liveN}</b> 家 · 打烊晚于 02:00 <b>${lateN}</b> 家 · 必须预约 <b>${bookMust}</b> 家 · 需实名 <b>${idN}</b> 家 · ⚠️ 待核实 <b>${warnN}</b> 家 · ⛔ 已停业/暂停 <b>${closedN}</b> 家。`;
+}
+function renderUneasyList(){
+  const ul = document.getElementById('uneasy-list');
+  ul.innerHTML = '';
+  VENUES.filter(v => v.uneasy).forEach(v => {
+    const li = document.createElement('li');
+    li.innerHTML = `<b style="color:var(--ink)">${v.name}</b>（${typeOf(v)} · ${v.district}）：${v.note ? v.note.split('；')[0] : '仅有 C/D 级来源'} <span style="color:#8FE3FF">[来源等级 ${v.src_tier.join('/')}]</span>`;
+    ul.appendChild(li);
+  });
+  const extra = document.createElement('li');
+  extra.innerHTML = `<b style="color:var(--ink)">地址两说与处理结果</b>：The Union Trading Company —— 大众点评地址片段「衡山路30******」与衡山路 306 号吻合，<b style="color:var(--ink)">已可判定现址为衡山路 306 号</b>（汾阳路 64 弄 2-1 号为旧址）；Sober Company —— 点评地址片段「雁荡路10******」与 109 号吻合，<b style="color:var(--ink)">109 号一说获佐证</b>，但本页仍并列保留「99 号」两说；M2 —— 淮海中路 1 号与 283 号香港广场 4F <b style="color:var(--ink)">两处均已停业</b>，门牌之争已无实际意义。`;
+  ul.appendChild(extra);
+}
+</script>
+</body>
+</html>

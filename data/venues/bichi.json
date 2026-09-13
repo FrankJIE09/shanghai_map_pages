@@ -1,0 +1,1182 @@
+[
+  {
+    "key": "both_lailai_xiaolong",
+    "name": "莱莱小笼·乔艾",
+    "bichi": true,
+    "saojie": true,
+    "michelin": -1,
+    "avg": 58,
+    "coords": [
+      31.238112,
+      121.472547
+    ],
+    "cuisine": "点心小笼",
+    "address": "黄浦区天津路506号",
+    "price": "¥ 负担得起的",
+    "desc": "天津路上的老牌小笼馆，蟹粉小笼皮薄近乎透光，咬开瞬间滚烫鲜甜的汤汁爆满口腔；鲜肉与蟹粉双拼是本地人默认点法，不做营销全靠街坊口口相传，市井烟火气十足。",
+    "mnemonic": "2/10号线南京东路站1号口步行约6分钟，天津路近福建中路",
+    "icon": "🥟",
+    "note": "连续在榜 · 米其林必比登交叉",
+    "isNew": false
+  },
+  {
+    "key": "both_huxi_laolongtang",
+    "name": "沪西老弄堂面馆（定西路店）",
+    "bichi": true,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 40,
+    "coords": [
+      31.2201,
+      121.4182
+    ],
+    "cuisine": "本帮面",
+    "address": "长宁区定西路（近愚园路）",
+    "price": "¥¥ 中档",
+    "desc": "藏在弄堂口的本帮面馆，招牌蛤蜊猪肝拌面猪肝嫩而不腥、蛤蜊鲜香，浓油赤酱裹住每根面条；现炒浇头现熬汤底，可免费续面加汤，连续八年登上必吃榜。",
+    "mnemonic": "2/11号线江苏路站步行约10分钟，定西路近愚园路",
+    "icon": "🍜",
+    "note": "连续8年上榜 · 坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "both_weihuang_guangfu",
+    "name": "威皇广福和小海鲜（襄阳南路店）",
+    "bichi": true,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 116,
+    "coords": [
+      31.2135,
+      121.4595
+    ],
+    "cuisine": "粤菜海鲜",
+    "address": "徐汇区襄阳南路（近复兴中路）",
+    "price": "¥¥¥ 优质的",
+    "desc": "上海花雕醉鸡煲的鼻祖，一锅汤慢煨五小时，散养走地鸡配花雕酒香，先喝汤再吃肉暖胃满足；小海鲜每日到货看得见鲜活，锅巴香脆、港风烟火气浓。",
+    "mnemonic": "1/10/12号线陕西南路站步行约8分钟，襄阳南路近复兴中路",
+    "icon": "🦞",
+    "note": "双榜交叉 · 坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "both_renheguan",
+    "name": "人和馆·上海菜（徐汇店）",
+    "bichi": true,
+    "saojie": true,
+    "michelin": 1,
+    "avg": 170,
+    "coords": [
+      31.20364,
+      121.453582
+    ],
+    "cuisine": "本帮菜",
+    "address": "徐汇区肇嘉浜路407号",
+    "price": "¥¥ 中档",
+    "desc": "民国风情装潢配现场驻唱，招牌蟹粉捞饭限量供应，金黄蟹粉裹满粒粒分明的米饭，配特制蟹醋鲜香浓郁；本帮家常菜火候稳，是几代上海人的聚餐记忆。",
+    "mnemonic": "9/12号线嘉善路站4号口步行约3分钟，肇嘉浜路近嘉善路",
+    "icon": "🥢",
+    "note": "米其林一星 · 连续5年摘星 · 双榜交叉",
+    "isNew": false
+  },
+  {
+    "key": "both_nongjiacai_laoda",
+    "name": "农家菜老大（松江店）",
+    "bichi": true,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 107,
+    "coords": [
+      31.0356,
+      121.2274
+    ],
+    "cuisine": "农家菜",
+    "address": "松江区（松江城区）",
+    "price": "¥¥ 中档",
+    "desc": "水库鱼头毫无腥味、汤头浓鲜，年糕与豆腐吸饱汤汁，上桌热气腾腾一锅端上就是农家宴排面；明档现选现做，梅干菜饼与爽脆山野菜是必加点心。",
+    "mnemonic": "9号线松江新城站换乘公交约10分钟，位于松江城区",
+    "icon": "🐟",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "both_miheliang",
+    "name": "米禾良日料",
+    "bichi": true,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 128,
+    "coords": [
+      31.2338,
+      121.4736
+    ],
+    "cuisine": "日本料理",
+    "address": "黄浦区人民广场商圈",
+    "price": "¥¥ 中档",
+    "desc": "商圈里的居酒屋，鹅肝寿司用料惊人，一片肥厚鹅肝几乎盖住整个寿司饭，入口即化不腥不腻；刺身厚切、鱼骨熬汤，服务亲切分量扎实，性价比高。",
+    "mnemonic": "1/2/8号线人民广场站步行约5分钟",
+    "icon": "🍣",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "both_hongziji_fenghuanglou",
+    "name": "红子鸡凤凰楼（澳门路店）",
+    "bichi": true,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 150,
+    "coords": [
+      31.244,
+      121.4418
+    ],
+    "cuisine": "粤菜",
+    "address": "普陀区澳门路（近长寿路）",
+    "price": "¥¥ 中档",
+    "desc": "千平老牌大店，招牌乳鸽先卤后炸、皮脆肉嫩，服务员脚踩溜冰鞋穿梭上菜是延续三十多年的标志性场景，仿佛穿越回九十年代，宴请与聚餐都够排面。",
+    "mnemonic": "7/13号线长寿路站步行约8分钟，澳门路近陕西北路",
+    "icon": "🍗",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "both_chilis",
+    "name": "Chili's Cafe&Bar 奇利斯（滨江店）",
+    "bichi": true,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 145,
+    "coords": [
+      31.24,
+      121.5
+    ],
+    "cuisine": "美式餐厅",
+    "address": "浦东新区滨江（陆家嘴滨江一带）",
+    "price": "¥¥ 中档",
+    "desc": "坐拥江景视野的美式餐厅，烟熏猪肋排入味酥软、肉质多汁，搭配浓郁酱料是每桌必点；熔岩蛋糕与分享拼盘适合多人聚会，服务贴心节奏轻松。",
+    "mnemonic": "2号线陆家嘴站步行约10分钟至滨江",
+    "icon": "🍔",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_haifuduo_gongfu",
+    "name": "海福多共富海鲜面馆",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 223,
+    "coords": [
+      31.286,
+      121.426
+    ],
+    "cuisine": "海鲜面",
+    "address": "宝山区共富路一带",
+    "price": "¥¥ 中档",
+    "desc": "海鲜用料扎实、个个饱满，蒜蓉小青龙、生蚝与白灼鱿鱼弹牙鲜甜，一桌硬菜人均下来负担轻；汤头鲜浓面条筋道，吃得过瘾又不心疼钱包。",
+    "mnemonic": "1号线共富新村站步行约10分钟",
+    "icon": "🍤",
+    "note": "扫街榜榜首 · 坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_jinqiang_niuroumian",
+    "name": "金强牛肉面（虹梅路店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 37,
+    "coords": [
+      31.1835,
+      121.3985
+    ],
+    "cuisine": "兰州牛肉面",
+    "address": "闵行区虹梅路（近吴中路）",
+    "price": "¥ 负担得起的",
+    "desc": "二十四小时营业的街边排队王，汤底鲜香、面条筋道，牛肉厚实有嚼劲而非薄如纸片，辣子香而不辣；自助取餐效率高，是扎实满足的一碗。",
+    "mnemonic": "9号线合川路站步行约12分钟，虹梅路近吴中路",
+    "icon": "🍜",
+    "note": "扫街榜状元·上海第1 · 坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_huangyou_mianbao",
+    "name": "黄油与面包（上海旗舰店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 46,
+    "coords": [
+      31.229,
+      121.455
+    ],
+    "cuisine": "烘焙甜点",
+    "address": "静安区南京西路商圈",
+    "price": "¥¥ 中档",
+    "desc": "紫色城堡外墙是打卡地标，草莓奶油牛角包酥皮层次分明，夹着清新草莓与丝滑奶油甜而不腻；咸奶油泡芙与超大黄油司康同样人气极高。",
+    "mnemonic": "2/12/13号线南京西路站步行约6分钟",
+    "icon": "🥐",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_henjiuyiqian_yangrouchuan",
+    "name": "很久以前羊肉串（南京路第一百货店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 100,
+    "coords": [
+      31.2382,
+      121.4768
+    ],
+    "cuisine": "烧烤",
+    "address": "黄浦区南京东路第一百货商业中心",
+    "price": "¥¥ 中档",
+    "desc": "羊肉串来自呼伦贝尔草原，现烤滋滋冒油、肥瘦相间，一口鲜嫩爆汁几乎没有膻味；全程代烤服务省心，用料扎实安心，逛街途中撸串首选。",
+    "mnemonic": "1/2/8号线人民广场站19号口步行约3分钟",
+    "icon": "🍢",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_nanmen_shuanrou",
+    "name": "南门涮肉（上海一店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 132,
+    "coords": [
+      31.2286,
+      121.457
+    ],
+    "cuisine": "京式涮肉",
+    "address": "静安区（南京西路商圈）",
+    "price": "¥¥ 中档",
+    "desc": "清水锅底涮手切鲜羊肉，肉质紧实不散、微微带脂入口即化，秘制麻酱香浓；京味沉浸式装潢与扎实分量，是铜锅涮肉的经典打开方式。",
+    "mnemonic": "2/12/13号线南京西路站步行约8分钟",
+    "icon": "🍲",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_sijiminfu_kaoya",
+    "name": "四季民福烤鸭店（外滩外白渡桥店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 190,
+    "coords": [
+      31.244,
+      121.4855
+    ],
+    "cuisine": "京菜烤鸭",
+    "address": "黄浦区南苏州路（近外白渡桥）",
+    "price": "¥¥¥ 优质的",
+    "desc": "枣木挂炉烤制的酥香嫩烤鸭，鸭皮油亮酥脆、入口即化还带果木香，鸭肉鲜嫩多汁火候刚好；京味古风装潢，聚餐不踩雷、分量扎实耐吃。",
+    "mnemonic": "10/12号线天潼路站步行约8分钟，近外白渡桥",
+    "icon": "🦆",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_diandude",
+    "name": "点都德（环宇荟店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 104,
+    "coords": [
+      31.2138,
+      121.4726
+    ],
+    "cuisine": "粤式点心",
+    "address": "黄浦区黄陂南路838弄环宇荟",
+    "price": "¥¥ 中档",
+    "desc": "广式饮茶氛围浓厚，金莎红米肠外层肠粉滑嫩、内裹酥脆金莎与整颗大虾，一口Q弹与酥脆交织；虾饺皇大颗鲜嫩，配薄荷柠香汁清爽解腻。",
+    "mnemonic": "9/13号线马当路站步行约5分钟，环宇荟商场内",
+    "icon": "🥟",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_shendacheng",
+    "name": "沈大成（南京东路店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 37,
+    "coords": [
+      31.2375,
+      121.4778
+    ],
+    "cuisine": "点心糕团",
+    "address": "黄浦区南京东路636号",
+    "price": "¥ 负担得起的",
+    "desc": "百年中华老字号，现烤鲜肉月饼与现包青团常年排队，双酿团、重阳糕不断出新；坚持当日现做现卖，吃的是点心，更是上海的城市记忆。",
+    "mnemonic": "2/10号线南京东路站4号口步行约4分钟",
+    "icon": "🍡",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_gongyan",
+    "name": "宫宴",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 579,
+    "coords": [
+      31.2266,
+      121.4472
+    ],
+    "cuisine": "宫廷菜",
+    "address": "静安区（南京西路一带）",
+    "price": "¥¥¥ 优质的",
+    "desc": "汉服换装加宫廷布景的沉浸式餐厅，每上一道菜就有一场对应主题的表演，光影舞乐与御膳复刻同步呈现，宛若亲赴一场千年宫宴，文化与味觉双盛宴。",
+    "mnemonic": "2/12/13号线南京西路站步行约8分钟",
+    "icon": "🏯",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_guojifandian_xibingwu",
+    "name": "国际饭店西饼屋",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 49,
+    "coords": [
+      31.2346,
+      121.4694
+    ],
+    "cuisine": "西点烘焙",
+    "address": "黄浦区南京西路170号",
+    "price": "¥ 负担得起的",
+    "desc": "排队三小时也要买的蝴蝶酥，一口咔嚓声后是浓郁黄油香与焦糖甜的完美融合，层次丰富；酒香蛋糕与老上海味道，现买现吃最酥，是长辈心头好。",
+    "mnemonic": "1/2/8号线人民广场站9号口步行约3分钟",
+    "icon": "🥮",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_huoshaoyun",
+    "name": "浩海火烧云傣家菜（新天地广场店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 103,
+    "coords": [
+      31.2205,
+      121.4735
+    ],
+    "cuisine": "云南傣味",
+    "address": "黄浦区马当路245号新天地广场",
+    "price": "¥¥ 中档",
+    "desc": "每桌必点的铜锅油焖鸡，鸡腿肉软烂入味，配绵密如云的蒜香土豆泥，一上桌就让人忍不住拌饭三碗；黑三剁拌饭一绝，民族风情装潢沉浸感强。",
+    "mnemonic": "10/13号线新天地站步行约4分钟",
+    "icon": "🌶️",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_shangshangqian",
+    "name": "上上谦火锅（南京东路步行街店）",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 105,
+    "coords": [
+      31.2367,
+      121.478
+    ],
+    "cuisine": "川式火锅",
+    "address": "黄浦区南京东路步行街",
+    "price": "¥¥ 中档",
+    "desc": "坐在循环播放老歌的店里涮毛肚，地道牛油锅底翻滚够味，整只嫩牛蛙与芝士拉丝虾滑是招牌；主题互动服务带来追星式仪式感，粉丝与吃货都买账。",
+    "mnemonic": "2/10号线南京东路站步行约5分钟",
+    "icon": "🍲",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_guangmingcun",
+    "name": "光明邨大酒家",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 79,
+    "coords": [
+      31.2205,
+      121.463
+    ],
+    "cuisine": "本帮菜",
+    "address": "黄浦区淮海中路588号",
+    "price": "¥¥ 中档",
+    "desc": "淮海路上的老字号排队大户，鲜肉月饼与熟食窗口常年人龙，本帮菜浓油赤酱做得地道；一楼买点心、二楼堂食，是几代上海人的共同味觉记忆。",
+    "mnemonic": "1号线陕西南路站步行约6分钟，近成都南路",
+    "icon": "🥟",
+    "note": "高德上海TOP100 · 坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "saojie_haiwanhui",
+    "name": "海湾荟·闽兰轩",
+    "bichi": false,
+    "saojie": true,
+    "michelin": 0,
+    "avg": 328,
+    "coords": [
+      31.238,
+      121.506
+    ],
+    "cuisine": "闽菜",
+    "address": "浦东新区（陆家嘴临江片区）",
+    "price": "¥¥¥ 优质的",
+    "desc": "主打闽菜的临江中高端餐厅，红蟳米糕、佛跳墙与海鲜类菜式用料讲究，摆盘精致；靠窗位可看江景，适合商务宴请与家庭重要聚餐。",
+    "mnemonic": "2号线陆家嘴站步行约12分钟至临江",
+    "icon": "🦞",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_homes_benbangcai",
+    "name": "HOMES上海本帮菜（襄阳公园店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 168,
+    "coords": [
+      31.2164,
+      121.4553
+    ],
+    "cuisine": "本帮菜",
+    "address": "徐汇区襄阳北路（襄阳公园一带）",
+    "price": "¥¥¥ 优质的",
+    "desc": "襄阳公园旁的本帮菜馆，红烧肉、油爆虾与响油鳝糊都做得扎实，浓油赤酱里透着克制的甜；环境安静适合家庭聚餐，老客人多、出品稳定。",
+    "mnemonic": "1/10/12号线陕西南路站步行约8分钟",
+    "icon": "🥢",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_alimentari_grande",
+    "name": "Alimentari Grande（东湖路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 165,
+    "coords": [
+      31.2143,
+      121.4565
+    ],
+    "cuisine": "意大利菜",
+    "address": "徐汇区东湖路（近新乐路）",
+    "price": "¥¥¥ 优质的",
+    "desc": "东湖路上的意大利餐厅，手工意面、萨拉米拼盘与窑烤披萨都地道，橄榄油与番茄的清爽平衡得刚好；露台位适合午后小坐，氛围松弛适合朋友聚会。",
+    "mnemonic": "1/10号线陕西南路站步行约10分钟，东湖路近新乐路",
+    "icon": "🍕",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_omills",
+    "name": "O'mills Sourdough Bakery&Bistro（永嘉路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 142,
+    "coords": [
+      31.2052,
+      121.45
+    ],
+    "cuisine": "西式烘焙",
+    "address": "徐汇区永嘉路（近乌鲁木齐南路）",
+    "price": "¥¥¥ 优质的",
+    "desc": "以天然酵母酸种面包出名的社区餐厅，酸种吐司外壳脆内里润，配牛油果与溏心蛋的早午餐人气极高；开放式厨房明亮，适合周末慢慢吃一顿。",
+    "mnemonic": "1/10号线陕西南路站步行约10分钟，永嘉路近乌鲁木齐南路",
+    "icon": "🥐",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_awuluo_yueyong",
+    "name": "阿吾罗·月咏精致日料（港汇恒隆广场店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 226,
+    "coords": [
+      31.1953,
+      121.4368
+    ],
+    "cuisine": "日本料理",
+    "address": "徐汇区虹桥路1号港汇恒隆广场",
+    "price": "¥¥¥ 优质的",
+    "desc": "港汇恒隆内的精致日料，刺身厚切且油脂丰腴，寿司与天妇罗火候精准，午市定食性价比高；环境安静雅致，适合商务简餐与小规模约会。",
+    "mnemonic": "1/9/11号线徐家汇站步行约3分钟，商场内",
+    "icon": "🍣",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_bingcheng_laoyujia",
+    "name": "冰城老于家（徐家汇店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 78,
+    "coords": [
+      31.194,
+      121.44
+    ],
+    "cuisine": "东北菜",
+    "address": "徐汇区徐家汇一带",
+    "price": "¥¥ 中档",
+    "desc": "徐家汇的东北菜馆，锅包肉外壳酥脆、酸甜挂汁均匀，小鸡炖蘑菇与蘸酱菜分量豪爽；东北做法不刻意减糖减油，聚餐管饱又过瘾。",
+    "mnemonic": "1/9/11号线徐家汇站步行约8分钟",
+    "icon": "🍖",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_dongbei_sijijiaoziwang",
+    "name": "东北四季饺子王·家常菜（淮海中路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 71,
+    "coords": [
+      31.213,
+      121.4585
+    ],
+    "cuisine": "东北菜",
+    "address": "徐汇区淮海中路（近常熟路）",
+    "price": "¥¥ 中档",
+    "desc": "开业二十五年的东北风味馆，全程零线上推广，饺子皮每日手工擀制，锅包肉、酱骨头、小鸡炖蘑菇严格按东北本土做法；老街坊占半数以上。",
+    "mnemonic": "1/7号线常熟路站步行约5分钟，淮海中路近常熟路",
+    "icon": "🥟",
+    "note": "2026 新上榜 · 坐标为近似",
+    "isNew": true
+  },
+  {
+    "key": "bichi_gucheng_yan",
+    "name": "菰城宴·大锅红烧羊肉面",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 47,
+    "coords": [
+      31.199659,
+      121.456996
+    ],
+    "cuisine": "面食羊肉",
+    "address": "徐汇区斜土路1422弄12号",
+    "price": "¥ 负担得起的",
+    "desc": "大锅红烧羊肉现烧现卖，羊肉酥烂不膻、酱香浓郁，汤面吸足肉汁暖到胃里；湖州菰城做法家常实在，冬天午市常要拼桌，是老弄堂里的实在味。",
+    "mnemonic": "4/12号线大木桥路站步行约8分钟，斜土路弄堂内",
+    "icon": "🍜",
+    "note": "米其林必比登交叉",
+    "isNew": false
+  },
+  {
+    "key": "bichi_hengyuexuan",
+    "name": "恒悦轩·精致香港粤菜（徐家汇店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 295,
+    "coords": [
+      31.1935,
+      121.438
+    ],
+    "cuisine": "粤菜",
+    "address": "徐汇区徐家汇一带",
+    "price": "¥¥¥ 优质的",
+    "desc": "徐家汇的精致粤菜馆，烧腊皮脆肉嫩、蜜汁叉烧肥瘦相间，老火例汤与蒸鱼火候稳；点心与炒菜水准均衡，适合家庭聚餐和商务宴请。",
+    "mnemonic": "1/9/11号线徐家汇站步行约8分钟",
+    "icon": "🍤",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_longhua_suzhai",
+    "name": "龙华素斋（龙华路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 33,
+    "coords": [
+      31.1852,
+      121.457
+    ],
+    "cuisine": "素食",
+    "address": "徐汇区龙华路（近龙华寺）",
+    "price": "¥¥ 中档",
+    "desc": "龙华寺旁的素斋馆，素面汤清味鲜、罗汉上素与素鸭做得有形有神，素点心的豆香与甜度都很克制；吃的是斋饭，也是一份闹市里的清静。",
+    "mnemonic": "11/12号线龙华站步行约5分钟，近龙华寺",
+    "icon": "🥬",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_ruilite_tai",
+    "name": "瑞俪泰·泰国料理（龙华会店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 178,
+    "coords": [
+      31.183,
+      121.46
+    ],
+    "cuisine": "泰国菜",
+    "address": "徐汇区龙华中路（龙华会）",
+    "price": "¥¥ 中档",
+    "desc": "龙华会里的泰国料理，冬阴功酸辣层次分明、椰香恰当，青咖喱与虾饼用料实在，芒果糯米饭收尾刚好；装修明亮，适合逛街后就近解决一餐。",
+    "mnemonic": "7/12号线龙华中路站步行约5分钟，龙华会商场内",
+    "icon": "🍛",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_simiantai",
+    "name": "四面泰（环贸 IAPM 店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 156,
+    "coords": [
+      31.2176,
+      121.4531
+    ],
+    "cuisine": "泰国菜",
+    "address": "徐汇区淮海中路999号环贸广场",
+    "price": "¥¥ 中档",
+    "desc": "环贸广场里的泰式餐厅，招牌冬阴功与绿咖喱香料味足，泰式炒河粉锅气够；午市套餐性价比不错，逛商场时想换口味的好选择。",
+    "mnemonic": "1/10/12号线陕西南路站直达环贸广场",
+    "icon": "🍛",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_xiji_gangjiu",
+    "name": "细记港九早茶包房夜宵（东湖路总店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 130,
+    "coords": [
+      31.214,
+      121.4568
+    ],
+    "cuisine": "粤式早茶",
+    "address": "徐汇区东湖路（近新乐路）",
+    "price": "¥¥ 中档",
+    "desc": "东湖路上的港式早茶与夜宵店，虾饺、烧卖、凤爪与流沙包都是现蒸现上，粥粉面饭俱全；开到深夜，是老城区里为数不多能吃到夜茶的地方。",
+    "mnemonic": "1/10号线陕西南路站步行约10分钟，东湖路近新乐路",
+    "icon": "🍵",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_xianggang_chiziji",
+    "name": "香港池仔记肠粉王（博多新记襄阳南路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 38,
+    "coords": [
+      31.21,
+      121.457
+    ],
+    "cuisine": "粤式肠粉",
+    "address": "徐汇区襄阳南路（近永嘉路）",
+    "price": "¥ 负担得起的",
+    "desc": "现磨米浆现拉肠粉，粉皮薄滑、豉油咸鲜带甜，牛肉肠与鲜虾肠都是招牌；配一碗艇仔粥或例汤，二三十元吃得舒服，早餐与宵夜都合适。",
+    "mnemonic": "1/10号线陕西南路站步行约12分钟，襄阳南路近永嘉路",
+    "icon": "🍚",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_xinyuan_sifangcai",
+    "name": "新苑私房菜·本帮菜（嘉善路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 118,
+    "coords": [
+      31.211,
+      121.4552
+    ],
+    "cuisine": "本帮菜",
+    "address": "徐汇区嘉善路（近建国西路）",
+    "price": "¥¥ 中档",
+    "desc": "嘉善路上的私房本帮菜，红烧肉肥而不腻、油酱毛蟹与草头圈子都是老味道，糖醋小排酸甜收口干净；店面不大但出品稳定，熟客回头率很高。",
+    "mnemonic": "9/12号线嘉善路站步行约5分钟",
+    "icon": "🥢",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_xuji_haixian",
+    "name": "徐记海鲜（肇嘉浜店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 290,
+    "coords": [
+      31.2035,
+      121.452
+    ],
+    "cuisine": "海鲜",
+    "address": "徐汇区肇嘉浜路（近嘉善路）",
+    "price": "¥¥¥ 优质的",
+    "desc": "主打现捞海鲜的中餐厅，清蒸与蒜蓉做法突出鲜味，时令虾蟹贝类品种多，可现场挑货定做法；包房宽敞，适合家庭聚会与商务宴请。",
+    "mnemonic": "9/12号线嘉善路站步行约5分钟，肇嘉浜路沿线",
+    "icon": "🦞",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_siji_nongpu",
+    "name": "四季农圃（天平路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 220,
+    "coords": [
+      31.202,
+      121.44
+    ],
+    "cuisine": "粤菜家常",
+    "address": "徐汇区天平路（近衡山路）",
+    "price": "¥¥ 中档",
+    "desc": "天平路上的粤式家常菜馆，老火汤与清蒸鱼做得清爽不油，烧味拼盘与煲仔菜够镬气；价格亲民分量实在，是衡复风貌区里安心的日常饭堂。",
+    "mnemonic": "1/9/11号线徐家汇站步行约12分钟，天平路近衡山路",
+    "icon": "🍲",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_jinri_niushi",
+    "name": "今日牛事潮汕鲜牛肉火锅（徐汇总店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 130,
+    "coords": [
+      31.192,
+      121.437
+    ],
+    "cuisine": "潮汕火锅",
+    "address": "徐汇区徐家汇一带",
+    "price": "¥¥ 中档",
+    "desc": "潮汕鲜切牛肉火锅，吊龙、匙柄与五花趾现点现切，涮八秒蘸沙茶酱最见鲜甜；牛骨清汤锅底不夺味，配手打牛肉丸与粿条，吃完不口干。",
+    "mnemonic": "1/9/11号线徐家汇站步行约10分钟",
+    "icon": "🍲",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_yijiayiyan",
+    "name": "忆家一宴（大木桥路旗舰店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 160,
+    "coords": [
+      31.2,
+      121.465
+    ],
+    "cuisine": "本帮菜",
+    "address": "徐汇区大木桥路（近斜土路）",
+    "price": "¥¥ 中档",
+    "desc": "大木桥路的本帮家常菜，响油鳝糊、糖醋小排与腌笃鲜都是熟悉的味道，浓油赤酱里甜度调得克制；包房多，适合家庭寿宴与朋友围桌。",
+    "mnemonic": "4/12号线大木桥路站步行约6分钟",
+    "icon": "🥢",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_yishanfang_octave",
+    "name": "意膳坊 Thought For Food By Octave",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 216,
+    "coords": [
+      31.21,
+      121.452
+    ],
+    "cuisine": "融合菜",
+    "address": "徐汇区（衡复风貌区）",
+    "price": "¥¥¥ 优质的",
+    "desc": "衡复风貌区里的融合菜餐厅，菜单随时令更换，中西手法并用却不炫技，酱汁与食材搭配讲究；老洋房环境安静，适合慢慢吃一顿有想法的饭。",
+    "mnemonic": "1/10号线陕西南路站步行约12分钟",
+    "icon": "🍽️",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_ningguo_suzhai",
+    "name": "宁国素斋（华泾路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 58,
+    "coords": [
+      31.162,
+      121.452
+    ],
+    "cuisine": "素食",
+    "address": "徐汇区华泾路",
+    "price": "¥¥ 中档",
+    "desc": "华泾一带的素斋馆，素鸡、素鹅与罗汉斋口味清爽，素面汤头用菌菇与笋吊鲜，不靠重油重盐；初一十五常有香客光顾，氛围平和。",
+    "mnemonic": "15号线华泾西站一带，华泾路沿线",
+    "icon": "🥬",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_yulixiang",
+    "name": "御鲤湘（淮海中路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 78,
+    "coords": [
+      31.2145,
+      121.46
+    ],
+    "cuisine": "湘菜",
+    "address": "徐汇区淮海中路（近襄阳南路）",
+    "price": "¥¥ 中档",
+    "desc": "淮海中路上的湘菜馆，剁椒鱼头鲜辣过瘾、辣椒炒肉锅气足，擂椒皮蛋与湘西外婆菜下饭；辣度可按本地口味微调，仍保留了湘菜的爽利。",
+    "mnemonic": "1/10/12号线陕西南路站步行约8分钟",
+    "icon": "🌶️",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_yunli_mixian",
+    "name": "云里·云南铜锅米线（长乐路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 43,
+    "coords": [
+      31.2165,
+      121.452
+    ],
+    "cuisine": "云南菜",
+    "address": "徐汇区（长乐路西段）",
+    "price": "¥ 负担得起的",
+    "desc": "铜锅上桌的云南米线，汤底用筒骨与老鸡熬足时间，米线筋道挂汤，配鲜肉、菌子与腌菜层层加料；一碗下肚踏踏实实，午市常要等位。",
+    "mnemonic": "1/10号线陕西南路站步行约10分钟",
+    "icon": "🍜",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_zheyuan_guangzhou",
+    "name": "啫苑·广州啫啫煲（徐家汇店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 110,
+    "coords": [
+      31.193,
+      121.439
+    ],
+    "cuisine": "粤菜",
+    "address": "徐汇区徐家汇一带",
+    "price": "¥¥ 中档",
+    "desc": "主打广州啫啫煲，砂锅上桌仍滋滋作响，啫黄鳝、啫鸡与啫芥兰镬气十足，酱香裹住食材；配一盅例汤与煲仔饭，是广式大排档的热闹味。",
+    "mnemonic": "1/9/11号线徐家汇站步行约8分钟",
+    "icon": "🍲",
+    "note": "坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_huiting_jingcui",
+    "name": "荟廷·晶萃（陆家嘴尚悦湾店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 169,
+    "coords": [
+      31.2385,
+      121.5085
+    ],
+    "cuisine": "粤菜",
+    "address": "浦东新区尚悦湾（陆家嘴）",
+    "price": "¥¥¥ 优质的",
+    "desc": "陆家嘴尚悦湾的粤菜馆，烧味与炖汤功夫扎实，虾饺、流沙包等点心现点现蒸，摆盘精致；临江位置适合宴请，是本帮上海人心里的体面之选。",
+    "mnemonic": "2号线陆家嘴站步行约10分钟至尚悦湾",
+    "icon": "🍤",
+    "note": "连续8年上榜 · 坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_dianweiyuan_mixian",
+    "name": "滇味园·传统过桥米线（宁波路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 48,
+    "coords": [
+      31.2358,
+      121.4805
+    ],
+    "cuisine": "云南菜",
+    "address": "黄浦区宁波路（近福建中路）",
+    "price": "¥ 负担得起的",
+    "desc": "二〇〇六年开店的老店，坚持不加改良还原云南过桥米线，米线筷子挑起不断、入口即断，汤底用筒骨、老母鸡、火腿骨加整只板鸭熬足三小时。",
+    "mnemonic": "2/10号线南京东路站步行约6分钟，宁波路近福建中路",
+    "icon": "🍜",
+    "note": "2026 新上榜 · 坐标为近似",
+    "isNew": true
+  },
+  {
+    "key": "bichi_linghun_huntun",
+    "name": "灵馄·本帮馄饨",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": null,
+    "coords": [
+      31.2335,
+      121.442
+    ],
+    "cuisine": "本帮馄饨",
+    "address": "静安区常德路（同乐坊一带）",
+    "price": "¥ 负担得起的",
+    "desc": "本地小伙二〇二五年开的馄饨店，臭豆腐鲜肉馄饨把绍兴风味与上海口味揉在一起，年轻人排队打卡；汤底却守着葱花、紫菜、蛋皮、虾皮的老底子。",
+    "mnemonic": "7号线昌平路站步行约8分钟，常德路近余姚路",
+    "icon": "🥟",
+    "note": "2026 新上榜 · 榜单常客 · 坐标为近似",
+    "isNew": true
+  },
+  {
+    "key": "bichi_chilong_niuca",
+    "name": "方友赤龙·牛杂（淡水路店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 0,
+    "avg": 48,
+    "coords": [
+      31.2205,
+      121.4688
+    ],
+    "cuisine": "牛杂小吃",
+    "address": "黄浦区淡水路（近淮海中路）",
+    "price": "¥ 负担得起的",
+    "desc": "淡水路上的牛杂小摊，牛杂与大肠处理得干净无腥，卤汁咸香带微甜，配萝卜与油豆腐吸饱汤汁；小小一碗却是周边居民从小吃到大的味道。",
+    "mnemonic": "10/13号线新天地站步行约6分钟，淡水路沿线",
+    "icon": "🍢",
+    "note": "2025 上榜 · 坐标为近似",
+    "isNew": false
+  },
+  {
+    "key": "bichi_laozhengxing",
+    "name": "老正兴",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 1,
+    "avg": 149,
+    "coords": [
+      31.235045,
+      121.475617
+    ],
+    "cuisine": "本帮菜",
+    "address": "黄浦区福州路556号",
+    "price": "¥¥ 中档",
+    "desc": "一八六二年开业至今的本帮菜馆，是不少经典名菜的起始之处；糟溜黄鱼片鲜嫩如脂，芡汁把糟香与酸香拿捏得刚好，油爆虾与红烧肉也值得点。",
+    "mnemonic": "1/2/8号线人民广场站步行约8分钟，福州路近福建中路",
+    "icon": "🥢",
+    "note": "米其林一星 · 必吃榜老字号",
+    "isNew": false
+  },
+  {
+    "key": "bichi_chenglonghang_xiewangfu",
+    "name": "成隆行蟹王府（黄浦）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": 1,
+    "avg": 324,
+    "coords": [
+      31.239067,
+      121.48161
+    ],
+    "cuisine": "蟹宴",
+    "address": "黄浦区九江路216号",
+    "price": "¥¥¥ 优质的",
+    "desc": "以蟹宴闻名的中餐厅，六月黄、大闸蟹与蟹粉菜式贯穿四季，蟹粉豆腐与秃黄油拌饭鲜得扎实；拆蟹服务省事，是请客吃蟹的稳妥之选。",
+    "mnemonic": "2/10号线南京东路站步行约5分钟，九江路近河南中路",
+    "icon": "🦀",
+    "note": "米其林一星",
+    "isNew": false
+  },
+  {
+    "key": "bichi_lubolang",
+    "name": "绿波廊",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 163,
+    "coords": [
+      31.22843,
+      121.487434
+    ],
+    "cuisine": "本帮点心",
+    "address": "黄浦区城隍庙豫园老街115号",
+    "price": "¥¥ 中档",
+    "desc": "九曲桥旁依水而建的明代旧建筑，修缮后银色金属天花配绿色灯光如波浪起伏；各式地道上海点心与船点依然精致，是豫园里最有排面的老字号。",
+    "mnemonic": "10/14号线豫园站步行约6分钟，豫园老街内",
+    "icon": "🥟",
+    "note": "米其林必比登",
+    "isNew": false
+  },
+  {
+    "key": "bichi_nanxiang_mantoudian",
+    "name": "南翔馒头店",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 90,
+    "coords": [
+      31.228583,
+      121.487006
+    ],
+    "cuisine": "点心小笼",
+    "address": "黄浦区城隍庙豫园路85号",
+    "price": "¥ 负担得起的",
+    "desc": "过百年历史的老店，南翔小笼皮薄馅足、汤汁清鲜，蟹黄小笼与需用吸管享用的蟹黄灌汤包都是招牌；楼上堂食配茶，楼下窗口排队买最热闹。",
+    "mnemonic": "10/14号线豫园站步行约5分钟，豫园路近九曲桥",
+    "icon": "🥟",
+    "note": "米其林必比登",
+    "isNew": false
+  },
+  {
+    "key": "bichi_dahuchun",
+    "name": "大壶春（四川中路）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 27,
+    "coords": [
+      31.236734,
+      121.484831
+    ],
+    "cuisine": "生煎",
+    "address": "黄浦区四川中路136号",
+    "price": "¥ 负担得起的",
+    "desc": "上海生煎的老字号代表，褶子朝上、底板焦脆，肉馅紧实带汤汁，咬开先吸汤再蘸醋；配一碗咖喱牛肉汤或双档汤，是几十年不变的标准配置。",
+    "mnemonic": "2/10号线南京东路站步行约7分钟，四川中路近福州路",
+    "icon": "🥠",
+    "note": "米其林必比登",
+    "isNew": false
+  },
+  {
+    "key": "bichi_gongdelin",
+    "name": "功德林（南京西路）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 78,
+    "coords": [
+      31.238362,
+      121.489489
+    ],
+    "cuisine": "素食",
+    "address": "黄浦区南京西路445号",
+    "price": "¥¥ 中档",
+    "desc": "百年素食老字号，素鸡、素鸭与罗汉斋以豆制品仿荤形神兼备，素菜包与净素月饼同样出名；油而不腻、清鲜见长，逢年过节买点心的队伍很长。",
+    "mnemonic": "2/10号线南京东路站步行约6分钟，南京西路近西藏中路",
+    "icon": "🥬",
+    "note": "米其林必比登",
+    "isNew": false
+  },
+  {
+    "key": "bichi_yangzhoufandian",
+    "name": "扬州饭店（黄浦）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 128,
+    "coords": [
+      31.237972,
+      121.475334
+    ],
+    "cuisine": "淮扬菜",
+    "address": "黄浦区福建中路345号",
+    "price": "¥¥ 中档",
+    "desc": "老牌淮扬菜馆，狮子头松软入味、煮干丝刀工细密，蟹粉类菜式与清炖汤品都见功底；口味清爽不厚重，适合带长辈来吃一顿正经的老味道。",
+    "mnemonic": "1/2/8号线人民广场站步行约9分钟，福建中路近南京东路",
+    "icon": "🥢",
+    "note": "米其林必比登",
+    "isNew": false
+  },
+  {
+    "key": "bichi_rongxiaoguan",
+    "name": "荣小馆（安达仕店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 207,
+    "coords": [
+      31.223832,
+      121.471163
+    ],
+    "cuisine": "台州菜",
+    "address": "黄浦区太仓路128号",
+    "price": "¥¥ 中档",
+    "desc": "新天地一带的台州菜馆，主打东海小海鲜与家常做法，家烧黄鱼、沙蒜豆面与麦饼都做得地道；出品稳定、价格实在，连续八年稳坐必吃榜。",
+    "mnemonic": "10/13号线新天地站步行约5分钟，太仓路近马当路",
+    "icon": "🐟",
+    "note": "连续8年上榜 · 米其林必比登",
+    "isNew": false
+  },
+  {
+    "key": "bichi_linhu_sushi",
+    "name": "临湖素食（保利·时光里店）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 108,
+    "coords": [
+      31.183976,
+      121.451012
+    ],
+    "cuisine": "素食",
+    "address": "徐汇区瑞平路230号保利时光里L2",
+    "price": "¥¥ 中档",
+    "desc": "商场里的现代素食餐厅，菜单把菌菇、豆制品与当季蔬菜做出层次，素蟹粉与黑松露菌菇饭点单率高；环境素净，适合想吃得清爽的一餐。",
+    "mnemonic": "7号线龙华中路站步行约8分钟，保利时光里商场L2",
+    "icon": "🥬",
+    "note": "米其林必比登",
+    "isNew": false
+  },
+  {
+    "key": "bichi_lanxin",
+    "name": "兰心（进贤路）",
+    "bichi": true,
+    "saojie": false,
+    "michelin": -1,
+    "avg": 90,
+    "coords": [
+      31.223621,
+      121.455265
+    ],
+    "cuisine": "本帮菜",
+    "address": "黄浦区进贤路130号",
+    "price": "¥ 负担得起的",
+    "desc": "进贤路上的本帮小馆，红烧肉、油爆虾与酱鸭都是浓油赤酱的教科书味道，店面小、翻台快、拼桌常见；价廉物美，是几代上海人的弄堂食堂。",
+    "mnemonic": "1/10/12号线陕西南路站步行约5分钟，进贤路近茂名南路",
+    "icon": "🥢",
+    "note": "米其林必比登",
+    "isNew": false
+  }
+]

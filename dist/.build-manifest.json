@@ -1,0 +1,21 @@
+{
+  "generated_by": "build.py",
+  "note": "记录每个产物的 sha256，用于检测 dist/ 是否被手改。",
+  "pages": {
+    "shanghai_bars_livehouse_2026.html": {
+      "source": "src/pages/bars.html",
+      "sha256": "0608bc0db4863482e5ab56880e0105cf15ed10d9e71317fd6288912d01dfb766",
+      "bytes": 186099
+    },
+    "shanghai_bichi_saojie_2026.html": {
+      "source": "src/pages/bichi.html",
+      "sha256": "4974ef964f66b6bdc6485058bcf9f2fa5b7e9e014fb318478d5ae721b3744338",
+      "bytes": 191370
+    },
+    "shanghai_michelin_2026.html": {
+      "source": "src/pages/michelin.html",
+      "sha256": "2ef09f1a63f382babf17020f71dd16a84ddb10c8592740c32ad9f8b35ba2a12f",
+      "bytes": 202610
+    }
+  }
+}

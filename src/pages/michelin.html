@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上海米其林指南 2026 · 探店地图</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet 1.9.4 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=ZCOOL+XiaoWei&family=Noto+Serif+SC:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Serif SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #FAF5EB;
+            color: #2E2B27;
+        }
+        .handwritten-title { font-family: 'ZCOOL XiaoWei', serif; }
+        /* 拟真手绘纸张微阴影 */
+        .sketch-card {
+            background: #FCF9F2;
+            border: 2px solid #3E3933;
+            box-shadow: 4px 4px 0px #3E3933;
+            transition: all 0.2s ease;
+        }
+        .sketch-card:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0px #3E3933; }
+        /* 宣纸色调底图 */
+        .warm-paper-map .leaflet-tile-pane { filter: sepia(0.45) saturate(1.15) contrast(0.9) brightness(1.02); }
+        .leaflet-tooltip-pane { z-index: 650; }
+
+        /* ===== 地标图标 ===== */
+        .m-icon {
+            position: relative;
+            display: flex; align-items: center; justify-content: center;
+            background: #FFFDF9;
+            border: 2px solid #3E3933;
+            box-shadow: 2px 2px 0px #3E3933;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .m-icon:hover { transform: scale(1.16) rotate(-5deg); }
+        .m-icon.is-active { transform: scale(1.22); box-shadow: 0 0 0 3px #C88A4B, 3px 3px 0px #3E3933; }
+        .m-icon.m-dim { opacity: 0.18; filter: grayscale(0.8); }
+
+        .cat-michelin3 { border-color: #B8860B !important; }
+        .cat-michelin2 { border-color: #C88A4B !important; }
+        .cat-michelin1 { border-color: #D9A05B !important; }
+        .cat-bib       { border-color: #DC2626 !important; }
+
+        /* 星级角标 */
+        .m-badge {
+            position: absolute; top: -7px; right: -7px;
+            min-width: 16px; height: 16px; padding: 0 2px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; line-height: 1; font-weight: 700;
+            color: #FAF5EB; background: #B8860B;
+            border: 1.5px solid #3E3933; border-radius: 9999px;
+            box-shadow: 1px 1px 0px #3E3933;
+            pointer-events: none;
+        }
+        .badge-michelin3 { background: #B8860B; }
+        .badge-michelin2 { background: #C88A4B; }
+        .badge-michelin1 { background: #D9A05B; }
+        .badge-bib       { background: #DC2626; }
+
+        .m-tip {
+            font-size: 10px !important; font-weight: 700;
+            padding: 2px 6px !important;
+            background: #1F402B !important; color: #FAF5EB !important;
+            border: 1.5px solid #3E3933 !important;
+            box-shadow: 2px 2px 0px #3E3933 !important;
+            border-radius: 4px !important;
+        }
+        .m-tip::before { border-top-color: #3E3933 !important; }
+
+        /* ===== 主要道路 ===== */
+        .road-name {
+            display: inline-block;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            font-size: 9px;
+            font-weight: 700;
+            color: #6B6357;
+            background: rgba(250, 245, 235, 0.85);
+            border: 1px solid rgba(107, 99, 87, 0.4);
+            border-radius: 3px;
+            padding: 0 3px;
+            letter-spacing: 0.02em;
+            pointer-events: none;
+        }
+        .road-name-major { font-size: 10px; color: #4A443B; border-color: rgba(74, 68, 59, 0.55); }
+
+
+        /* ===== 区域锚点 / 地标参照 ===== */
+        .area-label {
+            display: inline-block;
+            transform: translate(-50%, -50%);
+            white-space: nowrap;
+            font-size: 10px;
+            font-weight: 700;
+            color: #1F402B;
+            padding: 0 3px;
+            border-radius: 2px;
+            background: rgba(250, 245, 235, 0.78);
+            pointer-events: none;
+        }
+        .area-label.origin { color: #4A443B; font-weight: 600; }
+        .poi-mark {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            line-height: 1.1;
+        }
+        .poi-dot {
+            width: 7px; height: 7px;
+            border: 1.5px solid rgba(255,255,255,0.85);
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.12);
+            flex-shrink: 0;
+        }
+        .poi-dot.park   { background: #7C9070; border-radius: 50%; }
+        .poi-dot.tower,
+        .poi-dot.venue,
+        .poi-dot.mall   { background: #8C8377; border-radius: 1px; }
+        .poi-dot.transit {
+            width: 0; height: 0; border: none; box-shadow: none;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 8px solid #7A8494;
+            background: transparent;
+        }
+        .poi-name {
+            margin-top: 2px;
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+            padding: 0 3px;
+            border-radius: 2px;
+            background: rgba(250, 245, 235, 0.78);
+        }
+        .poi-name.park    { color: #6B7A63; }
+        .poi-name.tower,
+        .poi-name.venue,
+        .poi-name.mall    { color: #6E6558; }
+        .poi-name.transit { color: #6B7580; }
+
+        /* ===== 筛选按钮 ===== */
+        .cat-btn { transition: all 0.15s ease; }
+        .cat-btn.active { background-color: #1F402B !important; color: #FAF5EB !important; border-color: #1F402B !important; }
+        .chip { transition: all 0.15s ease; }
+        .chip.active { background-color: #1F402B !important; color: #FAF5EB !important; border-color: #1F402B !important; }
+        /* 价位 chip：由浅到深的暖色渐层，选满 4 档时形成明显的色阶 */
+        .price-chip { background-color: var(--pc); border-color: var(--pcb); color: var(--pct); }
+        .chip.price-chip.active { background-color: var(--pca) !important; color: #FFFDF9 !important; border-color: var(--pca) !important; }
+        .price-chip[data-tier="1"] { --pc: #FDF8EE; --pcb: #EBD9B4; --pct: #8A6B2E; --pca: #A98A3C; }
+        .price-chip[data-tier="2"] { --pc: #FBEDD3; --pcb: #E2B76A; --pct: #8A6220; --pca: #B8862B; }
+        .price-chip[data-tier="3"] { --pc: #F7DEB0; --pcb: #D2963C; --pct: #7A4F14; --pca: #A96A12; }
+        .price-chip[data-tier="4"] { --pc: #F0C377; --pcb: #BB7C22; --pct: #6B3F0A; --pca: #8A5209; }
+        .price-chip[data-tier="all"] { --pc: #FFFFFF; --pcb: #D1D5DB; --pct: #374151; --pca: #1F402B; }
+
+        /* ===== 名录条目 ===== */
+        .rest-item { transition: all 0.15s ease; }
+        .rest-item:hover { background: #FAF5EB; border-color: #1F402B !important; }
+        .rest-item.active { background: #1F402B !important; border-color: #1F402B !important; }
+        .rest-item.active .ri-name { color: #FAF5EB !important; }
+        .rest-item.active .ri-sub { color: #D9C7A8 !important; }
+        .rest-item.active .ri-star { color: #E5C07B !important; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .thin-scroll::-webkit-scrollbar { width: 7px; }
+        .thin-scroll::-webkit-scrollbar-thumb { background: #C88A4B; border-radius: 4px; }
+        .thin-scroll::-webkit-scrollbar-track { background: #EFE7D8; }
+
+        /* ===== 定位（我的位置） ===== */
+        .user-dot {
+            position: relative;
+            width: 18px; height: 18px; border-radius: 50%;
+            background: #2563EB; border: 2.5px solid #FFFDF9;
+            box-shadow: 0 0 0 2px #3E3933, 2px 2px 0 rgba(62, 57, 51, 0.3);
+        }
+        .user-dot::after {
+            content: ''; position: absolute; inset: -7px; border-radius: 50%;
+            background: rgba(37, 99, 235, 0.30);
+            animation: userPulse 2s ease-out infinite;
+            pointer-events: none;
+        }
+        @keyframes userPulse {
+            0%   { transform: scale(0.55); opacity: 0.85; }
+            100% { transform: scale(1.9);  opacity: 0; }
+        }
+        .user-tip {
+            font-size: 10px !important; font-weight: 700;
+            padding: 1px 5px !important;
+            background: #2563EB !important; color: #FFFFFF !important;
+            border: 1.5px solid #3E3933 !important;
+            box-shadow: 2px 2px 0px #3E3933 !important;
+            border-radius: 4px !important;
+        }
+        .user-tip::before { border-top-color: #3E3933 !important; }
+        .leaflet-bar a.locate-on { background: #DBEAFE !important; box-shadow: inset 0 0 0 2px #2563EB; }
+        .sort-btn { transition: all 0.15s ease; }
+        .sort-btn.active { background-color: #2563EB !important; color: #FAF5EB !important; border-color: #2563EB !important; }
+        .dist-tag { color: #2563EB; font-weight: 700; }
+        .rest-item.active .dist-tag { color: #93C5FD !important; }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+<header class="w-full bg-[#1F402B] text-[#FAF5EB] py-6 px-4 shadow-md relative overflow-hidden border-b-4 border-[#3E3933]">
+    <div class="absolute right-6 top-2 opacity-10 pointer-events-none">
+        <svg width="130" height="130" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C11.5 4 9 7.5 6 9.5C3 11.5 2 13.5 2 15.5C2 18.5 4.5 21 7.5 21C10.5 21 12 18 12 18C12 18 13.5 21 16.5 21C19.5 21 22 18.5 22 15.5C22 13.5 21 11.5 18 9.5C15 7.5 12.5 4 12 2Z"/>
+        </svg>
+    </div>
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 flex-wrap">
+                <span class="bg-[#D9A05B] text-[#1F402B] text-[10px] font-bold px-2 py-0.5 rounded-sm transform -rotate-1">2026 沪苏浙米其林指南 · 上海</span>
+                <h1 class="text-3xl md:text-4xl font-bold handwritten-title tracking-wider">
+                    🍽️ 上海米其林探店地图 <span class="text-lg md:text-xl font-sans font-light opacity-80">(WGS-84 真实坐标版)</span>
+                </h1>
+            </div>
+            <p class="text-xs md:text-sm opacity-90 mt-2 font-light leading-relaxed max-w-4xl">
+                2026-04-09 于台州发布，上海共 <b>156 家</b>上榜。本图收录全部星级餐厅 <b>51 家</b>（三星 1 · 二星 12 · 一星 38）+ 必比登推介 <b>35 家</b>，共 <b class="text-[#D9A05B]">86 家</b>。点击图标可看菜系、门牌地址、人均档位与简介。
+            </p>
+        </div>
+        <div class="flex gap-2 shrink-0 flex-wrap">
+            <span class="bg-[#FAF5EB] text-[#1F402B] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">⭐ 三星 1</span>
+            <span class="bg-[#C88A4B] text-[#FAF5EB] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">⭐⭐ 二星 12</span>
+            <span class="bg-[#D9A05B] text-[#1F402B] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">⭐ 一星 38</span>
+            <span class="bg-[#DC2626] text-[#FAF5EB] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">🥢 必比登 35</span>
+        </div>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 mt-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- 左栏：地图 + 图例 -->
+    <section class="lg:col-span-7 flex flex-col gap-4">
+        <div class="sketch-card p-2 rounded-2xl relative bg-[#FAF5EB]">
+            <div class="absolute top-4 left-4 flex flex-col items-start gap-1 z-[1000] select-none pointer-events-none">
+                <div class="bg-[#1F402B] text-[#FAF5EB] px-2.5 py-1 rounded text-[11px] font-bold shadow-md">
+                    🗺️ 米其林餐厅分布（上北 ⬆️）
+                </div>
+                <div id="map-hint" class="text-[9px] text-gray-700 bg-white/95 px-2 py-0.5 rounded border border-gray-300 shadow-sm font-semibold">
+                    显示 86 家 · 点击图标查看详情
+                </div>
+            </div>
+            <div id="leaflet-map" class="w-full h-[600px] rounded-xl warm-paper-map z-10 border border-[#3E3933]"></div>
+        </div>
+
+        <!-- 图例 -->
+        <div class="sketch-card p-4 rounded-xl">
+            <h4 class="font-bold text-sm text-[#1F402B] mb-2">🎨 图例 & 统计</h4>
+            <div class="flex flex-wrap gap-x-5 gap-y-2 text-xs text-gray-700">
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#B8860B;background:#FFFDF9"></span>米其林三星</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#C88A4B;background:#FFFDF9"></span>米其林二星</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#D9A05B;background:#FFFDF9"></span>米其林一星</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#DC2626;background:#FFFDF9"></span>必比登推介</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#B8860B;background:#FFFDF9"></span>图标右上角为主题星级</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-6 h-[3px] rounded" style="background:#6E6558"></span>核心干道 52 条（放大即标路名）</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-6 h-[2px] rounded" style="background:#8C8377"></span>主要干道 66 条</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-6 h-[1.5px] rounded" style="background:#A79E92"></span>较长道路 109 条</span>
+                <span class="flex items-center gap-1.5">🛣️ 地图右上角按钮可开关道路</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-2 h-2 rounded-full" style="background:#7C9070"></span>公园绿地</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-2 h-2" style="background:#8C8377"></span>标志建筑 / 商圈</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block" style="width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent;border-bottom:7px solid #7A8494"></span>交通枢纽</span>
+                <span class="flex items-center gap-1.5"><span class="text-[10px] font-bold text-[#1F402B] bg-[#FAF5EB] border border-[#1F402B]/40 px-1 rounded">区</span>区域锚点标签</span>
+                <span class="flex items-center gap-1.5">📍 地图右上角按钮可开关地标参照</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#2563EB;background:#DBEAFE"></span>我的位置（地图右上角 🧭 定位 · ✕ 清除）</span>
+                <span class="flex items-center gap-1.5">📏 名录内点 <b>近→远</b> 可按距你远近排序</span>
+            </div>
+            <div id="stat-line" class="text-[11px] text-gray-500 mt-3 leading-relaxed"></div>
+        </div>
+    </section>
+
+    <!-- 右栏：详情 + 筛选 + 名录 -->
+    <section class="lg:col-span-5 flex flex-col gap-4">
+
+        <!-- 详情卡 -->
+        <div id="detail-card" class="sketch-card p-5 rounded-2xl bg-white border-2 border-[#1F402B] min-h-[190px] relative">
+            <div class="absolute top-2 right-2 text-4xl opacity-15" id="detail-icon">🍽️</div>
+            <div>
+                <span id="detail-type" class="text-[9px] font-bold tracking-widest uppercase bg-[#1F402B] text-[#FAF5EB] px-2 py-0.5 rounded">
+                    请在地图或右侧名录点选餐厅
+                </span>
+                <h3 id="detail-title" class="text-2xl font-bold mt-2 text-[#2E2B27] handwritten-title">
+                    上海米其林 2026
+                </h3>
+                <div id="detail-meta" class="mt-2"></div>
+                <p id="detail-desc" class="text-xs text-gray-600 mt-2 leading-relaxed">
+                    收录 2026 沪苏浙《米其林指南》上海榜单全部 <b>51 家星级餐厅</b>与 <b>35 家必比登推介</b>。坐标来自米其林官方数据（WGS-84）。
+                </p>
+                <div id="detail-addr-box" class="hidden mt-3 p-2.5 bg-emerald-50 rounded-lg border border-emerald-200">
+                    <span class="text-xs font-bold text-emerald-900 block">📍 门店地址:</span>
+                    <p id="detail-addr" class="text-xs text-emerald-950 font-medium mt-1 leading-relaxed"></p>
+                </div>
+                <div id="detail-tip-box" class="hidden mt-3 p-2.5 bg-amber-50 rounded-lg border border-amber-200">
+                    <span class="text-xs font-bold text-amber-900 block">🧠 认路落脚点:</span>
+                    <p id="detail-tip" class="text-xs text-amber-950 font-medium mt-1 leading-relaxed"></p>
+                </div>
+                <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
+                   class="hidden mt-3 w-full items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2 border-[#1F402B] bg-[#1F402B] text-[#FAF5EB] hover:bg-[#2C5A3C]">🧭 在高德地图打开</a>
+            </div>
+        </div>
+
+        <!-- 筛选 + 名录 -->
+        <div class="sketch-card rounded-2xl overflow-hidden bg-white">
+            <div class="p-3 bg-gray-50 border-b border-gray-200 flex flex-col gap-2.5">
+
+                <!-- 星级筛选 -->
+                <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" data-cat="all" class="cat-btn active px-2 py-1 text-[10px] font-semibold rounded border border-gray-300 bg-white text-gray-700">全部 86</button>
+                    <button type="button" data-cat="michelin3" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border border-yellow-600 bg-yellow-50 text-yellow-900">⭐⭐⭐ 三星 1</button>
+                    <button type="button" data-cat="michelin2" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border border-amber-400 bg-amber-50 text-amber-900">⭐⭐ 二星 12</button>
+                    <button type="button" data-cat="michelin1" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border border-yellow-400 bg-yellow-50 text-yellow-900">⭐ 一星 38</button>
+                    <button type="button" data-cat="bib" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border border-red-300 bg-red-50 text-red-900">🥢 必比登 35</button>
+                    <button type="button" id="sort-dist" class="sort-btn ml-auto px-2 py-1 text-[10px] font-semibold rounded border border-blue-300 bg-blue-50 text-blue-800" title="按距我的位置远近排序（首次点击会请求定位授权）">📏 近→远</button>
+                </div>
+
+                <!-- 搜索 -->
+                <input type="text" id="search-input" placeholder="🔍 输入店名 / 菜系 / 地址（如：粤菜、外滩、泰安门）..."
+                       class="w-full text-xs px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1F402B]">
+
+                <!-- 菜系 -->
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-gray-600">菜系筛选:</span>
+                        <button id="clear-cuisine" class="text-[10px] underline text-gray-500 hover:text-gray-800 hidden">清除</button>
+                    </div>
+                    <div id="cuisine-chips" class="flex flex-wrap gap-1 mt-1 max-h-[84px] overflow-y-auto thin-scroll"></div>
+                </div>
+
+                <!-- 行政区 + 只看新 -->
+                <div>
+                    <span class="text-[10px] font-bold text-gray-600">行政区:</span>
+                    <div id="district-chips" class="flex flex-wrap gap-1 mt-1"></div>
+                </div>
+
+                <!-- 价位（可多选） -->
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-[10px] font-bold text-gray-600">价位 <span class="font-normal text-gray-400">(可多选)</span>:</span>
+                        <button id="clear-price" class="text-[10px] underline text-gray-500 hover:text-gray-800 hidden">清除</button>
+                    </div>
+                    <div id="price-chips" class="flex flex-wrap gap-1 mt-1"></div>
+                </div>
+                <div class="flex items-center justify-between pt-1 border-t border-gray-100">
+                    <label class="flex items-center gap-1.5 text-[11px] text-gray-700 cursor-pointer">
+                        <input type="checkbox" id="only-new" class="accent-[#1F402B]">
+                        ✨ 只看 2026 新上榜/新晋星（14 家）
+                    </label>
+                    <button id="reset-btn" class="text-[10px] bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded text-gray-700 font-medium">重置筛选</button>
+                </div>
+            </div>
+
+            <div id="rest-list" class="max-h-[520px] overflow-y-auto thin-scroll p-2 flex flex-col gap-1.5 bg-white"></div>
+            <div id="empty-tip" class="hidden text-center text-xs text-gray-400 py-8">没有符合条件的餐厅，试试放宽筛选 🙂</div>
+        </div>
+
+        <p class="text-[10px] text-gray-400 leading-relaxed px-1">
+            数据来源：米其林指南官方 2026 沪苏浙榜单（michelin.com / guide.michelin.com）。星级、菜系、地址取自官方；坐标为官方 WGS-84 点位（已修正 1 处官方坐标错误）。人均为官方价位档（¥ / ¥¥ / ¥¥¥ / ¥¥¥¥）换算参考，非实际账单。<br>
+            🛣️ 道路骨架抽取自同站《上海中心城区认路宝典》，共 227 条（核心干道 52 + 主要干道 66 + 较长道路 109）；路名在放大到 13 级后显示。骨架仅覆盖市中心六区；浦东、闵行偏远片区（虹桥商务区 / 七宝 / 前滩 / 三林等）以区域锚点与地标参照补方位。<br>
+            🧭 定位由浏览器 Geolocation 提供（需 HTTPS 并授权），坐标仅在你的设备本地用于计算距离与排序，<b>不会上传或存储</b>；名录中的「📍距离」为直线距离，非步行路径。
+        </p>
+    </section>
+</main>
+
+<footer class="max-w-7xl mx-auto px-4 mt-10 text-center text-[11px] text-gray-500 border-t border-gray-200 pt-4">
+    🍃 数据整理自 2026 沪苏浙《米其林指南》上海榜单 · 仅供认路与探店参考 🍃
+</footer>
+
+<script>
+    /* ================= 数据（由 shanghai_wutong_streets.html 抽取） ================= */
+    /* @@BUILD:json data/venues/michelin.json -> RESTAURANTS@@ */
+    const RESTAURANTS = [ /* 构建生成：勿手改，改数据请改 data/venues/michelin.json */ ];
+    /* @@BUILD:end@@ */
+
+    /* ================= 主要道路骨架（抽取自 shanghai_wutong_streets.html 的 STREETS） ================= */
+    /* @@BUILD:json data/map/roads.json -> MAIN_ROADS@@ */
+    const MAIN_ROADS = [ /* 构建生成：勿手改，改数据请改 data/map/roads.json */ ];
+    /* @@BUILD:end@@ */
+
+    /* ================= 区域锚点 + 地标参照（WGS-84，Nominatim/Overpass 核验；失败项已剔除） ================= */
+    /* @@BUILD:json data/map/areas/greater.json -> AREAS@@ */
+    const AREAS = [ /* 构建生成：勿手改，改数据请改 data/map/areas/greater.json */ ];
+    /* @@BUILD:end@@ */
+    /* @@BUILD:json data/map/landmarks/greater.json -> LANDMARKS@@ */
+    const LANDMARKS = [ /* 构建生成：勿手改，改数据请改 data/map/landmarks/greater.json */ ];
+    /* @@BUILD:end@@ */
+
+    const CAT_META = {
+        michelin3: { label: '米其林三星', badge: '★★★', color: '#B8860B', bg: 'bg-yellow-100',  text: 'text-yellow-900', border: 'border-yellow-600' },
+        michelin2: { label: '米其林二星', badge: '★★',  color: '#C88A4B', bg: 'bg-amber-100',   text: 'text-amber-900',  border: 'border-amber-400' },
+        michelin1: { label: '米其林一星', badge: '★',   color: '#D9A05B', bg: 'bg-yellow-50',   text: 'text-yellow-900', border: 'border-yellow-400' },
+        bib:       { label: '必比登推介', badge: '必',  color: '#DC2626', bg: 'bg-red-50',      text: 'text-red-900',    border: 'border-red-300' }
+    };
+    const CAT_ORDER = ['michelin3', 'michelin2', 'michelin1', 'bib'];
+
+    /* ================= 状态 ================= */
+    let map;
+    let markerMap = {};        // key -> marker
+    let activeKey = null;
+    const state = { cat: 'all', cuisine: 'all', district: 'all', price: [], q: '', onlyNew: false, sortByDist: false };
+    let labelsPermanent = false;
+    let roadsGroup = null;     // 道路线
+    let roadLabelsA = null;    // 核心干道路名（z≥13）
+    let roadLabelsB = null;    // 主要干道路名（z≥15）
+    let roadsVisible = true;
+    let areasGroup = null;
+    let landmarksGroup = null;
+    let poiVisible = true;
+
+    /* ================= 工具 ================= */
+    function districtOf(r) {
+        const m = /^([\u4e00-\u9fa5]{2,3}区)/.exec(r.address || '');
+        return m ? m[1] : '其他';
+    }
+    function badgeText(r) { return r.bib ? '必' : (r.stars === 3 ? '★★★' : r.stars === 2 ? '★★' : '★'); }
+    const DISTRICTS = [...new Set(RESTAURANTS.map(districtOf))];
+    const CUISINES = [...new Set(RESTAURANTS.map(r => r.cuisine))].sort((a, b) => a.localeCompare(b, 'zh'));
+
+    /* 价位：从 "¥¥¥ 优质的" 这类展示字符串里派生档位，不改动原始数据 */
+    function priceTier(r) {
+        const m = /^(¥{1,4})/.exec(r.price || '');
+        return m ? m[1].length : null;      // 无 ¥ 前缀（如「待核实」）返回 null
+    }
+    const PRICE_TIERS = [
+        { tier: 1, sym: '¥',    label: '负担得起的' },
+        { tier: 2, sym: '¥¥',   label: '中档' },
+        { tier: 3, sym: '¥¥¥',  label: '优质的' },
+        { tier: 4, sym: '¥¥¥¥', label: '奢华' }
+    ];
+
+    /* ================= 地图 ================= */
+    window.onload = function () {
+        map = L.map('leaflet-map', {
+            center: [31.2304, 121.4737],
+            zoom: 12,
+            minZoom: 10,
+            maxZoom: 18,
+            zoomControl: true
+        });
+
+        // 引入 CartoDB 无标静音底图（与 shanghai_wutong_streets.html 保持一致）
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png?key=cb1_3h6n_1_0d49d482d013e94f5ae62bb2', {
+            attribution: '&copy; CartoDB No-Labels Map Projection',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        drawRoads();
+        drawAreas();
+        drawLandmarks();
+
+        RESTAURANTS.forEach(r => {
+            const meta = CAT_META[r.category];
+            const icon = L.divIcon({
+                html: `<div class="m-icon cat-${r.category}" data-key="${r.key}" style="width:32px;height:32px;font-size:15px;" title="${r.name}">${r.icon}<span class="m-badge badge-${r.category}">${badgeText(r)}</span></div>`,
+                className: '',
+                iconSize: [32, 32],
+                iconAnchor: [16, 16]
+            });
+            const mk = L.marker(r.coords, { icon: icon, zIndexOffset: 600 }).addTo(map);
+            mk.on('click', () => selectRestaurant(r.key, true));
+            markerMap[r.key] = mk;
+        });
+
+        bindLabels();
+        initLocate();
+
+        const bounds = L.latLngBounds(RESTAURANTS.map(r => r.coords));
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+
+        buildChips();
+        renderStat();
+        renderList();
+        updateMarkers();
+    };
+
+    /* ================= 主要道路绘制（三级） ================= */
+    const ROAD_STYLE = {
+        1: { color: '#6E6558', weight: 3.4, opacity: 0.85 },  // 核心干道
+        2: { color: '#8C8377', weight: 2.2, opacity: 0.62 },  // 主要干道
+        3: { color: '#A79E92', weight: 1.3, opacity: 0.40 }   // 较长道路
+    };
+
+    function drawRoads() {
+        map.createPane('roadsPane');
+        map.getPane('roadsPane').style.zIndex = 350;
+        map.createPane('roadLabelsPaneA');
+        map.getPane('roadLabelsPaneA').style.zIndex = 355;
+        map.getPane('roadLabelsPaneA').style.pointerEvents = 'none';
+        map.createPane('roadLabelsPaneB');
+        map.getPane('roadLabelsPaneB').style.zIndex = 354;
+        map.getPane('roadLabelsPaneB').style.pointerEvents = 'none';
+
+        roadsGroup = L.layerGroup();
+        roadLabelsA = L.layerGroup();
+        roadLabelsB = L.layerGroup();
+
+        MAIN_ROADS.forEach(r => {
+            const st = ROAD_STYLE[r.tier] || ROAD_STYLE[3];
+            L.polyline(r.path, {
+                pane: 'roadsPane',
+                color: st.color,
+                weight: st.weight,
+                opacity: st.opacity,
+                lineCap: 'round',
+                lineJoin: 'round',
+                interactive: false
+            }).addTo(roadsGroup);
+
+            // 一级路名常驻（放大后），二级路名需更高缩放级别
+            if (r.tier === 1 || r.tier === 2) {
+                const mid = r.path[Math.floor(r.path.length / 2)];
+                const mk = L.marker(mid, {
+                    pane: r.tier === 1 ? 'roadLabelsPaneA' : 'roadLabelsPaneB',
+                    interactive: false,
+                    keyboard: false,
+                    icon: L.divIcon({
+                        className: '',
+                        html: `<span class="road-name${r.tier === 1 ? ' road-name-major' : ''}">${r.name}</span>`,
+                        iconSize: [0, 0],
+                        iconAnchor: [0, 0]
+                    })
+                });
+                (r.tier === 1 ? roadLabelsA : roadLabelsB).addLayer(mk);
+            }
+        });
+
+        roadsGroup.addTo(map);
+        roadLabelsA.addTo(map);
+        roadLabelsB.addTo(map);
+        updateRoadLabelVisibility();
+        map.on('zoomend', updateRoadLabelVisibility);
+
+        // 右上角开关
+        const RoadsToggle = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function () {
+                const wrap = L.DomUtil.create('div', 'leaflet-bar');
+                const btn = L.DomUtil.create('a', '', wrap);
+                btn.href = '#';
+                btn.title = '显示 / 隐藏道路骨架';
+                btn.innerHTML = '🛣️';
+                btn.style.cssText = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:15px;text-decoration:none;background:#FCF9F2;';
+                L.DomEvent.on(btn, 'click', function (e) {
+                    L.DomEvent.stop(e);
+                    roadsVisible = !roadsVisible;
+                    [roadsGroup, roadLabelsA, roadLabelsB].forEach(function (g) {
+                        if (roadsVisible) { g.addTo(map); } else { map.removeLayer(g); }
+                    });
+                    btn.style.background = roadsVisible ? '#FCF9F2' : '#D9D2C6';
+                    updateRoadLabelVisibility();
+                });
+                return wrap;
+            }
+        });
+        map.addControl(new RoadsToggle());
+    }
+
+    function updateRoadLabelVisibility() {
+        const pa = map.getPane('roadLabelsPaneA');
+        const pb = map.getPane('roadLabelsPaneB');
+        const z = map.getZoom();
+        if (pa) pa.style.display = (roadsVisible && z >= 13) ? '' : 'none';
+        if (pb) pb.style.display = (roadsVisible && z >= 15) ? '' : 'none';
+    }
+
+
+    /* ================= 区域锚点 / 地标参照 ================= */
+    function drawAreas() {
+        map.createPane('areaLabelsPane');
+        map.getPane('areaLabelsPane').style.zIndex = 370;
+        map.getPane('areaLabelsPane').style.pointerEvents = 'none';
+
+        areasGroup = L.layerGroup();
+        AREAS.forEach(a => {
+            const cls = a.kind === 'origin' ? 'area-label origin' : 'area-label';
+            L.marker(a.coords, {
+                pane: 'areaLabelsPane',
+                interactive: false,
+                keyboard: false,
+                icon: L.divIcon({
+                    className: '',
+                    html: `<span class="${cls}">${a.name}</span>`,
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0]
+                })
+            }).addTo(areasGroup);
+        });
+        areasGroup.addTo(map);
+    }
+
+    function drawLandmarks() {
+        map.createPane('landmarksPane');
+        map.getPane('landmarksPane').style.zIndex = 365;
+        map.getPane('landmarksPane').style.pointerEvents = 'none';
+
+        landmarksGroup = L.layerGroup();
+        LANDMARKS.forEach(p => {
+            const k = p.kind;
+            L.marker(p.coords, {
+                pane: 'landmarksPane',
+                interactive: false,
+                keyboard: false,
+                icon: L.divIcon({
+                    className: '',
+                    html: `<div class="poi-mark"><span class="poi-dot ${k}"></span><span class="poi-name ${k}">${p.name}</span></div>`,
+                    iconSize: [0, 0],
+                    iconAnchor: [0, 0]
+                })
+            }).addTo(landmarksGroup);
+        });
+        landmarksGroup.addTo(map);
+        updatePoiVisibility();
+        map.on('zoomend', updatePoiVisibility);
+
+        const PoiToggle = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function () {
+                const wrap = L.DomUtil.create('div', 'leaflet-bar');
+                const btn = L.DomUtil.create('a', '', wrap);
+                btn.href = '#';
+                btn.title = '显示 / 隐藏地标参照';
+                btn.innerHTML = '📍';
+                btn.style.cssText = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:15px;text-decoration:none;background:#FCF9F2;';
+                L.DomEvent.on(btn, 'click', function (e) {
+                    L.DomEvent.stop(e);
+                    poiVisible = !poiVisible;
+                    [areasGroup, landmarksGroup].forEach(function (g) {
+                        if (!g) return;
+                        if (poiVisible) { g.addTo(map); } else { map.removeLayer(g); }
+                    });
+                    btn.style.background = poiVisible ? '#FCF9F2' : '#D9D2C6';
+                    updatePoiVisibility();
+                });
+                return wrap;
+            }
+        });
+        map.addControl(new PoiToggle());
+    }
+
+    function updatePoiVisibility() {
+        const pa = map.getPane('areaLabelsPane');
+        const pl = map.getPane('landmarksPane');
+        const z = map.getZoom();
+        if (pa) pa.style.display = (poiVisible && z >= 10) ? '' : 'none';
+        if (pl) pl.style.display = (poiVisible && z >= 12) ? '' : 'none';
+    }
+
+    function bindLabels() {
+        RESTAURANTS.forEach(r => {
+            const mk = markerMap[r.key];
+            if (mk.getTooltip && mk.getTooltip()) mk.unbindTooltip();
+            mk.bindTooltip(r.name, {
+                permanent: labelsPermanent,
+                direction: 'top',
+                offset: [0, -12],
+                className: 'm-tip'
+            });
+        });
+    }
+
+    /* ================= 动态生成筛选 chip ================= */
+    function buildChips() {
+        const cWrap = document.getElementById('cuisine-chips');
+        cWrap.innerHTML = '';
+        const allBtn = document.createElement('button');
+        allBtn.type = 'button';
+        allBtn.dataset.cuisine = 'all';
+        allBtn.className = 'chip active px-2 py-0.5 text-[10px] rounded border border-gray-300 bg-white text-gray-700';
+        allBtn.textContent = '不限';
+        cWrap.appendChild(allBtn);
+        CUISINES.forEach(c => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.dataset.cuisine = c;
+            b.className = 'chip px-2 py-0.5 text-[10px] rounded border border-gray-300 bg-white text-gray-700';
+            b.textContent = c;
+            cWrap.appendChild(b);
+        });
+
+        const dWrap = document.getElementById('district-chips');
+        dWrap.innerHTML = '';
+        const dAll = document.createElement('button');
+        dAll.type = 'button';
+        dAll.dataset.district = 'all';
+        dAll.className = 'chip active px-2 py-0.5 text-[10px] rounded border border-gray-300 bg-white text-gray-700';
+        dAll.textContent = '全部';
+        dWrap.appendChild(dAll);
+        DISTRICTS.forEach(d => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.dataset.district = d;
+            b.className = 'chip px-2 py-0.5 text-[10px] rounded border border-gray-300 bg-white text-gray-700';
+            b.textContent = d;
+            dWrap.appendChild(b);
+        });
+
+        // 价位（多选）
+        const pWrap = document.getElementById('price-chips');
+        pWrap.innerHTML = '';
+        const pAll = document.createElement('button');
+        pAll.type = 'button';
+        pAll.dataset.tier = 'all';
+        pAll.className = 'chip price-chip px-2 py-0.5 text-[10px] rounded border active';
+        pAll.textContent = '不限';
+        pWrap.appendChild(pAll);
+        PRICE_TIERS.forEach(t => {
+            const n = RESTAURANTS.filter(r => priceTier(r) === t.tier).length;
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.dataset.tier = String(t.tier);
+            b.className = 'chip price-chip px-2 py-0.5 text-[10px] rounded border';
+            b.innerHTML = `<b class="font-bold">${t.sym}</b> ${t.label} <span class="opacity-60">${n}</span>`;
+            pWrap.appendChild(b);
+        });
+    }
+
+    /* 价位 chip 选中态同步（多选） */
+    function syncPriceChips() {
+        const none = state.price.length === 0;
+        document.querySelectorAll('#price-chips .chip').forEach(b => {
+            const t = b.dataset.tier;
+            b.classList.toggle('active', t === 'all' ? none : state.price.includes(Number(t)));
+        });
+        const clr = document.getElementById('clear-price');
+        if (clr) clr.classList.toggle('hidden', none);
+    }
+
+    document.addEventListener('click', function (e) {
+        if (e.target.closest('#sort-dist')) { toggleSortDist(); return; }
+        const catBtn = e.target.closest('.cat-btn');
+        if (catBtn) {
+            state.cat = catBtn.dataset.cat;
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b === catBtn));
+            renderList(); updateMarkers(); return;
+        }
+        const cChip = e.target.closest('#cuisine-chips .chip');
+        if (cChip) {
+            state.cuisine = cChip.dataset.cuisine;
+            document.querySelectorAll('#cuisine-chips .chip').forEach(b => b.classList.toggle('active', b === cChip));
+            document.getElementById('clear-cuisine').classList.toggle('hidden', state.cuisine === 'all');
+            renderList(); updateMarkers(); return;
+        }
+        const dChip = e.target.closest('#district-chips .chip');
+        if (dChip) {
+            state.district = dChip.dataset.district;
+            document.querySelectorAll('#district-chips .chip').forEach(b => b.classList.toggle('active', b === dChip));
+            renderList(); updateMarkers(); return;
+        }
+        const pChip = e.target.closest('#price-chips .chip');
+        if (pChip) {
+            if (pChip.dataset.tier === 'all') {
+                state.price = [];
+            } else {
+                const t = Number(pChip.dataset.tier);
+                const i = state.price.indexOf(t);
+                if (i >= 0) state.price.splice(i, 1); else state.price.push(t);
+            }
+            syncPriceChips();
+            renderList(); updateMarkers(); return;
+        }
+        if (e.target.id === 'clear-price') {
+            state.price = [];
+            syncPriceChips();
+            renderList(); updateMarkers(); return;
+        }
+        const item = e.target.closest('.rest-item');
+        if (item) { selectRestaurant(item.dataset.key, false); return; }
+        if (e.target.id === 'clear-cuisine') {
+            state.cuisine = 'all';
+            document.querySelectorAll('#cuisine-chips .chip').forEach(b => b.classList.toggle('active', b.dataset.cuisine === 'all'));
+            e.target.classList.add('hidden');
+            renderList(); updateMarkers(); return;
+        }
+        if (e.target.id === 'reset-btn') { resetFilters(); return; }
+    });
+
+    document.getElementById('search-input').addEventListener('input', function (e) {
+        state.q = e.target.value.trim().toLowerCase();
+        renderList(); updateMarkers();
+    });
+    document.getElementById('only-new').addEventListener('change', function (e) {
+        state.onlyNew = e.target.checked;
+        renderList(); updateMarkers();
+    });
+
+    function resetFilters() {
+        state.cat = 'all'; state.cuisine = 'all'; state.district = 'all'; state.price = []; state.q = ''; state.onlyNew = false;
+        document.getElementById('search-input').value = '';
+        document.getElementById('only-new').checked = false;
+        document.getElementById('clear-cuisine').classList.add('hidden');
+        document.querySelectorAll('.cat-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === 'all'));
+        document.querySelectorAll('#cuisine-chips .chip').forEach(b => b.classList.toggle('active', b.dataset.cuisine === 'all'));
+        document.querySelectorAll('#district-chips .chip').forEach(b => b.classList.toggle('active', b.dataset.district === 'all'));
+        syncPriceChips();
+        syncSortBtn();
+        renderList(); updateMarkers();
+    }
+
+    /* ================= 过滤逻辑 ================= */
+    function match(r) {
+        if (state.cat !== 'all' && r.category !== state.cat) return false;
+        if (state.cuisine !== 'all' && r.cuisine !== state.cuisine) return false;
+        if (state.district !== 'all' && districtOf(r) !== state.district) return false;
+        if (state.price.length && !state.price.includes(priceTier(r))) return false;
+        if (state.onlyNew && !r.isNew) return false;
+        if (state.q) {
+            const hay = (r.name + ' ' + r.cuisine + ' ' + r.address + ' ' + r.desc).toLowerCase();
+            if (!hay.includes(state.q)) return false;
+        }
+        return true;
+    }
+
+    function updateMarkers() {
+        let shown = 0;
+        RESTAURANTS.forEach(r => {
+            const ok = match(r);
+            const mk = markerMap[r.key];
+            const el = mk.getElement();
+            if (el) {
+                el.style.display = ok ? '' : 'none';
+                const inner = el.querySelector('.m-icon');
+                if (inner) inner.classList.toggle('m-dim', false);
+            }
+            if (ok) shown++;
+        });
+        let extra = '';
+        if (userLatLng) {
+            const mine = RESTAURANTS.filter(match);
+            if (mine.length) {
+                let best = mine[0], bd = distOf(best);
+                mine.forEach(r => { const d = distOf(r); if (d != null && d < bd) { bd = d; best = r; } });
+                extra = bd == null ? ' · 📍 已定位' : ` · 📍 已定位 · 最近 ${best.name} ${fmtDist(bd)}`;
+            } else {
+                extra = ' · 📍 已定位';
+            }
+        }
+        document.getElementById('map-hint').textContent = `显示 ${shown} / ${RESTAURANTS.length} 家 · 点击图标查看详情${extra}`;
+    }
+
+    /* ================= 名录 ================= */
+    function renderList() {
+        const list = document.getElementById('rest-list');
+        list.innerHTML = '';
+        const rows = RESTAURANTS.filter(match);
+        if (!rows.length) {
+            document.getElementById('empty-tip').classList.remove('hidden');
+            return;
+        }
+        document.getElementById('empty-tip').classList.add('hidden');
+
+        CAT_ORDER.forEach(cat => {
+            const group = rows.filter(r => r.category === cat);
+            if (!group.length) return;
+            const head = document.createElement('div');
+            head.className = 'flex items-center gap-2 mt-2 mb-0.5 px-1';
+            head.innerHTML = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded text-white" style="background:${CAT_META[cat].color}">${CAT_META[cat].badge}</span>
+                <span class="text-[11px] font-bold text-[#1F402B]">${CAT_META[cat].label}</span>
+                <span class="text-[10px] text-gray-400">${group.length} 家</span>`;
+            list.appendChild(head);
+
+            group.sort(state.sortByDist && userLatLng
+                ? (a, b) => (distOf(a) ?? Infinity) - (distOf(b) ?? Infinity)
+                : (a, b) => a.name.localeCompare(b.name, 'zh'));
+            group.forEach(r => {
+                const meta = CAT_META[r.category];
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = `rest-item text-left w-full px-2.5 py-2 rounded-lg border border-gray-200 bg-white flex items-start gap-2 ${activeKey === r.key ? 'active' : ''}`;
+                btn.dataset.key = r.key;
+                const newTag = r.isNew ? `<span class="ml-1 text-[9px] font-bold text-[#DC2626] border border-red-300 bg-red-50 rounded px-1">新</span>` : '';
+                const dm = distOf(r);
+                const distTag = dm == null ? '' : ` · <span class="dist-tag">📍${fmtDist(dm)}</span>`;
+                btn.innerHTML = `
+                    <span class="ri-star text-sm leading-5 shrink-0" style="color:${meta.color}">${meta.badge}</span>
+                    <span class="min-w-0 flex-1">
+                        <span class="ri-name block text-xs font-bold text-gray-800 truncate">${r.name}${newTag}</span>
+                        <span class="ri-sub block text-[9px] text-gray-500 truncate">${r.cuisine} · ${districtOf(r)} · ${r.price}${r.note ? ' · ' + r.note : ''}${distTag}</span>
+                    </span>`;
+                list.appendChild(btn);
+            });
+        });
+    }
+
+    /* ================= 详情 ================= */
+    function selectRestaurant(key, fromMap) {
+        const r = RESTAURANTS.find(x => x.key === key);
+        if (!r) return;
+        activeKey = key;
+        const meta = CAT_META[r.category];
+
+        document.getElementById('detail-type').textContent = `📍 ${meta.label}`;
+        document.getElementById('detail-title').textContent = r.name;
+        document.getElementById('detail-icon').textContent = r.icon;
+        document.getElementById('detail-desc').textContent = r.desc;
+
+        const metaEl = document.getElementById('detail-meta');
+        metaEl.innerHTML = '';
+        const chips = [r.cuisine, districtOf(r), r.price];
+        if (r.note) chips.push('🏅 ' + r.note);
+        const dm = distOf(r);
+        if (dm != null) chips.unshift(`📍 距你约 ${fmtDist(dm)}（${bearingOf(r)}）`);
+        chips.forEach(t => {
+            const s = document.createElement('span');
+            s.className = `inline-block text-[10px] font-semibold mr-1.5 mb-1.5 px-2 py-0.5 rounded border ${meta.bg} ${meta.text} ${meta.border}`;
+            s.textContent = t;
+            metaEl.appendChild(s);
+        });
+
+        const addrBox = document.getElementById('detail-addr-box');
+        const addrEl = document.getElementById('detail-addr');
+        if (r.address && r.address !== '待核实') { addrBox.classList.remove('hidden'); addrEl.textContent = r.address; }
+        else addrBox.classList.add('hidden');
+
+        const tipBox = document.getElementById('detail-tip-box');
+        const tipEl = document.getElementById('detail-tip');
+        if (r.mnemonic) { tipBox.classList.remove('hidden'); tipEl.textContent = r.mnemonic; }
+        else tipBox.classList.add('hidden');
+
+        // 图标高亮
+        Object.values(markerMap).forEach(mk => {
+            const el = mk.getElement();
+            if (!el) return;
+            const inner = el.querySelector('.m-icon');
+            if (inner) inner.classList.toggle('is-active', inner.dataset.key === key);
+        });
+
+        // 名录高亮（不自动滚动，避免打断当前浏览位置）
+        document.querySelectorAll('.rest-item').forEach(b => b.classList.toggle('active', b.dataset.key === key));
+
+        updateNavLink(r);
+        map.flyTo(r.coords, Math.max(map.getZoom(), 15), { duration: 0.7 });
+    }
+
+    /* ================= 定位（我的位置） ================= */
+    let userMarker = null;      // 我的位置标记
+    let userCircle = null;      // 定位精度圆
+    let userLatLng = null;      // [lat, lng]
+    let watchId = null;         // watchPosition 句柄
+    let geoBusy = false;        // 正在请求定位
+
+    const GEO_OPTS = { enableHighAccuracy: true, timeout: 12000, maximumAge: 20000 };
+
+    /* 球面距离（米） */
+    function geoDist(a, b) {
+        const R = 6371000, rad = d => d * Math.PI / 180;
+        const dLat = rad(b[0] - a[0]), dLng = rad(b[1] - a[1]);
+        const la1 = rad(a[0]), la2 = rad(b[0]);
+        const h = Math.sin(dLat / 2) ** 2 + Math.cos(la1) * Math.cos(la2) * Math.sin(dLng / 2) ** 2;
+        return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+    }
+    /* 我 → 门店的直线距离（未定位返回 null） */
+    function distOf(r) {
+        return (userLatLng && r && r.coords) ? geoDist(userLatLng, r.coords) : null;
+    }
+    function fmtDist(m) {
+        if (m == null) return '';
+        if (m < 1000) return `${Math.round(m / 10) * 10} m`;
+        return `${(m / 1000).toFixed(m < 10000 ? 1 : 0)} km`;
+    }
+    /* 我 → 门店的 8 向方位 */
+    function bearingOf(r) {
+        if (!userLatLng || !r || !r.coords) return '';
+        const rad = d => d * Math.PI / 180;
+        const y = Math.sin(rad(r.coords[1] - userLatLng[1])) * Math.cos(rad(r.coords[0]));
+        const x = Math.cos(rad(userLatLng[0])) * Math.sin(rad(r.coords[0])) -
+                  Math.sin(rad(userLatLng[0])) * Math.cos(rad(r.coords[0])) * Math.cos(rad(r.coords[1] - userLatLng[1]));
+        const deg = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+        return ['正北', '东北', '正东', '东南', '正南', '西南', '正西', '西北'][Math.round(deg / 45) % 8];
+    }
+
+    function setGeoBtn(on, busy) {
+        const btn = document.getElementById('locate-btn');
+        const clr = document.getElementById('locate-clear');
+        if (btn) {
+            btn.classList.toggle('locate-on', !!on);
+            btn.innerHTML = busy ? '⏳' : '🧭';
+            btn.title = on ? '重新居中到我的位置' : '定位到我的位置（需浏览器授权）';
+        }
+        if (clr) clr.style.display = on ? 'flex' : 'none';
+    }
+    function syncSortBtn() {
+        const b = document.getElementById('sort-dist');
+        if (!b) return;
+        b.classList.toggle('active', state.sortByDist);
+        b.textContent = (state.sortByDist ? '📏 近→远 ✓' : '📏 近→远');
+        b.title = state.sortByDist ? '已按距你远近排序，再点一次恢复按店名排序' : '按距我的位置远近排序（首次点击会请求定位授权）';
+    }
+    /* 定位/错误提示：借用地图上方的 hint 条，5 秒后恢复默认统计 */
+    function flashHint(msg, isErr) {
+        const el = document.getElementById('map-hint');
+        if (!el) return;
+        el.textContent = msg;
+        el.style.color = isErr ? '#B91C1C' : '#1F402B';
+        el.style.borderColor = isErr ? '#FCA5A5' : '#86EFAC';
+        el.style.background = '#FFFFFF';
+        clearTimeout(flashHint._t);
+        flashHint._t = setTimeout(() => {
+            el.style.color = ''; el.style.borderColor = ''; el.style.background = '';
+            updateMarkers();
+        }, 5000);
+    }
+
+    /* 把定位结果显示到地图上；recenter=true 时才移动地图 */
+    function applyUserPos(pos, recenter) {
+        const c = pos.coords;
+        const next = [c.latitude, c.longitude];
+        const moved = userLatLng ? geoDist(userLatLng, next) : Infinity;
+        userLatLng = next;
+
+        if (!userMarker) {
+            userMarker = L.marker(userLatLng, {
+                zIndexOffset: 2000,
+                keyboard: false,
+                icon: L.divIcon({ className: '', html: '<div class="user-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] })
+            }).addTo(map).bindTooltip('我的位置', { permanent: true, direction: 'top', offset: [0, -12], className: 'user-tip' });
+        } else {
+            userMarker.setLatLng(userLatLng);
+        }
+
+        const acc = Math.max(20, c.accuracy || 50);
+        if (!userCircle) {
+            userCircle = L.circle(userLatLng, {
+                radius: acc, color: '#2563EB', weight: 1.2, opacity: 0.55,
+                fillColor: '#3B82F6', fillOpacity: 0.13, interactive: false
+            }).addTo(map);
+        } else {
+            userCircle.setLatLng(userLatLng).setRadius(acc);
+        }
+
+        if (recenter) map.flyTo(userLatLng, Math.max(map.getZoom(), 15), { duration: 0.8 });
+        if (recenter || moved > 40) { renderList(); updateMarkers(); }
+        return acc;
+    }
+
+    function onGeoOk(pos) {
+        geoBusy = false;
+        setGeoBtn(true, false);
+        const acc = applyUserPos(pos, true);
+        syncSortBtn();
+        flashHint(`📍 已定位（精度约 ${fmtDist(acc)}）· 名录已显示距离`, false);
+    }
+    function onGeoErr(err) {
+        geoBusy = false;
+        setGeoBtn(!!userLatLng, false);
+        const code = err && err.code;
+        flashHint(code === 1 ? '🚫 定位被拒绝：请点地址栏的「位置」图标允许授权后重试'
+            : code === 3 ? '⏱️ 定位超时：请到窗边 / 室外，并确认系统定位服务已开启'
+            : '⚠️ 暂时拿不到位置：请检查系统定位服务或稍后重试', true);
+    }
+
+    /* 点击 🧭：首次请求授权定位，之后仅重新居中 */
+    function locateMe() {
+        if (!navigator.geolocation) { flashHint('❌ 当前浏览器不支持定位（Geolocation API）', true); return; }
+        if (userLatLng) { map.flyTo(userLatLng, Math.max(map.getZoom(), 15), { duration: 0.8 }); return; }
+        if (geoBusy) return;
+        geoBusy = true;
+        setGeoBtn(true, true);
+        navigator.geolocation.getCurrentPosition(onGeoOk, onGeoErr, GEO_OPTS);
+        if (watchId == null) {
+            // 持续跟踪：位置变化只刷新标记与距离，不打断正在浏览的地图
+            watchId = navigator.geolocation.watchPosition(
+                p => applyUserPos(p, false),
+                () => {},
+                GEO_OPTS
+            );
+        }
+    }
+
+    function clearLocation() {
+        if (watchId != null) { navigator.geolocation.clearWatch(watchId); watchId = null; }
+        if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
+        if (userCircle) { map.removeLayer(userCircle); userCircle = null; }
+        userLatLng = null;
+        geoBusy = false;
+        setGeoBtn(false, false);
+        const nav = document.getElementById('detail-nav');
+        if (nav) nav.style.display = 'none';
+        renderList(); updateMarkers();
+        syncSortBtn();
+        flashHint('已清除定位：距离与排序已恢复默认', false);
+    }
+
+    /* 详情卡里的高德打开 / 导航按钮 */
+    function updateNavLink(r) {
+        const nav = document.getElementById('detail-nav');
+        if (!nav) return;
+        if (!r || !r.coords) { nav.style.display = 'none'; return; }
+        const [lat, lng] = r.coords;
+        const name = encodeURIComponent(r.name);
+        nav.href = userLatLng
+            ? `https://uri.amap.com/navigation?from=${userLatLng[1]},${userLatLng[0]},我的位置&to=${lng},${lat},${name}&mode=walk&coordinate=wgs84&callnative=0`
+            : `https://uri.amap.com/marker?position=${lng},${lat}&name=${name}&coordinate=wgs84&callnative=0`;
+        nav.textContent = userLatLng ? '🧭 高德步行导航到店' : '🧭 在高德地图打开';
+        nav.style.display = 'flex';
+    }
+
+    function toggleSortDist() {
+        if (state.sortByDist) {
+            state.sortByDist = false;
+        } else {
+            state.sortByDist = true;
+            if (!userLatLng) locateMe();       // 未定位时顺手请求授权
+        }
+        syncSortBtn();
+        renderList();
+    }
+
+    /* 右上角定位控件（🧭 定位 / ✕ 清除） */
+    function initLocate() {
+        const LocateControl = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function () {
+                const wrap = L.DomUtil.create('div', 'leaflet-bar');
+                const css = 'display:flex;align-items:center;justify-content:center;width:30px;height:30px;text-decoration:none;background:#FCF9F2;';
+
+                const btn = L.DomUtil.create('a', '', wrap);
+                btn.id = 'locate-btn';
+                btn.href = '#';
+                btn.innerHTML = '🧭';
+                btn.title = '定位到我的位置（需浏览器授权）';
+                btn.style.cssText = css + 'font-size:15px;';
+                L.DomEvent.on(btn, 'click', function (e) { L.DomEvent.stop(e); locateMe(); });
+
+                const clr = L.DomUtil.create('a', '', wrap);
+                clr.id = 'locate-clear';
+                clr.href = '#';
+                clr.innerHTML = '✕';
+                clr.title = '清除定位与距离';
+                clr.style.cssText = css + 'display:none;font-size:13px;color:#7F1D1D;';
+                L.DomEvent.on(clr, 'click', function (e) { L.DomEvent.stop(e); clearLocation(); });
+                return wrap;
+            }
+        });
+        map.addControl(new LocateControl());
+        setGeoBtn(false, false);
+        syncSortBtn();
+    }
+
+    /* ================= 统计 ================= */
+    function renderStat() {
+        const byCat = {};
+        CAT_ORDER.forEach(c => byCat[c] = RESTAURANTS.filter(r => r.category === c).length);
+        const byDist = {};
+        RESTAURANTS.forEach(r => { const d = districtOf(r); byDist[d] = (byDist[d] || 0) + 1; });
+        const distStr = Object.entries(byDist).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · ');
+        const priceStr = PRICE_TIERS.map(t => `${t.sym} ${RESTAURANTS.filter(r => priceTier(r) === t.tier).length}`).join(' · ');
+        document.getElementById('stat-line').innerHTML =
+            `星级 <b>${byCat.michelin3 + byCat.michelin2 + byCat.michelin1}</b> 家（三星 ${byCat.michelin3} / 二星 ${byCat.michelin2} / 一星 ${byCat.michelin1}） + 必比登 <b>${byCat.bib}</b> 家，共 <b>${RESTAURANTS.length}</b> 家。<br>行政区分布：${distStr}。菜系 <b>${CUISINES.length}</b> 类。<br>价位分布（官方档位）：${priceStr}。`;
+    }
+</script>
+</body>
+</html>

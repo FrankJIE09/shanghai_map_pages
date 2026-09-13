@@ -1,0 +1,1283 @@
+[
+  {
+    "key": "beer_aunt",
+    "name": "啤酒阿姨（南苏州路店）",
+    "coords": [
+      31.242,
+      121.462
+    ],
+    "district": "黄浦区",
+    "addr": "南苏州路1247号（大悦城北侧）",
+    "type": "精酿",
+    "genre": "综合",
+    "avg": 98,
+    "close": "02:00",
+    "open_days": "周一–周日 11:00–02:00",
+    "live": false,
+    "capacity": null,
+    "booking": "免预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "8/12号线曲阜路站2号口步行约8分钟，南苏州路近大田路",
+    "vibe": "聊天社交",
+    "note": "“24 小时便利店式”自助选酒，瓶装种类多。人均 ¥98、11:00–02:00 据大众点评店铺页（2026-09-12 核实）；坐标为街道近似点。",
+    "uneasy": true,
+    "src_tier": [
+      "D",
+      "C"
+    ],
+    "src_url": [
+      "https://www.cityhui.com/shop/18175.html",
+      "https://www.cnpp100.com/shop/18175.html",
+      "https://m.dianping.com/shop/94013890"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "daga",
+    "name": "DAGA BrewPub",
+    "coords": [
+      31.2126,
+      121.4385
+    ],
+    "district": "徐汇区",
+    "addr": "复兴西路100号",
+    "type": "精酿",
+    "genre": "综合",
+    "avg": null,
+    "close": null,
+    "open_days": "已停业",
+    "live": false,
+    "capacity": null,
+    "booking": "免预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "closed",
+    "metro": "1/7号线常熟路站步行约8分钟，复兴西路近乌鲁木齐中路",
+    "vibe": "聊天社交",
+    "note": "⛔ 已停业（约 2019–2020 年）。点评标「永久关门」，并获 SmartShanghai、That’s Shanghai、Untappd 三处独立印证；原址复兴西路 100 号后由「毛辣果 Maolago」接手。本页保留供对照，勿按此安排行程。",
+    "uneasy": true,
+    "src_tier": [
+      "D",
+      "C"
+    ],
+    "src_url": [
+      "https://www.cityhui.com/shop/18167.html",
+      "https://www.smartshanghai.com/venue/12843/daga_brewpub_fuxing_lu",
+      "https://www.thatsmags.com/shanghai/directory/18697/daga-brewpub-fu-xing-xi-lu"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "tap19",
+    "name": "Tap19 要酒吧",
+    "coords": [
+      31.2095,
+      121.4556
+    ],
+    "district": "徐汇区",
+    "addr": "嘉善路257号嘉善公寓（近永嘉路）",
+    "type": "精酿",
+    "genre": "综合",
+    "avg": 130,
+    "close": "01:00",
+    "open_days": "周一–周日（工作日 16:00 / 周末 14:00 开门）",
+    "live": false,
+    "capacity": null,
+    "booking": "免预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "9/12号线嘉善路站步行约6分钟，嘉善路近永嘉路",
+    "vibe": "聊天社交",
+    "note": "以 19 个酒头生啤为特色，偏资深酒友；信息来自聚合站，坐标近似。",
+    "uneasy": true,
+    "src_tier": [
+      "D"
+    ],
+    "src_url": [
+      "https://www.cityhui.com/shop/18172.html",
+      "https://www.cnpp100.com/shop/18172.html"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "parkhere",
+    "name": "PARK HERE 啤酒场",
+    "coords": [
+      31.2221,
+      121.4465
+    ],
+    "district": "静安区",
+    "addr": "巨鹿路308号（近富民路）",
+    "type": "精酿",
+    "genre": "综合",
+    "avg": null,
+    "close": "02:00",
+    "open_days": "周一–周日（工作日 18:00 / 周末 16:00 开门）",
+    "live": false,
+    "capacity": null,
+    "booking": "免预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "1/7号线常熟路站步行约10分钟，巨鹿路近富民路",
+    "vibe": "聊天社交",
+    "note": "百年马厩改造、沿街全开窗；以精酿为基酒做创意特调，酒单按季度更新。人均待核实。",
+    "uneasy": true,
+    "src_tier": [
+      "C",
+      "🗂"
+    ],
+    "src_url": [
+      "https://www.toutiao.com/article/7651619249312285219/",
+      "https://untappd.com/v/park-here/13120441"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "kaiba",
+    "name": "开巴（武定路店）",
+    "coords": [
+      31.233,
+      121.443
+    ],
+    "district": "静安区",
+    "addr": "武定路479号",
+    "type": "精酿",
+    "genre": "综合",
+    "avg": null,
+    "close": null,
+    "open_days": "已停业",
+    "live": false,
+    "capacity": null,
+    "booking": "免预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "closed",
+    "metro": "2/7号线静安寺站步行约8分钟，武定路近常德路",
+    "vibe": "聊天社交",
+    "note": "⛔ 已停业（2018-04）。好奇心日报 2018-04-27 与 36氪 报道百威英博关停开巴全部 8 家门店，That’s Shanghai 亦标 closed；原「城市惠／品牌100」页面为旧数据。本页保留供对照，勿按此安排行程。",
+    "uneasy": true,
+    "src_tier": [
+      "C",
+      "D"
+    ],
+    "src_url": [
+      "https://www.sina.cn/gc/article/nipcfxz6397092.html",
+      "https://www.cityhui.com/shop/18171.html",
+      "https://www.thatsmags.com/shanghai/directory/5723/kaibawu-ding-lu",
+      "https://www.qdaily.org/articles/52475/"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "muchbeer",
+    "name": "Much Beer（新天地店）",
+    "coords": [
+      31.2219,
+      121.4704
+    ],
+    "district": "黄浦区",
+    "addr": "淡水路200号（新天地站5号口约150m）",
+    "type": "精酿",
+    "genre": "综合",
+    "avg": 80,
+    "close": "22:30",
+    "open_days": "周一–周日（14:30–22:30）",
+    "live": false,
+    "capacity": null,
+    "booking": "免预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "10/13号线新天地站步行约5分钟",
+    "vibe": "安静小酌",
+    "note": "精酿老店，以瓶装/外带为主，酒单每周轮换。门牌经 Untappd 与 Happy上海 两处独立来源一致指向淡水路 200 号；⚠️ 营业时间两说（11:00/12:30–24:00 与 14:30–22:30）相互冲突，本页暂采较早的 22:30，人均 ¥80 来自聚合站，均待核实。",
+    "uneasy": true,
+    "src_tier": [
+      "C",
+      "D"
+    ],
+    "src_url": [
+      "https://www.sina.cn/gc/article/nipcfxz6397092.html",
+      "https://untappd.com/v/muchbeer/8204232",
+      "https://www.happysh.cn/h-nd-16.html"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "ponyup",
+    "name": "Pony Up",
+    "coords": [
+      31.2231,
+      121.4532
+    ],
+    "district": "黄浦区",
+    "addr": "进贤路230号",
+    "type": "鸡尾酒",
+    "genre": "综合",
+    "avg": 187,
+    "close": "02:00",
+    "open_days": "周一–周四、周日 13:00–01:00；周五–周六 13:00–02:00",
+    "live": false,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "1/10/12号线陕西南路站步行约5分钟，进贤路近陕西南路",
+    "vibe": "聊天社交",
+    "note": "Asia’s 50 Best Bars 2026 主榜 #19，上海唯一入主榜且为 New Entry；美式 diner 风格，饭点与深夜均热闹。点评人均 ¥187；周一–周四、周日 13:00–01:00，周五–周六 13:00–02:00。",
+    "uneasy": false,
+    "src_tier": [
+      "A",
+      "C"
+    ],
+    "src_url": [
+      "https://www.theworlds50best.com/bars/best-in-asia/the-list/pony-up.html",
+      "https://www.citynewsservice.cn/articles/cns/city-news/quick-news/the-list-chinas-hope-sesame-wins-the-no-1-bar-in-asia-2026-zmppq75m",
+      "https://m.dianping.com/shop/512257664"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "coa",
+    "name": "Coa (Shanghai)",
+    "coords": [
+      31.2172,
+      121.4609
+    ],
+    "district": "黄浦区",
+    "addr": "复兴中路580号（近瑞金二路）",
+    "type": "鸡尾酒",
+    "genre": "综合",
+    "avg": 202,
+    "close": "02:30",
+    "open_days": "周二–周四、周日 18:30–01:30；周五–周六 18:30–02:30",
+    "live": false,
+    "capacity": "顶层 Mezcaleria 约 12 人",
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "1/10/12号线陕西南路站步行约8分钟，复兴中路近瑞金二路",
+    "vibe": "聊天社交",
+    "note": "Asia’s 50 Best Bars 2026 扩展榜（51–100）#95；四层概念（Taqueria / Cantina / Salón / Mezcaleria），龙舌兰与梅斯卡尔近 300 款。点评人均 ¥202。⚠️ 主榜 #24 的「Coa」为 Coa 香港，与上海店不是同一家。",
+    "uneasy": false,
+    "src_tier": [
+      "A",
+      "C",
+      "🗂"
+    ],
+    "src_url": [
+      "https://www.theworlds50best.com/stories/News/asias-50-best-bars-2026-the-51-100-list-revealed.html",
+      "https://www.thatsmags.com/shanghai/directory/1799583/coa",
+      "https://www.thespiritsbusiness.com/2024/07/coa-shanghai-relaunches-with-multi-storey-concept/",
+      "https://m.dianping.com/shop/1530753991"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "speaklow",
+    "name": "Speak Low",
+    "coords": [
+      31.2171,
+      121.4606
+    ],
+    "district": "黄浦区",
+    "addr": "复兴中路579号（近瑞金二路）",
+    "type": "鸡尾酒",
+    "genre": "综合",
+    "avg": 203,
+    "close": "02:30",
+    "open_days": "周一–周四、周日 18:00–01:30；周五–周六 18:00–02:30",
+    "live": false,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "1/10/12号线陕西南路站步行约8分钟，复兴中路近瑞金二路",
+    "vibe": "聊天社交",
+    "note": "藏在酒具店暗门后的日式 speakeasy，四层各自成概念。点评人均 ¥203；周一–周四、周日 18:00–01:30，周五–周六 18:00–02:30。周末排队久，建议预约。⚠️ 仅有 C 级来源及参考源，本页待核实。",
+    "uneasy": true,
+    "src_tier": [
+      "C",
+      "🗂"
+    ],
+    "src_url": [
+      "https://www.smartshanghai.com/venue/11327/speak_low",
+      "https://rachelgouk.com/listings/coa-shanghai/",
+      "https://m.dianping.com/shop/18515105"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "sober",
+    "name": "Sober Company",
+    "coords": [
+      31.2208,
+      121.4661
+    ],
+    "district": "黄浦区",
+    "addr": "雁荡路109号 INS F106（另说雁荡路99号，待核实）",
+    "type": "鸡尾酒",
+    "genre": "综合",
+    "avg": 363,
+    "close": "02:00",
+    "open_days": "周一–周日 12:00–02:00",
+    "live": false,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "13号线一大会址·新天地站步行约7分钟，雁荡路近南昌路",
+    "vibe": "聊天社交",
+    "note": "SG Group（Speak Low 同门）旗下，两层四概念：1F 咖啡+鸡尾酒、2F 主吧 Tipsy。点评人均 ¥363、12:00–02:00，其地址片段「雁荡路10******」与 109 号吻合，可佐证 109 号一说；⚠️ 本页仍并列保留「99 号」两说。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://rachelgouk.com/listings/sober-company/",
+      "https://m.dianping.com/shop/894450358"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "utc",
+    "name": "The Union Trading Company",
+    "coords": [
+      31.2035,
+      121.444
+    ],
+    "district": "徐汇区",
+    "addr": "衡山路306号（原汾阳路64弄2-1号，迁址待核实）",
+    "type": "鸡尾酒",
+    "genre": "综合",
+    "avg": 173,
+    "close": "02:00",
+    "open_days": "周一–周日 18:00–02:00",
+    "live": false,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "1号线衡山路站步行约8分钟（以到店导航为准）",
+    "vibe": "聊天社交",
+    "note": "2014 年开业的美式社区酒吧，酒单每季更换。点评人均 ¥173、18:00–02:00，其地址片段「衡山路30******」与衡山路 306 号吻合，可佐证该店已由汾阳路旧址迁出。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://rachelgouk.com/listings/the-union-trading-company/",
+      "https://www.diffordsguide.com/bars/n78YW9/the-union-trading-company",
+      "https://m.dianping.com/shop/GaC7fyEEg0CDu3Je"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "mining",
+    "name": "MINING Whisky Club",
+    "coords": [
+      31.2246,
+      121.4428
+    ],
+    "district": "静安区",
+    "addr": "富民路83号（静安寺站8号口步行约200米）",
+    "type": "威士忌",
+    "genre": "综合",
+    "avg": 155,
+    "close": "02:00",
+    "open_days": "周一–周日 20:00–02:00",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "2/7号线静安寺站8号口步行约3分钟，富民路近延安中路",
+    "vibe": "安静小酌",
+    "note": "威士忌品鉴 + 现场音乐的小型空间。点评人均 ¥155、周一–周日 20:00–02:00（富民路 83 号）；现场演出排期待核实，坐标为街道近似点。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://huodong.com/venue/detail/eyWJV",
+      "https://m.dianping.com/shop/1108460006"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "laizhou",
+    "name": "崃州吧（崃州蒸馏厂品牌吧）",
+    "coords": [
+      31.219,
+      121.448
+    ],
+    "district": "静安区",
+    "addr": "富民路291号1楼A108室",
+    "type": "威士忌",
+    "genre": "综合",
+    "avg": 177,
+    "close": "01:30",
+    "open_days": "周一–周四、周日 11:00–24:00；周五–周六 11:00–01:30",
+    "live": false,
+    "capacity": null,
+    "booking": "免预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "1/7号线常熟路站步行约10分钟，富民路近长乐路",
+    "vibe": "安静小酌",
+    "note": "崃州蒸馏厂首家品牌体验餐酒吧，主打中国威士忌与城市限定特调。点评人均 ¥177；周一–周四、周日 11:00–24:00，周五–周六 11:00–01:30。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://m.163.com/dy/article/J6B6TMJA05228TQ0.html",
+      "https://m.dianping.com/shop/1483564296"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "neotopia",
+    "name": "Neo Topia",
+    "coords": [
+      31.2232,
+      121.4438
+    ],
+    "district": "静安区",
+    "addr": "富民路140号",
+    "type": "鸡尾酒",
+    "genre": "综合",
+    "avg": null,
+    "close": "02:00",
+    "open_days": "周一–周日（10:30–02:00）",
+    "live": false,
+    "capacity": null,
+    "booking": "免预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "2/7号线静安寺站步行约6分钟，富民路近巨鹿路",
+    "vibe": "安静小酌",
+    "note": "“日咖夜酒”，白咖啡夜调酒，街边梧桐位；特调约 18 度、以花香系为主。⚠️ 大众点评未收录店铺页，SmartShanghai / That’s Shanghai / 秀动 / 大麦均无条目，仅存单一 UGC 来源，未找到第二个独立来源；人均与营业时间待核实。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂"
+    ],
+    "src_url": [
+      "https://travelnews.qunar.com/ugc/shanghai-fumin-road-neotopia"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "jz",
+    "name": "JZ Club（上海店）",
+    "coords": [
+      31.206762,
+      121.446169
+    ],
+    "district": "徐汇区",
+    "addr": "衡山路8号水塔广场",
+    "type": "爵士现场",
+    "genre": "爵士",
+    "avg": 173,
+    "close": "01:30",
+    "open_days": "周一 20:00–00:30；周二–周四 19:00–24:00；周五–周六 18:30–01:30；周日 18:30–00:30",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "1号线衡山路站3号口步行约4分钟",
+    "vibe": "看演出",
+    "note": "2005 年创立、JZ Festival 发起方；常年爵士/蓝调/放克/世界音乐现场与 Jam Session。点评人均 ¥173；周一 20:00–00:30、周二–周四 19:00–24:00、周五–周六 18:30–01:30、周日 18:30–00:30。坐标为高德 POI 精确点。",
+    "uneasy": true,
+    "src_tier": [
+      "C",
+      "🗂"
+    ],
+    "src_url": [
+      "https://www.amap.com/place/B0KGU5Y44N",
+      "https://huodong.com/venue/detail/eyWIw",
+      "https://m.dianping.com/shop/505502"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "jalc",
+    "name": "Jazz at Lincoln Center Shanghai",
+    "coords": [
+      31.238,
+      121.4838
+    ],
+    "district": "黄浦区",
+    "addr": "南京东路139号美伦大楼4F",
+    "type": "爵士现场",
+    "genre": "爵士",
+    "avg": 209,
+    "close": "02:00",
+    "open_days": "周一–周二 14:00–24:00；周三–周日 14:00–02:00",
+    "live": true,
+    "capacity": null,
+    "booking": "必须预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "2/10号线南京东路站步行约6分钟，南京东路近江西中路",
+    "vibe": "看演出",
+    "note": "常设座位制、需预约，常规场 19:30 开演，周五/六加开 21:30 场。点评人均 ¥209；周一–周二 14:00–24:00、周三–周日 14:00–02:00。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "C"
+    ],
+    "src_url": [
+      "https://jazz.org/watch-listen-discover/shanghai/",
+      "https://www.thatsmags.com/shanghai/directory/1798014/jazz-at-lincoln-center-shanghai-1",
+      "https://m.dianping.com/shop/979182076"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "heyday",
+    "name": "Heyday Jazz Bar",
+    "coords": [
+      31.2076,
+      121.4323
+    ],
+    "district": "长宁区",
+    "addr": "泰安路50号底层",
+    "type": "爵士现场",
+    "genre": "爵士",
+    "avg": 223,
+    "close": "02:00",
+    "open_days": "周二–周日 19:30–02:00",
+    "live": true,
+    "capacity": "50–60人",
+    "booking": "必须预约",
+    "id_check": "none",
+    "ticket": "¥50–80",
+    "status": "active",
+    "metro": "2/11号线江苏路站4号口步行约8分钟，泰安路近华山路",
+    "vibe": "看演出",
+    "note": "小体量复古爵士吧，桌椅围绕中央树形舞台。点评人均 ¥223、周二–周日 19:30–02:00。门票：周一/二免票、周三/四/日 ¥50、周五/六 ¥80（聚合/参考源，待核实）；吧台无低消、卡座有低消。",
+    "uneasy": true,
+    "src_tier": [
+      "D",
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://www.pinpai2.com/shop/18479.html",
+      "https://huodong.com/venue/detail/eyWJG",
+      "https://m.dianping.com/shop/21971463"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "mao",
+    "name": "MAO Livehouse（上海）",
+    "coords": [
+      31.2123,
+      121.4672
+    ],
+    "district": "黄浦区",
+    "addr": "重庆南路308号3楼（近建国中路）",
+    "type": "Livehouse",
+    "genre": "综合",
+    "avg": null,
+    "close": null,
+    "open_days": "依演出排期",
+    "live": true,
+    "capacity": "约 800–1000 人（含小厅）",
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": "¥98–298",
+    "status": "active",
+    "metro": "9/13号线马当路站步行约8分钟，重庆南路近建国中路",
+    "vibe": "看演出",
+    "note": "2000 年代起的老牌 Livehouse，层高 5.3 m、几乎覆盖所有风格；容量因大/小厅而异，公开资料 520–1000 人不等。票价为公开在售区间示例。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "C"
+    ],
+    "src_url": [
+      "https://www.showstart.com/venue/3976",
+      "https://i.kankanpiao.com/venue/1488.html"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "yyt_b",
+    "name": "育音堂 · 音乐青年小镇 B厅",
+    "coords": [
+      31.2183,
+      121.4172
+    ],
+    "district": "长宁区",
+    "addr": "昭化路658号 C·PARK D栋地下一层",
+    "type": "Livehouse",
+    "genre": "独立",
+    "avg": null,
+    "close": "02:00",
+    "open_days": "依演出排期（小镇 12:00–02:00）",
+    "live": true,
+    "capacity": "约 200 人",
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": "¥50–168",
+    "status": "active",
+    "metro": "3/4号线延安西路站步行约8分钟，昭化路近种德桥路",
+    "vibe": "看演出",
+    "note": "B厅为 200 人小型沉浸式听歌厅，主打小众独立音乐，舞台近距离。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "C"
+    ],
+    "src_url": [
+      "https://www.showstart.com/event/298043",
+      "https://www.jfdaily.com/sgh/detail?id=1758004"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "yyt_c",
+    "name": "育音堂 · 音乐青年小镇 C厅",
+    "coords": [
+      31.2181,
+      121.417
+    ],
+    "district": "长宁区",
+    "addr": "昭化路658号 C·PARK D栋地下一层",
+    "type": "Livehouse",
+    "genre": "摇滚",
+    "avg": null,
+    "close": "02:00",
+    "open_days": "依演出排期（小镇 12:00–02:00）",
+    "live": true,
+    "capacity": "约 450 人",
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": "¥100–260",
+    "status": "active",
+    "metro": "3/4号线延安西路站步行约8分钟，昭化路近种德桥路",
+    "vibe": "看演出",
+    "note": "小镇最大厅（约 450 人），摇滚/朋克/原创主战场；走廊有酒水与小吃档口。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "C"
+    ],
+    "src_url": [
+      "https://www.showstart.com/venue/4695060",
+      "https://www.jfdaily.com/sgh/detail?id=1758004"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "yyt_park",
+    "name": "育音堂音乐公园（愚园路）",
+    "coords": [
+      31.2211,
+      121.4175
+    ],
+    "district": "长宁区",
+    "addr": "愚园路1398号 米域 B1-02",
+    "type": "Livehouse",
+    "genre": "独立",
+    "avg": null,
+    "close": null,
+    "open_days": "已暂停营业（2026-09-01 起）",
+    "live": true,
+    "capacity": null,
+    "booking": "不接受预约",
+    "id_check": "实名一证一票",
+    "ticket": null,
+    "status": "suspended",
+    "metro": "2/11号线江苏路站步行约10分钟，愚园路近定西路",
+    "vibe": "看演出",
+    "note": "⛔ 官方公告自 2026-09-01 起暂停营业，场地整体转让合作中；本页保留供对照，请勿按此安排行程。大众点评仍显示「营业中」（周三–周日 18:00–23:00、人均 ¥104），属未同步，故本页人均与打烊时间一并清零，以店方公告为准。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "C"
+    ],
+    "src_url": [
+      "https://weibo.com/yuyintang",
+      "https://www.sina.cn/news/detail/5329346786757645.html",
+      "https://m.dianping.com/shop/107761768"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "specters",
+    "name": "老卵俱乐部 Specters",
+    "coords": [
+      31.2183,
+      121.4172
+    ],
+    "district": "长宁区",
+    "addr": "昭化路658号海粟文化广场D栋地下一层 LG-21（原愚园路753号，2025 年底迁址）",
+    "type": "Livehouse",
+    "genre": "硬核",
+    "avg": 88,
+    "close": "04:00",
+    "open_days": "周一–周四、周日 20:00–02:00；周五–周六 20:00–04:00",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": "¥50–130",
+    "status": "active",
+    "metro": "3/4号线延安西路站步行约8分钟，昭化路近种德桥路",
+    "vibe": "看演出",
+    "note": "育音堂系摇滚/朋克据点，黑红色 dive bar 气质，新址两层、比愚园路旧址更大。点评人均 ¥88；周一–周四、周日 20:00–02:00，周五–周六 20:00–04:00。容量待核实。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "C"
+    ],
+    "src_url": [
+      "https://www.smartshanghai.com/venue/34241/specters_c_park",
+      "https://www.showstart.com/venue/1767200",
+      "https://m.dianping.com/shop/98707007"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "starz",
+    "name": "星在文化中心（原万代南梦宫）",
+    "coords": [
+      31.250878,
+      121.435402
+    ],
+    "district": "普陀区",
+    "addr": "宜昌路179号（2026-04-01 起由「万代南梦宫上海文化中心」更名）",
+    "type": "音乐剧场",
+    "genre": "综合",
+    "avg": null,
+    "close": null,
+    "open_days": "依演出排期",
+    "live": true,
+    "capacity": "梦想剧场 1000 站席 / 713 座席；未来剧场 500 站席 / 300 座席",
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": null,
+    "status": "active",
+    "metro": "3/4/7号线镇坪路站步行约10分钟，宜昌路近江宁路",
+    "vibe": "看演出",
+    "note": "两个剧场：梦想剧场（B1–1F，约 1200㎡）、未来剧场（2F，约 400㎡）。一般开演 18:00–20:00。票价与排期待核实。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "C"
+    ],
+    "src_url": [
+      "https://bnshbase.com/m/index.php/cooperation/fqa",
+      "https://zh.wikipedia.org/wiki/%E6%98%9F%E5%9C%A8%E6%96%87%E5%8C%96%E4%B8%AD%E5%BF%83"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "vas_ear",
+    "name": "瓦肆 VAS ear（普陀店）",
+    "coords": [
+      31.2308,
+      121.4298
+    ],
+    "district": "普陀区",
+    "addr": "万航渡后路19号 沪西文化艺术中心3F",
+    "type": "Livehouse",
+    "genre": "综合",
+    "avg": null,
+    "close": null,
+    "open_days": "依演出排期",
+    "live": true,
+    "capacity": "约 800–1000 人",
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": null,
+    "status": "active",
+    "metro": "13号线武宁路站步行约12分钟，万航渡后路近长寿路",
+    "vibe": "看演出",
+    "note": "2018 年开业的 VAS 旗舰馆，前身为沪西电影院，保留阶梯下沉式看台；总面积约 800㎡。票价待核实，坐标近似。",
+    "uneasy": false,
+    "src_tier": [
+      "B"
+    ],
+    "src_url": [
+      "https://www.showstart.com/venue/1403801",
+      "https://www.dahepiao.com/venue/venue_101759.html"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "vas_evo",
+    "name": "瓦肆 VAS evo（虹口店）",
+    "coords": [
+      31.2568,
+      121.482
+    ],
+    "district": "虹口区",
+    "addr": "四川北路939号 滨港商业中心3F",
+    "type": "Livehouse",
+    "genre": "综合",
+    "avg": null,
+    "close": null,
+    "open_days": "依演出排期",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": "¥108–384",
+    "status": "active",
+    "metro": "10号线四川北路站步行约6分钟，四川北路近海伦路",
+    "vibe": "看演出",
+    "note": "VAS 在虹口的新馆；票价为公开在售区间示例，容量与坐标待核实。",
+    "uneasy": false,
+    "src_tier": [
+      "B"
+    ],
+    "src_url": [
+      "https://www.showstart.com/venue/28103932",
+      "https://www.piaoniu.com/venue/72425"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "phase",
+    "name": "蜚声 PHASE",
+    "coords": [
+      31.2548,
+      121.4625
+    ],
+    "district": "静安区",
+    "addr": "中兴路1683号 金融街购物中心1-3层（主场地 L3-27）",
+    "type": "Livehouse",
+    "genre": "独立",
+    "avg": null,
+    "close": null,
+    "open_days": "依演出排期",
+    "live": true,
+    "capacity": "约 300 人",
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": null,
+    "status": "active",
+    "metro": "8号线中兴路站步行约6分钟",
+    "vibe": "看演出",
+    "note": "2023 年开业的独立音乐现场，三层空间（1F 吧台站立区 / 2F 阶梯坐席 / 3F 观演区，主场地 L3-27）。店名与地址经秀动场馆页印证，2026-09 至 10 月有在售演出；⚠️ 容量「约 300 人」与人均仍待核实。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "B"
+    ],
+    "src_url": [
+      "https://huodong.com/venue/detail/eyWJ2",
+      "https://www.showstart.com/venue/11758225"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "encore",
+    "name": "ENCORE 意空间见",
+    "coords": [
+      31.1732,
+      121.42
+    ],
+    "district": "徐汇区",
+    "addr": "漕宝路261号 鑫耀光环Live二期三层",
+    "type": "Livehouse",
+    "genre": "综合",
+    "avg": null,
+    "close": null,
+    "open_days": "依演出排期",
+    "live": true,
+    "capacity": "数百人（待核实）",
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": "¥148起",
+    "status": "active",
+    "metro": "12/15号线桂林公园站步行约8分钟",
+    "vibe": "看演出",
+    "note": "漕河泾片区中型演艺空间，主打独立音乐巡演、KPOP 主题派对与小型音乐会，场地 S5-L3-G01a。店名与房号经秀动与 SmartShanghai 双重印证；⚠️ 秀动写的「漕宝路 193-1 号」为一期门牌误填，二期官方门牌为 261 号，本页从 261 号；容量仍待核实。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "B",
+      "C"
+    ],
+    "src_url": [
+      "https://www.juzimima.com/brand/5640/",
+      "https://www.showstart.com/venue/23887424",
+      "https://www.smartshanghai.com/venue/34257/encore_space"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "pearl",
+    "name": "The Pearl 珍珠剧场",
+    "coords": [
+      31.2492,
+      121.4855
+    ],
+    "district": "虹口区",
+    "addr": "乍浦路471号",
+    "type": "音乐剧场",
+    "genre": "音乐剧",
+    "avg": 232,
+    "close": "01:00",
+    "open_days": "周三–周四 18:00–23:00；周五–周六 18:00–01:00；周日 17:00–20:00",
+    "live": true,
+    "capacity": "400–500 人",
+    "booking": "必须预约",
+    "id_check": "实名一证一票",
+    "ticket": "¥100–280",
+    "status": "active",
+    "metro": "10号线四川北路站2号口步行约6分钟，乍浦路近海宁路",
+    "vibe": "看演出",
+    "note": "1931 年石库门建筑改建，现场乐队 + 音乐剧 + 复古主题之夜，通常有着装要求。点评人均 ¥232；周三–周四 18:00–23:00、周五–周六 18:00–01:00、周日 17:00–20:00。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://neodrop.ai/post/1ZAEDwMUiek",
+      "https://m.dianping.com/shop/k5bV22gAMQVTanYz"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "ark",
+    "name": "ARK LIVE HOUSE（今潮8弄）",
+    "coords": [
+      31.252589,
+      121.479514
+    ],
+    "district": "虹口区",
+    "addr": "今潮8弄文创园区（四川北路商圈）",
+    "type": "音乐剧场",
+    "genre": "音乐剧",
+    "avg": null,
+    "close": "01:00",
+    "open_days": "周一–周四、周日 18:00–24:00；周五–周六 18:00–01:00",
+    "live": true,
+    "capacity": "约 120 座（剧场面积 300㎡）",
+    "booking": "必须预约",
+    "id_check": "实名一证一票",
+    "ticket": "¥140–160",
+    "status": "active",
+    "metro": "10号线四川北路站3号口步行约5分钟",
+    "vibe": "看演出",
+    "note": "2021 年开业，集合餐饮 / 咖啡 / 酒吧与沉浸式音乐剧、驻场演出；以坐席为主。⚠️ 点评标「已关门」与 2026 上半年演出事实不符；驻演《Little Jack 小杰克》2026-06-28 收官后未查到新排期，是否续办待核实。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://www.startsh.com.cn/ArkLiveHouse/355.html",
+      "https://neodrop.ai/post/1ZAEDwMUiek",
+      "https://m.dianping.com/shop/675808130"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "chihong",
+    "name": "赤红（EKA·天物）",
+    "coords": [
+      31.257,
+      121.601
+    ],
+    "district": "浦东新区",
+    "addr": "金桥路535号 EKA·天物15幢",
+    "type": "Livehouse",
+    "genre": "金属",
+    "avg": 134,
+    "close": "02:00",
+    "open_days": "周一–周日 20:00–02:00",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "实名一证一票",
+    "ticket": null,
+    "status": "active",
+    "metro": "6号线金桥路站 / 9号线金桥站换乘公交约10分钟",
+    "vibe": "看演出",
+    "note": "金桥 EKA·天物园区内的演出场地，偏摇滚/金属现场。点评人均 ¥134、周一–周日 20:00–02:00；容量与排期待核实。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://www.amap.com/",
+      "https://m.dianping.com/shop/1420330646"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "exit",
+    "name": "EXIT Club",
+    "coords": [
+      31.2128,
+      121.4235
+    ],
+    "district": "长宁区",
+    "addr": "幸福路298号",
+    "type": "电音俱乐部",
+    "genre": "Techno",
+    "avg": 169,
+    "close": "04:00",
+    "open_days": "周五–周六 22:00–04:00；周日 22:00–02:00",
+    "live": true,
+    "capacity": null,
+    "booking": "必须预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "2/11号线江苏路站步行约12分钟，幸福路近延安西路",
+    "vibe": "蹦迪",
+    "note": "电子/地下音乐俱乐部，以音响与先锋阵容著称。点评人均 ¥169；周五–周六 22:00–04:00、周日 22:00–02:00。⚠️ 据 SmartShanghai 2026-09 报道，该址 2026 年 8 月大部分时间关闭、拟更名「Doop」重开；截至 2026-09-12 票务仍以「Exit Club」售票，更名是否已生效待核实。",
+    "uneasy": false,
+    "src_tier": [
+      "B",
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://www.showstart.com/venue/26275703",
+      "https://huodong.com/venue/detail/eyWJO",
+      "https://m.dianping.com/shop/1950460472"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "potent",
+    "name": "POTENT CLUB",
+    "coords": [
+      31.2234,
+      121.4665
+    ],
+    "district": "黄浦区",
+    "addr": "淮海中路523号 TX淮海年轻力中心3楼（近成都南路）",
+    "type": "电音俱乐部",
+    "genre": "House",
+    "avg": 159,
+    "close": "05:00",
+    "open_days": "周五–周六 22:00–05:00",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "1/14号线一大会址·黄陂南路站2号口步行约5分钟",
+    "vibe": "蹦迪",
+    "note": "淮海路商圈地下电音俱乐部，常邀国内外 DJ 驻场。地址经 SmartShanghai 与大众点评双向核实为「淮海中路 523 号 TX 淮海年轻力中心 3 楼」；点评人均 ¥159、周五–周六 22:00–05:00。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://huodong.com/venue/detail/eyWIO",
+      "https://maps.apple.com/place?auid=1118515312501665",
+      "https://m.dianping.com/shop/HaQCIVGYAJr94QBz"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "cultureclub",
+    "name": "Culture Club",
+    "coords": [
+      31.2208,
+      121.4661
+    ],
+    "district": "黄浦区",
+    "addr": "雁荡路109号 INS 复兴乐园4F",
+    "type": "电音俱乐部",
+    "genre": "Disco",
+    "avg": 156,
+    "close": "05:00",
+    "open_days": "周三–周日 22:00–05:00",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "13号线一大会址·新天地站步行约9分钟，雁荡路近南昌路",
+    "vibe": "蹦迪",
+    "note": "INS 多楼层夜生活综合体内的舞厅，流行舞曲为主、LGBTQ 友好。点评人均 ¥156、周三–周日 22:00–05:00。",
+    "uneasy": true,
+    "src_tier": [
+      "C"
+    ],
+    "src_url": [
+      "https://www.smartshanghai.com/venue/31225/culture_club",
+      "https://m.dianping.com/shop/1684361613"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "kezee",
+    "name": "KEZEE Shanghai",
+    "coords": [
+      31.2206,
+      121.4659
+    ],
+    "district": "黄浦区",
+    "addr": "雁荡路109号 INS 复兴乐园3F",
+    "type": "大型夜店",
+    "genre": "综合",
+    "avg": 330,
+    "close": "04:00",
+    "open_days": "周一–周日 20:00–04:00",
+    "live": true,
+    "capacity": "约 4500㎡（人数待核实）",
+    "booking": "必须预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "13号线一大会址·新天地站步行约7分钟，雁荡路近南昌路",
+    "vibe": "蹦迪",
+    "note": "面积超 4500㎡、层高 13 m 的剧院式夜店，含主舞台/舞池/两层包厢。点评店名作「KZ Shanghai」，人均 ¥330、周一–周日 20:00–04:00；散台低消约 ¥500（平日）–¥1000（周末，编辑估算），人数容量未公开。",
+    "uneasy": true,
+    "src_tier": [
+      "C",
+      "🗂"
+    ],
+    "src_url": [
+      "http://m.dav01.com/article/2025/09/a6278995.html",
+      "https://neodrop.ai/post/1ZAEDwMUiek",
+      "https://m.dianping.com/shop/1506191974"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "barrouge",
+    "name": "Bar Rouge",
+    "coords": [
+      31.2404,
+      121.4852
+    ],
+    "district": "黄浦区",
+    "addr": "中山东一路18号 外滩18号7楼",
+    "type": "大型夜店",
+    "genre": "House",
+    "avg": null,
+    "close": null,
+    "open_days": "已停业",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "closed",
+    "metro": "2/10号线南京东路站步行约10分钟，中山东一路近南京东路",
+    "vibe": "蹦迪",
+    "note": "⛔ 已停业（2022-07-29 告别派对，2022-12-01 正式闭店）。外滩 18 号 7 楼现为 KEV，SmartShanghai 2026-09 夜店指南仍以「Bar Rouge 旧址的 KEV」描述。本页保留供对照。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "D",
+      "C"
+    ],
+    "src_url": [
+      "https://www.shanghainavi.com/food/536/",
+      "https://www.kdclub.net/kdBar/detail?id=1312",
+      "https://www.smartshanghai.com/venue/473/Bar_Rouge_shanghai",
+      "https://www.smartshanghai.com/venue/29701/kev"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "poproof",
+    "name": "POP Roof 露台餐厅与酒吧",
+    "coords": [
+      31.2396,
+      121.4876
+    ],
+    "district": "黄浦区",
+    "addr": "中山东一路3号 外滩三号7楼（广东路一侧入口）",
+    "type": "大型夜店",
+    "genre": "Disco",
+    "avg": 398,
+    "close": "22:00",
+    "open_days": "周一–周五 11:30–14:00、17:00–22:00；周六–周日 11:30–14:30、17:00–22:00",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "active",
+    "metro": "2/10号线南京东路站步行约8分钟，中山东一路近广东路",
+    "vibe": "聊天社交",
+    "note": "外滩三号顶层露台，正对陆家嘴江景。点评店名作「POP 露台西餐厅·望江阁」，人均 ¥398、11:30–14:00 与 17:00–22:00（周末午市至 14:30）；以餐酒社交为主，驻场 DJ 与夜场时间待核实。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://zui.ms/archives/9296",
+      "https://m.dianping.com/shop/22200756"
+    ],
+    "updated": "2026-09-12"
+  },
+  {
+    "key": "m2",
+    "name": "M2",
+    "coords": [
+      31.2232,
+      121.4702
+    ],
+    "district": "黄浦区",
+    "addr": "淮海中路283号 香港广场4F（另说淮海中路1号，待核实）",
+    "type": "大型夜店",
+    "genre": "House",
+    "avg": null,
+    "close": null,
+    "open_days": "已停业",
+    "live": true,
+    "capacity": null,
+    "booking": "建议预约",
+    "id_check": "none",
+    "ticket": null,
+    "status": "closed",
+    "metro": "1/14号线一大会址·黄陂南路站步行约5分钟",
+    "vibe": "蹦迪",
+    "note": "⛔ 已停业。点评标「已关门」，并经 SmartShanghai 独立印证：淮海中路 283 号香港广场 4F 的 M2 约 2017 年底由 MYST 接替；淮海中路 1 号 6 楼的 M2 于 2019 秋改名 Wann，Wann 亦已停业。本页保留供对照。",
+    "uneasy": true,
+    "src_tier": [
+      "🗂",
+      "C"
+    ],
+    "src_url": [
+      "https://www.amap.com/",
+      "https://www.smartshanghai.com/venue/15038/myst_huaihai_zhong_lu",
+      "https://m.dianping.com/shop/59933113"
+    ],
+    "updated": "2026-09-12"
+  }
+]

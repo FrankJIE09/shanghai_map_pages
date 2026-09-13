@@ -1,0 +1,13 @@
+# IDE
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+
+# 注意：dist/ 是构建产物，但按约定提交进 git（帽子云部署输出目录即 dist/，构建命令留空），
+# 所以这里刻意不忽略 dist/。
