@@ -4,8 +4,8 @@
   "pages": {
     "index.html": {
       "source": "src/pages/index.html",
-      "sha256": "e2e4ef6f46576d39be3fcd8d80a4da2a3b723d8e38b7093b973f895c808888bd",
-      "bytes": 14406
+      "sha256": "8407872f63c1a8510323cfa11bc064d760e485bd690dc2167b4c4cb55eedded7",
+      "bytes": 15741
     },
     "shanghai_bars_livehouse_2026.html": {
       "source": "src/pages/bars.html",
