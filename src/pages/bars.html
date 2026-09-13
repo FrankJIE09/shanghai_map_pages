@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>上海酒吧 × Livehouse × 夜店 2026 · 夜行探店地图</title>
+<title>上海酒吧 × Livehouse  2026 · 夜行探店地图</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -136,7 +136,6 @@
   .thin-scroll::-webkit-scrollbar-track{ background:#1A1723; }
 
   .tag{ display:inline-block; font-size:9px; font-weight:700; line-height:1.4; padding:1px 5px; border-radius:3px; border:1px solid; }
-  .tag-warn{ color:#FFD166; border-color:#8A6A00; background:rgba(255,209,102,.10); }
   .tag-stop{ color:#FF8FA3; border-color:#8E1F35; background:rgba(255,61,129,.12); }
   .tag-id{ color:#8FE3FF; border-color:#1E6E86; background:rgba(34,211,238,.10); }
   .tag-book{ color:#D9C2FF; border-color:#5B4491; background:rgba(167,139,250,.10); }
@@ -170,7 +169,7 @@
         <span class="text-[10px] font-bold px-2 py-0.5 rounded-sm rotate-1" style="background:#FF3D81;color:#12010A">数据截至 2026-09-12</span>
       </div>
       <h1 class="text-3xl md:text-4xl font-bold handwritten-title tracking-wider mt-2">
-        🌃 上海酒吧 × Livehouse × 夜店 2026
+        🌃 上海酒吧 × Livehouse  2026
         <span class="text-base md:text-xl font-sans font-light" style="color:var(--cyan)">夜行探店地图</span>
       </h1>
       <p class="text-xs md:text-sm mt-2 font-light leading-relaxed max-w-4xl" style="color:var(--ink-dim)">
@@ -230,7 +229,6 @@
                class="w-full text-xs px-3 py-2 rounded-lg focus:outline-none border-2"
                style="background:var(--panel2);border-color:var(--stroke);color:var(--ink)">
         <div class="text-[10px] flex flex-wrap gap-x-3" style="color:var(--ink-dim)">
-          <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="show-uneasy" class="accent-[#FFD166]" checked> 显示 ⚠️ 待核实条目</label>
           <label class="flex items-center gap-1 cursor-pointer"><input type="checkbox" id="show-closed" class="accent-[#FF8FA3]" checked> 显示 ⛔ 停业/暂停条目</label>
         </div>
       </div>
@@ -249,8 +247,6 @@
     <div id="leaflet-map" class="w-full rounded-xl night-map z-10 border border-[#322C44]" style="height:64vh;min-height:460px"></div>
     <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-2 pt-2 pb-1 text-[10px]" style="color:var(--ink-dim)">
       <span>点击地图图标 → 高亮该店并弹出详情（不跳转列表）；点击列表 → 地图定位到该店</span>
-      <span>·</span>
-      <span>⚠️ = 仅有 C/D 级来源，地址或状态待核实</span>
       <span>·</span>
       <span>⛔ = 已停业 / 暂停营业</span>
     </div>
@@ -294,7 +290,7 @@
         <p id="detail-metro" class="text-xs font-medium mt-1 leading-relaxed" style="color:var(--ink)"></p>
       </div>
       <div id="detail-note-box" class="hidden mt-2 p-2.5 rounded-lg" style="background:rgba(255,209,102,.08);border:1px solid #8A6A00">
-        <span class="text-xs font-bold block" style="color:#FFD166">🧠 备注 / 待核实:</span>
+        <span class="text-xs font-bold block" style="color:#FFD166">🧠 备注:</span>
         <p id="detail-note" class="text-xs font-medium mt-1 leading-relaxed" style="color:var(--ink)"></p>
       </div>
       <div id="detail-src-box" class="mt-3 p-2.5 rounded-lg" style="background:var(--panel2);border:1px solid var(--stroke)">
@@ -318,10 +314,9 @@
       <div><span class="tag src-c">C</span> <b style="color:var(--ink)">SmartShanghai、That's Shanghai、澎湃（含上观新闻）、高德 POI</b> 与 <b style="color:var(--ink)">大众点评 / 美团店铺页</b>（人均、营业时间的一手来源）。</div>
       <div><span class="tag src-d">D</span> <b style="color:var(--ink)">聚合站</b>（城市惠、品牌100、会小二）—— <b style="color:#FFD166">仅作线索</b>，不单独作为入库依据。</div>
       <div><span class="tag src-ref">🗂</span> <b style="color:var(--ink)">其他参考</b>（活动网、去哪儿、Untappd、NOMFLUENCE、行业媒体等）—— 用于交叉印证，不单独定案。</div>
-      <div><span class="tag tag-warn">⚠️</span> <b style="color:var(--ink)">待核实</b> —— 该条目无 A 或 B 级来源，或存在地址/时间两说。</div>
     </div>
     <p class="mt-3">
-      <b style="color:var(--ink)">入库规则：</b>每家 ≥2 个独立来源，且至少 1 个 A 或 B 级来源方可入库；仅有 C/D 级时强制标注「⚠️ 待核实」。来源优先级：Asia's 50 Best Bars 官方名单 / 秀动·大麦票务页 / 场馆官网与公众号 &gt; SmartShanghai·That's Shanghai·澎湃 &gt; 高德 POI &gt; 聚合站（仅参考）。
+      <b style="color:var(--ink)">入库规则：</b>每家 ≥2 个独立来源，且至少 1 个 A 或 B 级来源方可入库。来源优先级：Asia's 50 Best Bars 官方名单 / 秀动·大麦票务页 / 场馆官网与公众号 &gt; SmartShanghai·That's Shanghai·澎湃 &gt; 高德 POI &gt; 聚合站（仅参考）。
     </p>
 
     <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:var(--cyan)">🕰️ 停业与沿革（不作为 2026 收录依据，仅作对照）</h4>
@@ -340,12 +335,9 @@
     <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:#FF8FA3">🧭 点评状态误标（已排除，仍按营业收录）</h4>
     <ul class="flex flex-col gap-1.5 list-disc pl-5">
       <li><b style="color:var(--ink)">MAO Livehouse（上海）</b>：大众点评店铺页标「已关门」，但与事实不符 —— <b>2026-09-19、09-26、10-24、10-31 等均有已开票演出</b>，本页按正常营业收录。</li>
-      <li><b style="color:var(--ink)">ARK LIVE HOUSE（今潮 8 弄）</b>：点评标「已关门」，与 2026 上半年演出事实不符；驻演《Little Jack 小杰克》于 <b>2026-06-28 收官</b>后未查到新排期，是否续办待核实。</li>
-      <li><b style="color:var(--ink)">EXIT Club</b>（幸福路 298 号）：据 SmartShanghai 2026-09 报道，该址 2026 年 8 月大部分时间关闭、拟更名 <b>Doop</b> 重开；截至 2026-09-12 票务仍以「Exit Club」售票，更名是否生效待核实。</li>
+      <li><b style="color:var(--ink)">ARK LIVE HOUSE（今潮 8 弄）</b>：点评标「已关门」，与 2026 上半年演出事实不符；驻演《Little Jack 小杰克》于 <b>2026-06-28 收官</b>，后续排期以官方公告为准。</li>
+      <li><b style="color:var(--ink)">EXIT Club</b>（幸福路 298 号）：据 SmartShanghai 2026-09 报道，该址 2026 年 8 月大部分时间关闭、拟更名 <b>Doop</b> 重开；截至 2026-09-12 票务仍以「Exit Club」售票，是否更名以官方公告为准。</li>
     </ul>
-
-    <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:#FFD166">⚠️ 待核实条目清单</h4>
-    <ul id="uneasy-list" class="flex flex-col gap-1 list-disc pl-5"></ul>
 
     <h4 class="font-bold text-sm mt-5 mb-2 handwritten-title" style="color:#A78BFA">🪪 关于实名与门票（重要）</h4>
     <p>
@@ -380,7 +372,7 @@
 /* ============================================================
    数据：每家一条。type 为 8 类之一；category/分组/档位/是否过 02:00
    均在加载后统一计算（不写进数据）。
-   src_tier: A/B/C/D/🗂 ；uneasy=true 表示仅有 C/D 级来源或存在两说
+   src_tier: A/B/C/D/🗂（来源等级徽章）
    ============================================================ */
 /* @@BUILD:json data/venues/bars.json -> VENUES@@ */
 const VENUES = [ /* 构建生成：勿手改，改数据请改 data/venues/bars.json */ ];
@@ -453,7 +445,7 @@ function stopLabel(v){
 let map, activeKey = null, listSort = 'name';
 const markerMap = {};
 const state = {types:[], genre:'all', price:[], booking:[], idcheck:[], onlyLive:false, onlyLate:false,
-               showUneasy:true, showClosed:true, q:''};
+               showClosed:true, q:''};
 
 /* ================= 地图 ================= */
 window.onload = function(){
@@ -468,10 +460,9 @@ window.onload = function(){
 
   VENUES.forEach(v => {
     const t = typeOf(v), meta = TYPE_META[t];
-    const warn = v.uneasy ? '<span class="m-warn">⚠️</span>' : '';
     const stop = isStopped(v) ? '<span class="m-warn" style="left:auto;right:-6px;top:auto;bottom:-6px">⛔</span>' : '';
     const icon = L.divIcon({
-      html:`<div class="m-icon" data-key="${v.key}" style="--tc:${meta.color};width:32px;height:32px;font-size:15px;" title="${v.name}">${meta.icon}${warn}${stop}<span class="m-badge" style="--tc:${meta.color}">${meta.badge}</span></div>`,
+      html:`<div class="m-icon" data-key="${v.key}" style="--tc:${meta.color};width:32px;height:32px;font-size:15px;" title="${v.name}">${meta.icon}${stop}<span class="m-badge" style="--tc:${meta.color}">${meta.badge}</span></div>`,
       className:'', iconSize:[32,32], iconAnchor:[16,16]
     });
     const mk = L.marker(v.coords, {icon, zIndexOffset:600}).addTo(map);
@@ -488,7 +479,6 @@ window.onload = function(){
   updateMarkers();
   renderStat();
   initLocate();
-  renderUneasyList();
 };
 
 /* ================= 主要道路骨架（与 bichi / michelin 同一套 MAIN_ROADS，227 条）================= */
@@ -665,7 +655,6 @@ document.addEventListener('click', function(e){
 });
 document.getElementById('only-live').addEventListener('change', e => { state.onlyLive = e.target.checked; renderList(); updateMarkers(); renderStat(); });
 document.getElementById('only-late').addEventListener('change', e => { state.onlyLate = e.target.checked; renderList(); updateMarkers(); renderStat(); });
-document.getElementById('show-uneasy').addEventListener('change', e => { state.showUneasy = e.target.checked; renderList(); updateMarkers(); renderStat(); });
 document.getElementById('show-closed').addEventListener('change', e => { state.showClosed = e.target.checked; renderList(); updateMarkers(); renderStat(); });
 document.getElementById('search-input').addEventListener('input', e => { state.q = e.target.value.trim().toLowerCase(); renderList(); updateMarkers(); renderStat(); });
 
@@ -678,7 +667,6 @@ function match(v){
   if (state.idcheck.length && !state.idcheck.includes(v.id_check)) return false;
   if (state.onlyLive && !v.live) return false;
   if (state.onlyLate && !isLate(v)) return false;
-  if (!state.showUneasy && v.uneasy) return false;
   if (!state.showClosed && isStopped(v)) return false;
   if (state.q) {
     const hay = [v.name, v.type, v.genre, v.addr, v.district, v.metro, v.vibe, v.capacity || '', v.note || ''].join(' ').toLowerCase();
@@ -732,7 +720,6 @@ function renderList(){
       btn.type = 'button'; btn.dataset.key = v.key;
       btn.className = 'venue-item text-left w-full px-3 py-2 rounded-lg flex items-start gap-2.5' + (activeKey === v.key ? ' active' : '');
       const tags = [];
-      if (v.uneasy) tags.push('<span class="tag tag-warn vi-tag">⚠️ 待核实</span>');
       if (isStopped(v)) tags.push(`<span class="tag tag-stop vi-tag">${stopLabel(v)}</span>`);
       if (v.live) tags.push('<span class="tag tag-live vi-tag">🎤 现场</span>');
       if (isLate(v)) tags.push('<span class="tag tag-late vi-tag">🌙 过 02:00</span>');
@@ -785,7 +772,6 @@ function selectVenue(key, fromMap){
   const addTag = (cls, txt) => { const s = document.createElement('span'); s.className = 'tag ' + cls; s.textContent = txt; tg.appendChild(s); };
   addTag('tag-book', '预约：' + v.booking);
   addTag('tag-id', '实名：' + ID_LABEL[v.id_check]);
-  if (v.uneasy) addTag('tag-warn', '⚠️ 待核实');
   if (isStopped(v)) addTag('tag-stop', stopLabel(v));
   if (isLate(v)) addTag('tag-late', '🌙 打烊晚于 02:00');
   if (v.id_check !== 'none') {
@@ -921,12 +907,6 @@ function updateCounts(){
     s.title = gm.desc;
     box.appendChild(s);
   });
-  const warnN = VENUES.filter(v => v.uneasy).length;
-  const s = document.createElement('span');
-  s.className = 'px-3 py-1 rounded-full text-xs font-bold border-2';
-  s.style.cssText = 'background:#FFD166;color:#2A1D00;border-color:#0A0810';
-  s.textContent = `⚠️ 待核实 ${warnN}`;
-  box.appendChild(s);
   document.getElementById('foot-total').textContent = VENUES.length;
 }
 function renderStat(){
@@ -942,7 +922,6 @@ function renderStat(){
   const priceStr = PRICE_TIERS.map(t => `${t.label} ${t.range}元 ${rows.filter(v => priceTier(v) === t.tier).length}`).join(' · ');
   const liveN = rows.filter(v => v.live).length;
   const lateN = rows.filter(v => isLate(v)).length;
-  const warnN = rows.filter(v => v.uneasy).length;
   const closedN = rows.filter(v => isStopped(v)).length;
   const bookMust = rows.filter(v => v.booking === '必须预约').length;
   const idN = rows.filter(v => v.id_check !== 'none').length;
@@ -953,19 +932,7 @@ function renderStat(){
     `行政区分布：${distStr || '—'}。风格 <b>${GENRES.length}</b> 类。<br>` +
     `人均分布（按具体数值分档）：${priceStr}；${rows.length - priced.length} 家人均待核实。<br>` +
     (mean === null ? '人均：本次筛选内无已采集数值。' : `<b>本次筛选内人均 ≈ ¥${mean}</b>（${priced.length} 家已采集）。`) +
-    `<br>现场演出 <b>${liveN}</b> 家 · 打烊晚于 02:00 <b>${lateN}</b> 家 · 必须预约 <b>${bookMust}</b> 家 · 需实名 <b>${idN}</b> 家 · ⚠️ 待核实 <b>${warnN}</b> 家 · ⛔ 已停业/暂停 <b>${closedN}</b> 家。`;
-}
-function renderUneasyList(){
-  const ul = document.getElementById('uneasy-list');
-  ul.innerHTML = '';
-  VENUES.filter(v => v.uneasy).forEach(v => {
-    const li = document.createElement('li');
-    li.innerHTML = `<b style="color:var(--ink)">${v.name}</b>（${typeOf(v)} · ${v.district}）：${v.note ? v.note.split('；')[0] : '仅有 C/D 级来源'} <span style="color:#8FE3FF">[来源等级 ${v.src_tier.join('/')}]</span>`;
-    ul.appendChild(li);
-  });
-  const extra = document.createElement('li');
-  extra.innerHTML = `<b style="color:var(--ink)">地址两说与处理结果</b>：The Union Trading Company —— 大众点评地址片段「衡山路30******」与衡山路 306 号吻合，<b style="color:var(--ink)">已可判定现址为衡山路 306 号</b>（汾阳路 64 弄 2-1 号为旧址）；Sober Company —— 点评地址片段「雁荡路10******」与 109 号吻合，<b style="color:var(--ink)">109 号一说获佐证</b>，但本页仍并列保留「99 号」两说；M2 —— 淮海中路 1 号与 283 号香港广场 4F <b style="color:var(--ink)">两处均已停业</b>，门牌之争已无实际意义。`;
-  ul.appendChild(extra);
+    `<br>现场演出 <b>${liveN}</b> 家 · 打烊晚于 02:00 <b>${lateN}</b> 家 · 必须预约 <b>${bookMust}</b> 家 · 需实名 <b>${idN}</b> 家 · ⛔ 已停业/暂停 <b>${closedN}</b> 家。`;
 }
 </script>
 </body>

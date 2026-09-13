@@ -1,0 +1,53 @@
+name: Deploy Pages
+
+# 把 dist/ 直接发布为 GitHub Pages 站点。
+# dist/ 本身提交在 git 里，所以这里不需要「构建」，只在发布前校验一次
+# 「产物 == 源模板」（build.py --check），防止把忘记重新生成的 dist 发上线。
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个发布；排队中的旧任务作废，但正在进行的发布不打断。
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Validate data and dist freshness
+        run: python3 build.py --check
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dist as Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

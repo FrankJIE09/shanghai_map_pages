@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>上海必吃榜 × 高德扫街榜 2026 · 探店地图</title>
+    <title>上海餐饮总览 2026 · 必吃榜 × 扫街榜 × 米其林 · 探店地图</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Leaflet 1.9.4 -->
@@ -45,11 +45,16 @@
         .m-icon.is-active { transform: scale(1.22); box-shadow: 0 0 0 3px #C88A4B, 3px 3px 0px #3E3933; }
         .m-icon.m-dim { opacity: 0.18; filter: grayscale(0.8); }
 
-        .cat-both  { border-color: #7C3AED !important; }
-        .cat-bichi { border-color: #DC2626 !important; }
-        .cat-saojie{ border-color: #2563EB !important; }
+        /* ===== 主色分类（图标边框）：榜单用冷色、米其林用暖金色系，两族一眼可分 ===== */
+        .cat-both      { border-color: #7C3AED !important; }
+        .cat-bichi     { border-color: #DC2626 !important; }
+        .cat-saojie    { border-color: #2563EB !important; }
+        .cat-michelin3 { border-color: #B8860B !important; }
+        .cat-michelin2 { border-color: #C88A4B !important; }
+        .cat-michelin1 { border-color: #D9A05B !important; }
+        .cat-bib       { border-color: #C2410C !important; }
 
-        /* 榜单角标（吃 / 街 / 双） */
+        /* 主分类角标（右上角，吃 / 街 / 双 / ★ / 必） */
         .m-badge {
             position: absolute; top: -7px; right: -7px;
             min-width: 16px; height: 16px; padding: 0 2px;
@@ -60,10 +65,13 @@
             box-shadow: 1px 1px 0px #3E3933;
             pointer-events: none;
         }
-        /* 榜单角标（右上角） */
-        .badge-both  { background: #7C3AED; }
-        .badge-bichi { background: #DC2626; }
-        .badge-saojie{ background: #2563EB; }
+        .badge-both      { background: #7C3AED; }
+        .badge-bichi     { background: #DC2626; }
+        .badge-saojie    { background: #2563EB; }
+        .badge-michelin3 { background: #B8860B; }
+        .badge-michelin2 { background: #C88A4B; }
+        .badge-michelin1 { background: #D9A05B; }
+        .badge-bib       { background: #C2410C; }
 
         /* 米其林附加角标（左下角，金色小药丸） */
         .m-michelin {
@@ -231,20 +239,21 @@
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
             <div class="flex items-center gap-2 flex-wrap">
-                <span class="bg-[#D9A05B] text-[#1F402B] text-[10px] font-bold px-2 py-0.5 rounded-sm transform -rotate-1">大众点评必吃榜 × 高德扫街榜 · 上海 2026</span>
+                <span class="bg-[#D9A05B] text-[#1F402B] text-[10px] font-bold px-2 py-0.5 rounded-sm transform -rotate-1">必吃榜 × 扫街榜 × 米其林指南 · 上海 2026</span>
                 <h1 class="text-3xl md:text-4xl font-bold handwritten-title tracking-wider">
-                    🍜 上海必吃榜 × 扫街榜探店地图 <span class="text-lg md:text-xl font-sans font-light opacity-80">(WGS-84 真实坐标版)</span>
+                    🍜 上海餐饮总览地图 <span class="text-lg md:text-xl font-sans font-light opacity-80">(WGS-84 真实坐标版)</span>
                 </h1>
             </div>
             <p class="text-xs md:text-sm opacity-90 mt-2 font-light leading-relaxed max-w-4xl">
-                一个店可以同时上两个榜：本图把「大众点评必吃榜」与「高德扫街榜」合在一张图上，重合的店铺标注为 <b>双榜</b>。若它同时也是米其林（含必比登），只在角落加一枚金色小角标，不再作为分类。点击图标可看菜系、门牌地址、人均档位与认路落脚点。
+                把「大众点评必吃榜」「高德扫街榜」与「2026 米其林指南」三个榜单合在一张图上，共 <b>132 家</b>（三榜去重后）。一家店可以同时挂多个标签：榜单作为主色，米其林走左下角金角标；只被米其林收录的以星级为主色。下方标签可<b>多选叠加</b>筛选，点击图标可看菜系、门牌地址、人均与认路落脚点。
             </p>
         </div>
         <div class="flex gap-2 shrink-0 flex-wrap">
+            <span id="pill-both" class="bg-[#7C3AED] text-[#FAF5EB] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">🎯 双榜 0</span>
             <span id="pill-bichi" class="bg-[#DC2626] text-[#FAF5EB] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">🍜 必吃榜 0</span>
             <span id="pill-saojie" class="bg-[#2563EB] text-[#FAF5EB] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">🛣️ 扫街榜 0</span>
-            <span id="pill-both" class="bg-[#7C3AED] text-[#FAF5EB] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">🎯 双榜 0</span>
-            <span id="pill-michelin" class="bg-[#F5D77A] text-[#4A3A00] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#B8860B]">⭐ 含米其林 0</span>
+            <span id="pill-michelin" class="bg-[#F5D77A] text-[#4A3A00] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#B8860B]">⭐ 米其林 0</span>
+            <span id="pill-bib" class="bg-[#C2410C] text-[#FAF5EB] px-3 py-1 rounded-full text-xs font-bold shadow-sm border border-[#3E3933]">🥢 必比登 0</span>
         </div>
     </div>
 </header>
@@ -256,7 +265,7 @@
         <div class="sketch-card p-2 rounded-2xl relative bg-[#FAF5EB]">
             <div class="absolute top-4 left-4 flex flex-col items-start gap-1 z-[1000] select-none pointer-events-none">
                 <div class="bg-[#1F402B] text-[#FAF5EB] px-2.5 py-1 rounded text-[11px] font-bold shadow-md">
-                    🗺️ 必吃榜 × 扫街榜门店分布（上北 ⬆️）
+                    🗺️ 三榜合并门店分布（上北 ⬆️）
                 </div>
                 <div id="map-hint" class="text-[9px] text-gray-700 bg-white/95 px-2 py-0.5 rounded border border-gray-300 shadow-sm font-semibold">
                     加载中…
@@ -272,10 +281,13 @@
                 <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#7C3AED;background:#FFFDF9"></span>双榜（必吃 + 扫街）</span>
                 <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#DC2626;background:#FFFDF9"></span>大众点评必吃榜</span>
                 <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#2563EB;background:#FFFDF9"></span>高德扫街榜</span>
-                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full" style="background:#7C3AED"></span>图标右上角 = 榜单角标（吃 / 街 / 双）</span>
-                <span class="flex items-center gap-1.5"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-full border" style="border-color:#B8860B;background:#F5D77A;color:#4A3A00">★2</span>米其林星级</span>
-                <span class="flex items-center gap-1.5"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-full border" style="border-color:#B8860B;background:#F5D77A;color:#4A3A00">必</span>米其林必比登</span>
-                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#A79E92;background:#FFFDF9"></span>颜色 = 所在榜单；左下角金角标 = 米其林</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#B8860B;background:#FFFDF9"></span>米其林三星</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#C88A4B;background:#FFFDF9"></span>米其林二星</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#D9A05B;background:#FFFDF9"></span>米其林一星</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full border-2" style="border-color:#C2410C;background:#FFFDF9"></span>必比登推介</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block w-3.5 h-3.5 rounded-full" style="background:#7C3AED"></span>图标右上角 = 主色角标（双 / 吃 / 街 / ★ / 必）</span>
+                <span class="flex items-center gap-1.5"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded-full border" style="border-color:#B8860B;background:#F5D77A;color:#4A3A00">★2</span>左下角金角标 = 同时是米其林（星级 / 必）</span>
+                <span class="flex items-center gap-1.5">🎨 上榜门店以榜单为主色、米其林走角标；只被米其林收录的以星级为主色</span>
                 <span class="flex items-center gap-1.5"><span class="inline-block text-[10px] font-bold px-1.5 py-0.5 rounded border" style="border-color:#C9A227;background:#FBEAB4;color:#5C4708">人均约 ¥170</span>价位（具体人均，非档位）</span>
                 <span class="flex items-center gap-1.5">💰 价位档位按具体人均划分：平价 &lt;45 · 亲民 45–120 · 中档 120–250 · 高端 ≥250</span>
                 <span class="flex items-center gap-1.5"><span class="inline-block w-6 h-[3px] rounded" style="background:#6E6558"></span>核心干道 52 条（放大即标路名）</span>
@@ -304,11 +316,11 @@
                     请在地图或右侧名录点选餐厅
                 </span>
                 <h3 id="detail-title" class="text-2xl font-bold mt-2 text-[#2E2B27] handwritten-title">
-                    上海必吃榜 × 扫街榜 2026
+                    上海餐饮总览 2026
                 </h3>
                 <div id="detail-meta" class="mt-2"></div>
                 <p id="detail-desc" class="text-xs text-gray-600 mt-2 leading-relaxed">
-                    收录「大众点评必吃榜」与「高德扫街榜」上海上榜门店，两榜重合的标注为 <b>双榜</b>；同时是米其林（含必比登）的，仅在图标左下角加一枚金色角标。坐标为 WGS-84。
+                    合并「大众点评必吃榜」「高德扫街榜」与「2026 沪苏浙米其林指南」三个榜单，共 <b>132 家</b>（三榜去重后）。坐标为 WGS-84；米其林侧仅有官方 ¥ 档位，故其独有门店标注为「人均待核实」。
                 </p>
                 <div id="detail-addr-box" class="hidden mt-3 p-2.5 bg-emerald-50 rounded-lg border border-emerald-200">
                     <span class="text-xs font-bold text-emerald-900 block">📍 门店地址:</span>
@@ -327,17 +339,22 @@
         <div class="sketch-card rounded-2xl overflow-hidden bg-white">
             <div class="p-3 bg-gray-50 border-b border-gray-200 flex flex-col gap-2.5">
 
-                <!-- 榜单筛选（可叠加多选） -->
+                <!-- 标签筛选（一行平铺，可多选叠加；命中任一标签即显示） -->
                 <div class="flex flex-wrap items-center gap-1.5">
-                    <button type="button" id="list-all" data-list="all" class="cat-btn active px-2 py-1 text-[10px] font-semibold rounded border border-gray-300 bg-white text-gray-700">全部</button>
-                    <button type="button" id="list-both" data-list="both" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border" style="border-color:#7C3AED;background:#F5F3FF;color:#4C1D95">🎯 双榜</button>
-                    <button type="button" id="list-bichi" data-list="bichi" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border" style="border-color:#DC2626;background:#FEF2F2;color:#7F1D1D">🍜 必吃榜</button>
-                    <button type="button" id="list-saojie" data-list="saojie" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border" style="border-color:#2563EB;background:#EFF6FF;color:#1E3A8A">🛣️ 扫街榜</button>
+                    <button type="button" id="tag-all" data-tag="all" class="cat-btn active px-2 py-1 text-[10px] font-semibold rounded border border-gray-300 bg-white text-gray-700">全部</button>
+                    <button type="button" data-tag="both" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border" style="border-color:#7C3AED;background:#F5F3FF;color:#4C1D95">🎯 双榜</button>
+                    <button type="button" data-tag="bichi" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border" style="border-color:#DC2626;background:#FEF2F2;color:#7F1D1D">🍜 必吃榜</button>
+                    <button type="button" data-tag="saojie" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border" style="border-color:#2563EB;background:#EFF6FF;color:#1E3A8A">🛣️ 扫街榜</button>
+                    <button type="button" data-tag="michelin3" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border border-yellow-600 bg-yellow-50 text-yellow-900">⭐⭐⭐ 三星</button>
+                    <button type="button" data-tag="michelin2" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border border-amber-400 bg-amber-50 text-amber-900">⭐⭐ 二星</button>
+                    <button type="button" data-tag="michelin1" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border border-yellow-400 bg-yellow-50 text-yellow-900">⭐ 一星</button>
+                    <button type="button" data-tag="bib" class="cat-btn px-2 py-1 text-[10px] font-semibold rounded border" style="border-color:#C2410C;background:#FFF7ED;color:#7C2D12">🥢 必比登</button>
                     <button type="button" id="sort-dist" class="sort-btn ml-auto px-2 py-1 text-[10px] font-semibold rounded border border-blue-300 bg-blue-50 text-blue-800" title="按距我的位置远近排序（首次点击会请求定位授权）">📏 近→远</button>
                 </div>
+                <div class="text-[9px] text-gray-400 leading-tight">可多选叠加（命中任一标签即显示）；「必吃 + 扫街」同时命中 = 双榜。</div>
 
                 <!-- 搜索 -->
-                <input type="text" id="search-input" placeholder="🔍 输入店名 / 菜系 / 地址（如：小笼、粤菜、外滩、新天地）..."
+                <input type="text" id="search-input" placeholder="🔍 输入店名 / 菜系 / 地址（如：小笼、粤菜、外滩、泰安门）..."
                        class="w-full text-xs px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-[#1F402B]">
 
                 <!-- 菜系 -->
@@ -346,7 +363,7 @@
                         <span class="text-[10px] font-bold text-gray-600">菜系筛选:</span>
                         <button id="clear-cuisine" class="text-[10px] underline text-gray-500 hover:text-gray-800 hidden">清除</button>
                     </div>
-                    <div id="cuisine-chips" class="flex flex-wrap gap-1 mt-1 max-h-[84px] overflow-y-auto thin-scroll"></div>
+                    <div id="cuisine-chips" class="flex flex-wrap gap-1 mt-1 max-h-[132px] overflow-y-auto thin-scroll"></div>
                 </div>
 
                 <!-- 行政区 + 只看新 -->
@@ -364,16 +381,10 @@
                     <div id="price-chips" class="flex flex-wrap gap-1 mt-1"></div>
                 </div>
                 <div class="flex items-center justify-between gap-2 pt-1 border-t border-gray-100">
-                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
-                        <label class="flex items-center gap-1.5 text-[11px] text-gray-700 cursor-pointer">
-                            <input type="checkbox" id="only-new" class="accent-[#1F402B]">
-                            ✨ 只看 2026 新上榜
-                        </label>
-                        <label class="flex items-center gap-1.5 text-[11px] text-gray-700 cursor-pointer">
-                            <input type="checkbox" id="only-michelin" class="accent-[#B8860B]">
-                            ⭐ 只看含米其林
-                        </label>
-                    </div>
+                    <label class="flex items-center gap-1.5 text-[11px] text-gray-700 cursor-pointer">
+                        <input type="checkbox" id="only-new" class="accent-[#1F402B]">
+                        ✨ 只看 2026 新上榜（<b id="new-count">0</b> 家）
+                    </label>
                     <button id="reset-btn" class="text-[10px] bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded text-gray-700 font-medium">重置筛选</button>
                 </div>
             </div>
@@ -383,20 +394,21 @@
         </div>
 
         <p class="text-[10px] text-gray-400 leading-relaxed px-1">
-            <b class="text-gray-500">⚠️ 覆盖范围（务必先读）</b>：2026 大众点评必吃榜上海共 <b>160 家</b>上榜（全国第一；黄浦 36 &gt; 浦东 27 &gt; 徐汇 26 &gt; 静安 15 &gt; 长宁 12），高德扫街榜上海状元榜约 <b>145 家</b>、《烟火上海》TOP 100 餐厅 <b>100 家</b>。本页<b>只收录了已公开可查的部分门店</b>，<b>不是完整榜单</b>；其中只有徐汇区 26 家是官方转载的全量名单，其余区县公开报道仅披露数量与零星店名，因此本页<b>区域分布失真</b>（徐汇、黄浦占比过高），请勿据此判断各区餐饮实力。<br>
-            数据来源：大众点评必吃榜（dianping.com）、高德扫街榜（amap.com）；米其林信息仅作交叉标注（guide.michelin.com）。两榜均有轮换，实际以官方 App 内榜单为准。<br>
-            📍 坐标为 WGS-84 参考点位，部分门店按门牌地址取街道近似点（已在条目 <b>note</b> 中标注「坐标为近似」），可能与实际门牌存在百米级偏差。<br>
+            <b class="text-gray-500">⚠️ 合并口径（务必先读）</b>：本页把「大众点评必吃榜」「高德扫街榜」与「2026 沪苏浙米其林指南」合并成一张图，共 <b>132 家</b>。其中 <b>13 家</b>同时被两个数据源收录，按<b>坐标完全一致</b>判定为同一家店合并展示（两源命名不同，如「临湖素食（保利·时光里店）」与官方「临湖素食」），因此 <b>59 + 86 − 13 = 132</b>。坐标接近但不相等的<b>不合并</b>（实测是不同餐厅）。<br>
+            <b class="text-gray-500">⚠️ 覆盖范围</b>：2026 大众点评必吃榜上海共 <b>160 家</b>上榜，高德扫街榜上海状元榜约 <b>145 家</b>，米其林上海共 <b>156 家</b>（星级 51 + 必比登 35 为本页收录范围）。必吃/扫街侧<b>只收录了已公开可查的部分门店</b>，<b>不是完整榜单</b>：其中只有徐汇区 26 家是官方转载的全量名单，其余区县公开报道仅披露数量与零星店名，因此必吃/扫街部分<b>区域分布失真</b>（徐汇、黄浦占比过高），请勿据此判断各区餐饮实力。米其林侧为完整名单。<br>
+            数据来源：大众点评必吃榜（dianping.com）、高德扫街榜（amap.com）、米其林指南（guide.michelin.com）。三个榜单均有轮换，实际以官方 App 内榜单为准。<br>
+            📍 坐标为 WGS-84 参考点位；必吃/扫街侧部分门店按门牌地址取街道近似点（已在条目 <b>note</b> 中标注「坐标为近似」），可能与实际门牌存在百米级偏差。米其林侧为官方点位（已修正 1 处官方坐标错误）。<br>
             🧭 定位由浏览器 Geolocation 提供（需 HTTPS 并授权），坐标仅在你的设备本地用于计算距离与排序，<b>不会上传或存储</b>；距离为直线距离，非步行路径。<br>
-            💰 <b>价位为大众点评店铺页「人均 ¥XX/人」的具体数值</b>，非档位换算；数值随点评数据波动，且实际消费取决于点菜方式，仅供参考。筛选里的四档由该数值自动划分。个别查不到公开人均的门店如实标注为「人均待核实」，不做估算。<br>
+            💰 <b>价位</b>：必吃/扫街侧为大众点评店铺页「人均 ¥XX/人」的具体数值（非档位换算），筛选里的四档由该数值自动划分；米其林侧官方只给 ¥ / ¥¥ / ¥¥¥ / ¥¥¥¥ 档位，其独有门店如实标注为「人均待核实」，不做估算。<br>
             🧹 已剔除核实后「上海无门店」及已确认关停的条目（如上上谦火锅，2026-05 全国门店关停）；个别门店（阿娘面、壹零贰小馆）经核实已闭店/歇业，另有若干（小陶面馆、鲁采、头灶等）营业状态待核实，均保留条目并在详情中标注，请以店内实际情况为准。<br>
             🛣️ 道路骨架抽取自同站《上海中心城区认路宝典》，共 227 条（核心干道 52 + 主要干道 66 + 较长道路 109）；路名在放大到 13 级后显示。骨架仅覆盖市中心六区；偏远片区（虹桥商务区 / 七宝 / 前滩 / 三林等）以区域锚点与地标参照补方位。<br>
-            共收录 <b id="foot-total">59</b> 家，数据截至 <b>2026-09-12</b>。
+            共收录 <b id="foot-total">132</b> 家，数据截至 <b>2026-09-12</b>。
         </p>
     </section>
 </main>
 
 <footer class="max-w-7xl mx-auto px-4 mt-10 text-center text-[11px] text-gray-500 border-t border-gray-200 pt-4">
-    🍜 必吃榜 × 🛣️ 扫街榜 · 上海 2026 探店地图 · 米其林仅作交叉标注 · 仅供认路与探店参考，非广告 🍜
+    🍜 必吃榜 × 🛣️ 扫街榜 × ⭐ 米其林指南 · 上海 2026 餐饮总览地图 · 仅供认路与探店参考，非广告 🍜
 </footer>
 
 <script>
@@ -408,15 +420,13 @@
     /* @@BUILD:js src/static/geo-controls.js@@ */
     /* @@BUILD:end@@ */
 
-    /* ================= 数据（由 shanghai_wutong_streets.html 抽取） ================= */
-    /* @@BUILD:json data/venues/bichi.json -> ALL_STORES@@ */
-    const ALL_STORES = [ /* 构建生成：勿手改，改数据请改 data/venues/bichi.json */ ];
+    /* ================= 数据 ================= */
+    /* 由构建期把 data/venues/bichi.json 与 michelin.json 合并成一份：
+       坐标完全一致的 13 家视为同店合并，字段取值与标签规则见 scripts/merge_venues.py。 */
+    /* @@BUILD:merge data/venues/bichi.json,data/venues/michelin.json -> EAT_STORES@@ */
+    const EAT_STORES = [ /* 构建生成：勿手改，改数据请改 data/venues/*.json */ ];
     /* @@BUILD:end@@ */
 
-    /* 派生分类：不写进数据，加载后统一计算 */
-    ALL_STORES.forEach(s => {
-        s.category = (s.bichi && s.saojie) ? 'both' : (s.bichi ? 'bichi' : 'saojie');
-    });
     /* 米其林星级文案 */
     const MICHELIN_LABEL = { 1: '米其林一星', 2: '米其林二星', 3: '米其林三星', '-1': '米其林必比登推介' };
 
@@ -433,19 +443,28 @@
     const LANDMARKS = [ /* 构建生成：勿手改，改数据请改 data/map/landmarks/greater.json */ ];
     /* @@BUILD:end@@ */
 
-    const CAT_META = {
-        both:   { label: '双榜（必吃 + 扫街）', badge: '双', color: '#7C3AED', bg: 'bg-violet-100', text: 'text-violet-900', border: 'border-violet-400' },
-        bichi:  { label: '大众点评必吃榜',      badge: '吃', color: '#DC2626', bg: 'bg-red-100',    text: 'text-red-900',    border: 'border-red-300' },
-        saojie: { label: '高德扫街榜',          badge: '街', color: '#2563EB', bg: 'bg-blue-100',   text: 'text-blue-900',   border: 'border-blue-300' }
+    /* 标签元数据：一行平铺的 7 个标签，同时也是名录的分组顺序 */
+    const TAG_META = {
+        both:      { label: '双榜（必吃 + 扫街）', short: '双榜',   icon: '🎯',    badge: '双',  color: '#7C3AED', bg: 'bg-violet-100', text: 'text-violet-900', border: 'border-violet-400' },
+        bichi:     { label: '大众点评必吃榜',      short: '必吃榜', icon: '🍜',    badge: '吃',  color: '#DC2626', bg: 'bg-red-100',    text: 'text-red-900',    border: 'border-red-300' },
+        saojie:    { label: '高德扫街榜',          short: '扫街榜', icon: '🛣️',   badge: '街',  color: '#2563EB', bg: 'bg-blue-100',   text: 'text-blue-900',   border: 'border-blue-300' },
+        michelin3: { label: '米其林三星',          short: '三星',   icon: '⭐⭐⭐', badge: '★★★', color: '#B8860B', bg: 'bg-yellow-100', text: 'text-yellow-900', border: 'border-yellow-600' },
+        michelin2: { label: '米其林二星',          short: '二星',   icon: '⭐⭐',   badge: '★★',  color: '#C88A4B', bg: 'bg-amber-100',  text: 'text-amber-900',  border: 'border-amber-400' },
+        michelin1: { label: '米其林一星',          short: '一星',   icon: '⭐',    badge: '★',   color: '#D9A05B', bg: 'bg-yellow-50',  text: 'text-yellow-900', border: 'border-yellow-400' },
+        bib:       { label: '米其林必比登推介',    short: '必比登', icon: '🥢',    badge: '必',  color: '#C2410C', bg: 'bg-orange-100', text: 'text-orange-900', border: 'border-orange-300' }
     };
-    const CAT_ORDER = ['both', 'bichi', 'saojie'];
-    const MICHELIN_COLOR = '#B8860B';
+    /* 展示顺序 = 主色优先级：榜单 > 米其林 */
+    const TAG_ORDER = ['both', 'bichi', 'saojie', 'michelin3', 'michelin2', 'michelin1', 'bib'];
+    /* 米其林标签 -> 等级（1/2/3、-1 表示必比登） */
+    const TAG_LEVEL = { michelin1: 1, michelin2: 2, michelin3: 3, bib: -1 };
+    /* 榜单标签：这些是「主色」，米其林走左下角金角标 */
+    const LIST_TAGS = ['both', 'bichi', 'saojie'];
 
     /* ================= 状态 ================= */
     let map;
     let markerMap = {};        // key -> marker
     let activeKey = null;
-    const state = { lists: [], cuisine: 'all', district: 'all', price: [], q: '', onlyNew: false, onlyMichelin: false };
+    const state = { tags: [], cuisine: 'all', district: 'all', price: [], q: '', onlyNew: false };
     let labelsPermanent = false;
 
     /* ================= 工具 ================= */
@@ -453,18 +472,33 @@
         const m = /^([\u4e00-\u9fa5]{2,3}区)/.exec(r.address || '');
         return m ? m[1] : '其他';
     }
-    /* 米其林角标文案：michelin>0 → ★N；-1 → 必；0 → 不渲染 */
-    function michelinBadgeHtml(r) {
-        if (r.michelin > 0) {
-            return `<span class="m-michelin" title="${MICHELIN_LABEL[r.michelin]}">★${r.michelin}</span>`;
-        }
-        if (r.michelin === -1) {
-            return `<span class="m-michelin" title="${MICHELIN_LABEL['-1']}">必</span>`;
-        }
-        return '';
+    /* 有效标签：双榜已经涵盖必吃 + 扫街，展示时不再重复列这两项 */
+    function effectiveTags(r) {
+        return r.tags.filter(t => !(r.tags.includes('both') && (t === 'bichi' || t === 'saojie')));
     }
-    const DISTRICTS = [...new Set(ALL_STORES.map(districtOf))];
-    const CUISINES = [...new Set(ALL_STORES.map(r => r.cuisine))].sort((a, b) => a.localeCompare(b, 'zh'));
+    /* 左下角金角标：上榜门店（主色为榜单）且同时是米其林时才渲染 */
+    function michelinBadgeHtml(r) {
+        if (!LIST_TAGS.includes(r.primary) || r.michelin === 0) return '';
+        return r.michelin > 0
+            ? `<span class="m-michelin" title="${MICHELIN_LABEL[r.michelin]}">★${r.michelin}</span>`
+            : `<span class="m-michelin" title="${MICHELIN_LABEL['-1']}">必</span>`;
+    }
+    /* 名录里的小徽章（短） */
+    function tagBadgeShort(t) {
+        if (t === 'both') return '🎯 双榜';
+        if (t === 'bichi') return '🍜 必吃榜';
+        if (t === 'saojie') return '🛣️ 扫街榜';
+        return TAG_LEVEL[t] > 0 ? `米★${TAG_LEVEL[t]}` : '米必登';
+    }
+    /* 详情卡里的标签文案（完整） */
+    function tagBadgeFull(t) {
+        if (t === 'both') return '🎯 双榜（必吃 + 扫街）';
+        if (t === 'bichi') return '🍜 大众点评必吃榜';
+        if (t === 'saojie') return '🛣️ 高德扫街榜';
+        return (TAG_LEVEL[t] > 0 ? '⭐ ' : '🥢 ') + MICHELIN_LABEL[TAG_LEVEL[t]];
+    }
+    const DISTRICTS = [...new Set(EAT_STORES.map(districtOf))];
+    const CUISINES = [...new Set(EAT_STORES.map(r => r.cuisine))].sort((a, b) => a.localeCompare(b, 'zh'));
 
     /* 价位档位：优先按具体人均 avg 分档；avg 缺失时回退到 price 里的 ¥ 个数 */
     const PRICE_BANDS = [45, 120, 250];     // <45 平价 / <120 亲民 / <250 中档 / 其余 高端
@@ -513,10 +547,10 @@
             poiMinZoom: { area: 10, landmark: 12 }
         });
 
-        ALL_STORES.forEach(r => {
-            const meta = CAT_META[r.category];
+        EAT_STORES.forEach(r => {
+            const meta = TAG_META[r.primary];
             const icon = L.divIcon({
-                html: `<div class="m-icon cat-${r.category}" data-key="${r.key}" style="width:32px;height:32px;font-size:15px;" title="${r.name}">${r.icon}<span class="m-badge badge-${r.category}">${meta.badge}</span>${michelinBadgeHtml(r)}</div>`,
+                html: `<div class="m-icon cat-${r.primary}" data-key="${r.key}" style="width:32px;height:32px;font-size:15px;" title="${r.name}">${r.icon}<span class="m-badge badge-${r.primary}">${meta.badge}</span>${michelinBadgeHtml(r)}</div>`,
                 className: '',
                 iconSize: [32, 32],
                 iconAnchor: [16, 16]
@@ -526,10 +560,10 @@
             markerMap[r.key] = mk;
         });
 
-        MapBase.bindLabels(ALL_STORES, markerMap, labelsPermanent);
+        MapBase.bindLabels(EAT_STORES, markerMap, labelsPermanent);
         initLocate();
 
-        const bounds = L.latLngBounds(ALL_STORES.map(r => r.coords));
+        const bounds = L.latLngBounds(EAT_STORES.map(r => r.coords));
         map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
 
         buildChips();
@@ -546,22 +580,26 @@
        已抽到 src/static/map-base.js（MapBase.drawAreas / drawLandmarks / bindLabels） */
 
     /* ================= 动态生成筛选 chip ================= */
-    /* 头部胶囊 / 榜单按钮数量 / 脚注总数（数据驱动，避免手改数字） */
+    /* 头部胶囊 / 标签按钮数量 / 脚注总数（数据驱动，避免手改数字） */
+    function countTag(t) { return EAT_STORES.filter(r => r.tags.includes(t)).length; }
+
     function updateStaticCounts() {
-        const bichiN = ALL_STORES.filter(r => r.bichi).length;
-        const saojieN = ALL_STORES.filter(r => r.saojie).length;
-        const bothN = ALL_STORES.filter(r => r.category === 'both').length;
-        const micN = ALL_STORES.filter(r => r.michelin !== 0).length;
         const set = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
-        set('pill-bichi', `🍜 必吃榜 ${bichiN}`);
-        set('pill-saojie', `🛣️ 扫街榜 ${saojieN}`);
-        set('pill-both', `🎯 双榜 ${bothN}`);
-        set('pill-michelin', `⭐ 含米其林 ${micN}`);
-        set('list-all', '全部');
-        set('list-both', `🎯 双榜 ${bothN}`);
-        set('list-bichi', `🍜 必吃榜 ${bichiN}`);
-        set('list-saojie', `🛣️ 扫街榜 ${saojieN}`);
-        set('foot-total', ALL_STORES.length);
+        set('pill-both', `🎯 双榜 ${countTag('both')}`);
+        set('pill-bichi', `🍜 必吃榜 ${countTag('bichi')}`);
+        set('pill-saojie', `🛣️ 扫街榜 ${countTag('saojie')}`);
+        set('pill-michelin', `⭐ 米其林 ${EAT_STORES.filter(r => r.michelin !== 0).length}`);
+        set('pill-bib', `🥢 必比登 ${countTag('bib')}`);
+        set('new-count', EAT_STORES.filter(r => r.isNew).length);
+        set('foot-total', EAT_STORES.length);
+
+        // 标签按钮：全部 + 每个标签带条数
+        document.querySelectorAll('.cat-btn[data-tag]').forEach(b => {
+            const t = b.dataset.tag;
+            if (t === 'all') { b.textContent = `全部 ${EAT_STORES.length}`; return; }
+            const m = TAG_META[t];
+            b.textContent = `${m.icon} ${m.short} ${countTag(t)}`;
+        });
     }
 
     function buildChips() {
@@ -609,7 +647,7 @@
         pAll.textContent = '不限';
         pWrap.appendChild(pAll);
         PRICE_TIERS.forEach(t => {
-            const n = ALL_STORES.filter(r => priceTier(r) === t.tier).length;
+            const n = EAT_STORES.filter(r => priceTier(r) === t.tier).length;
             const b = document.createElement('button');
             b.type = 'button';
             b.dataset.tier = String(t.tier);
@@ -635,14 +673,14 @@
         if (e.target.closest('#sort-dist')) { geo.toggleSortDist(); return; }
         const catBtn = e.target.closest('.cat-btn');
         if (catBtn) {
-            const v = catBtn.dataset.list;
+            const v = catBtn.dataset.tag;
             if (v === 'all') {
-                state.lists = [];
+                state.tags = [];
             } else {
-                const i = state.lists.indexOf(v);
-                if (i >= 0) state.lists.splice(i, 1); else state.lists.push(v);
+                const i = state.tags.indexOf(v);
+                if (i >= 0) state.tags.splice(i, 1); else state.tags.push(v);
             }
-            syncListButtons();
+            syncTagButtons();
             renderList(); updateMarkers(); return;
         }
         const cChip = e.target.closest('#cuisine-chips .chip');
@@ -694,28 +732,23 @@
         state.onlyNew = e.target.checked;
         renderList(); updateMarkers();
     });
-    document.getElementById('only-michelin').addEventListener('change', function (e) {
-        state.onlyMichelin = e.target.checked;
-        renderList(); updateMarkers();
-    });
 
-    /* 榜单按钮选中态（可叠加多选） */
-    function syncListButtons() {
-        const none = state.lists.length === 0;
-        document.querySelectorAll('.cat-btn').forEach(b => {
-            const v = b.dataset.list;
-            b.classList.toggle('active', v === 'all' ? none : state.lists.includes(v));
+    /* 标签按钮选中态（一行平铺，可多选叠加） */
+    function syncTagButtons() {
+        const none = state.tags.length === 0;
+        document.querySelectorAll('.cat-btn[data-tag]').forEach(b => {
+            const v = b.dataset.tag;
+            b.classList.toggle('active', v === 'all' ? none : state.tags.includes(v));
         });
     }
 
     function resetFilters() {
-        state.lists = []; state.cuisine = 'all'; state.district = 'all'; state.price = []; state.q = '';
-        state.onlyNew = false; state.onlyMichelin = false;
+        state.tags = []; state.cuisine = 'all'; state.district = 'all'; state.price = []; state.q = '';
+        state.onlyNew = false;
         document.getElementById('search-input').value = '';
         document.getElementById('only-new').checked = false;
-        document.getElementById('only-michelin').checked = false;
         document.getElementById('clear-cuisine').classList.add('hidden');
-        syncListButtons();
+        syncTagButtons();
         document.querySelectorAll('#cuisine-chips .chip').forEach(b => b.classList.toggle('active', b.dataset.cuisine === 'all'));
         document.querySelectorAll('#district-chips .chip').forEach(b => b.classList.toggle('active', b.dataset.district === 'all'));
         syncPriceChips();
@@ -724,9 +757,9 @@
     }
 
     /* ================= 过滤逻辑 ================= */
+    /* 标签为「或」语义：命中任一选中标签即显示；未选标签则不按标签过滤 */
     function match(r) {
-        if (state.lists.length && !state.lists.includes(r.category)) return false;
-        if (state.onlyMichelin && r.michelin === 0) return false;
+        if (state.tags.length && !r.tags.some(t => state.tags.includes(t))) return false;
         if (state.cuisine !== 'all' && r.cuisine !== state.cuisine) return false;
         if (state.district !== 'all' && districtOf(r) !== state.district) return false;
         if (state.price.length && !state.price.includes(priceTier(r))) return false;
@@ -740,7 +773,7 @@
 
     function updateMarkers() {
         let shown = 0;
-        ALL_STORES.forEach(r => {
+        EAT_STORES.forEach(r => {
             const ok = match(r);
             const mk = markerMap[r.key];
             const el = mk.getElement();
@@ -753,7 +786,7 @@
         });
         let extra = '';
         if (geo && geo.pos()) {
-            const mine = ALL_STORES.filter(match);
+            const mine = EAT_STORES.filter(match);
             if (mine.length) {
                 let best = mine[0], bd = distOf(best);
                 mine.forEach(r => { const d = distOf(r); if (d != null && d < bd) { bd = d; best = r; } });
@@ -762,27 +795,27 @@
                 extra = ' · 📍 已定位';
             }
         }
-        document.getElementById('map-hint').textContent = `显示 ${shown} / ${ALL_STORES.length} 家 · 点击图标查看详情${extra}`;
+        document.getElementById('map-hint').textContent = `显示 ${shown} / ${EAT_STORES.length} 家 · 点击图标查看详情${extra}`;
     }
 
     /* ================= 名录 ================= */
     function renderList() {
         const list = document.getElementById('rest-list');
         list.innerHTML = '';
-        const rows = ALL_STORES.filter(match);
+        const rows = EAT_STORES.filter(match);
         if (!rows.length) {
             document.getElementById('empty-tip').classList.remove('hidden');
             return;
         }
         document.getElementById('empty-tip').classList.add('hidden');
 
-        CAT_ORDER.forEach(cat => {
-            const group = rows.filter(r => r.category === cat);
+        TAG_ORDER.forEach(tag => {
+            const group = rows.filter(r => r.primary === tag);
             if (!group.length) return;
             const head = document.createElement('div');
             head.className = 'flex items-center gap-2 mt-2 mb-0.5 px-1';
-            head.innerHTML = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded text-white" style="background:${CAT_META[cat].color}">${CAT_META[cat].badge}</span>
-                <span class="text-[11px] font-bold text-[#1F402B]">${CAT_META[cat].label}</span>
+            head.innerHTML = `<span class="text-[10px] font-bold px-1.5 py-0.5 rounded text-white" style="background:${TAG_META[tag].color}">${TAG_META[tag].badge}</span>
+                <span class="text-[11px] font-bold text-[#1F402B]">${TAG_META[tag].label}</span>
                 <span class="text-[10px] text-gray-400">${group.length} 家</span>`;
             list.appendChild(head);
 
@@ -790,22 +823,21 @@
                 ? (a, b) => (distOf(a) ?? Infinity) - (distOf(b) ?? Infinity)
                 : (a, b) => a.name.localeCompare(b.name, 'zh'));
             group.forEach(r => {
-                const meta = CAT_META[r.category];
+                const meta = TAG_META[r.primary];
                 const btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = `rest-item text-left w-full px-2.5 py-2 rounded-lg border border-gray-200 bg-white flex items-start gap-2 ${activeKey === r.key ? 'active' : ''}`;
                 btn.dataset.key = r.key;
                 const newTag = r.isNew ? `<span class="ml-1 text-[9px] font-bold text-[#DC2626] border border-red-300 bg-red-50 rounded px-1">新</span>` : '';
-                const bothTag = r.category === 'both' ? `<span class="ml-1 text-[9px] font-bold text-white rounded px-1" style="background:#7C3AED">双</span>` : '';
-                const micTag = r.michelin > 0
-                    ? `<span class="ml-1 text-[9px] font-bold rounded px-1" style="color:#8A6A00;border:1px solid #B8860B;background:#FEF7E0">米★${r.michelin}</span>`
-                    : (r.michelin === -1 ? `<span class="ml-1 text-[9px] font-bold rounded px-1" style="color:#8A6A00;border:1px solid #B8860B;background:#FEF7E0">必</span>` : '');
+                // 主色之外的次级标签（最多 2 个，避免刷屏）
+                const others = effectiveTags(r).filter(t => t !== r.primary).slice(0, 2)
+                    .map(t => `<span class="ml-1 text-[9px] font-bold rounded px-1" style="color:#5C4708;border:1px solid #D9A05B;background:#FEF7E0">${tagBadgeShort(t)}</span>`).join('');
                 const dm = distOf(r);
                 const distTag = dm == null ? '' : ` · <span class="dist-tag">📍${MapBase.fmtDist(dm)}</span>`;
                 btn.innerHTML = `
                     <span class="ri-star text-sm leading-5 shrink-0" style="color:${meta.color}">${meta.badge}</span>
                     <span class="min-w-0 flex-1">
-                        <span class="ri-name block text-xs font-bold text-gray-800 truncate">${r.name}${newTag}${bothTag}${micTag}</span>
+                        <span class="ri-name block text-xs font-bold text-gray-800 truncate">${r.name}${newTag}${others}</span>
                         <span class="ri-sub block text-[9px] text-gray-500 truncate">${r.cuisine} · ${districtOf(r)} · <b class="text-[#8A6220]">${avgText(r)}</b>${r.note ? ' · ' + r.note : ''}${distTag}</span>
                     </span>`;
                 list.appendChild(btn);
@@ -815,10 +847,10 @@
 
     /* ================= 详情 ================= */
     function selectRestaurant(key, fromMap) {
-        const r = ALL_STORES.find(x => x.key === key);
+        const r = EAT_STORES.find(x => x.key === key);
         if (!r) return;
         activeKey = key;
-        const meta = CAT_META[r.category];
+        const meta = TAG_META[r.primary];
 
         document.getElementById('detail-type').textContent = `📍 ${meta.label}`;
         document.getElementById('detail-title').textContent = r.name;
@@ -829,9 +861,9 @@
         metaEl.innerHTML = '';
         const chips = [r.cuisine, districtOf(r), avgText(r)];
         if (r.note) chips.push('🏅 ' + r.note);
-        if (r.category === 'both') chips.push('🎯 双榜');
-        chips.push(r.bichi ? '🍜 必吃榜' : '🛣️ 扫街榜');
-        if (r.michelin !== 0) chips.push('⭐ ' + MICHELIN_LABEL[r.michelin]);
+        // 该店的全部标签（主色标签排最前；双榜不重复列必吃/扫街）
+        effectiveTags(r).slice().sort((a, b) => TAG_ORDER.indexOf(a) - TAG_ORDER.indexOf(b))
+            .forEach(t => chips.push(tagBadgeFull(t)));
         const dm = distOf(r);
         if (dm != null) chips.unshift(`📍 距你约 ${MapBase.fmtDist(dm)}（${MapBase.bearingOf(geo.pos(), r)}）`);
         chips.forEach(t => {
@@ -909,34 +941,34 @@
 
     /* ================= 统计 ================= */
     function renderStat() {
-        const bichiN = ALL_STORES.filter(r => r.bichi).length;
-        const saojieN = ALL_STORES.filter(r => r.saojie).length;
-        const bothN = ALL_STORES.filter(r => r.category === 'both').length;
-        const micN = ALL_STORES.filter(r => r.michelin !== 0).length;
+        const byTag = {};
+        TAG_ORDER.forEach(t => { byTag[t] = countTag(t); });
+        const tagStr = TAG_ORDER.map(t => `${TAG_META[t].short} ${byTag[t]}`).join(' · ');
         const byDist = {};
-        ALL_STORES.forEach(r => { const d = districtOf(r); byDist[d] = (byDist[d] || 0) + 1; });
+        EAT_STORES.forEach(r => { const d = districtOf(r); byDist[d] = (byDist[d] || 0) + 1; });
         const distStr = Object.entries(byDist).sort((a, b) => b[1] - a[1]).map(([k, v]) => `${k} ${v}`).join(' · ');
 
-        /* 人均：只对有具体数值的店求平均，缺失的不计入分母 */
-        const priced = ALL_STORES.filter(r => typeof r.avg === 'number' && r.avg > 0);
+        /* 人均：只对有具体数值的店求平均（米其林独有门店只有 ¥ 档位，不计入分母） */
+        const priced = EAT_STORES.filter(r => typeof r.avg === 'number' && r.avg > 0);
         const mean = a => Math.round(a.reduce((s, r) => s + r.avg, 0) / a.length);
         const meanAll = priced.length ? mean(priced) : null;
-        const meanBichi = priced.filter(r => r.bichi);
-        const meanSaojie = priced.filter(r => r.saojie);
+        const meanBichi = priced.filter(r => r.tags.includes('bichi'));
+        const meanSaojie = priced.filter(r => r.tags.includes('saojie'));
         const cheapest = priced.slice().sort((a, b) => a.avg - b.avg)[0];
         const priciest = priced.slice().sort((a, b) => b.avg - a.avg)[0];
-        const priceStr = PRICE_TIERS.map(t => `${t.label} ${t.range}元 ${ALL_STORES.filter(r => priceTier(r) === t.tier).length}`).join(' · ');
+        const priceStr = PRICE_TIERS.map(t => `${t.label} ${t.range}元 ${EAT_STORES.filter(r => priceTier(r) === t.tier).length}`).join(' · ');
 
         document.getElementById('stat-line').innerHTML =
-            `必吃榜 <b>${bichiN}</b> 家 · 扫街榜 <b>${saojieN}</b> 家 · 双榜 <b>${bothN}</b> 家 · 含米其林 <b>${micN}</b> 家，共 <b>${ALL_STORES.length}</b> 家。<br>` +
+            `标签（可叠加）：${tagStr}，共 <b>${EAT_STORES.length}</b> 家（三榜去重后）。<br>` +
             `行政区分布：${distStr}。菜系 <b>${CUISINES.length}</b> 类。<br>` +
-            `价位分布（按具体人均分档）：${priceStr}。<br>` +
+            `价位分布（按具体人均 / 官方档位分档）：${priceStr}。<br>` +
             (meanAll === null
-                ? `人均：暂未采集到具体数值（${ALL_STORES.length} 家待补）。`
-                : `<b>整体人均 ≈ ¥${meanAll}</b>（${priced.length} 家已采集 / ${ALL_STORES.length} 家）` +
+                ? `人均：暂未采集到具体数值（${EAT_STORES.length} 家待补）。`
+                : `<b>整体人均 ≈ ¥${meanAll}</b>（${priced.length} 家有具体人均 / ${EAT_STORES.length} 家）` +
                   (meanBichi.length ? ` · 必吃榜 ≈ ¥${mean(meanBichi)}` : '') +
                   (meanSaojie.length ? ` · 扫街榜 ≈ ¥${mean(meanSaojie)}` : '') +
-                  `。最便宜 <b>${cheapest.name}</b> ¥${cheapest.avg}，最贵 <b>${priciest.name}</b> ¥${priciest.avg}。`);
+                  `。最便宜 <b>${cheapest.name}</b> ¥${cheapest.avg}，最贵 <b>${priciest.name}</b> ¥${priciest.avg}。` +
+                  `<br>其余 ${EAT_STORES.length - priced.length} 家为米其林独有收录，官方只给 ¥ 档位，未计入人均统计。`);
     }
 </script>
 </body>

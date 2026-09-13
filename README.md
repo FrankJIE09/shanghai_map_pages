@@ -1,6 +1,6 @@
 # shanghai_map_pages
 
-上海探店地图（三张）：米其林 / 必吃榜×扫街榜 / 酒吧×Livehouse×夜店。
+上海探店地图（四张）：米其林 / 必吃榜×扫街榜 / 酒吧×Livehouse×夜店 / **餐饮总览（三榜合并）**。
 
 页面是**自包含的单文件 HTML**：数据与共用地图逻辑在构建期内联进去，产物零依赖、可离线双击打开。
 
@@ -9,33 +9,53 @@
 ```
 data/
   venues/  bars.json  bichi.json  michelin.json   店铺数据（唯一数据源）
-  map/     roads.json                             227 条道路，三页共用
+  map/     roads.json                             227 条道路，各页共用
            areas/     downtown.json  greater.json
            landmarks/ downtown.json  greater.json
+.github/   workflows/deploy-pages.yml          GitHub Pages 发布（把 dist/ 发上线）
 src/
-  pages/   bars.html  bichi.html  michelin.html   页面模板，含构建标记
+  pages/   index.html                            落地页模板（总入口，不含数据）
+           bars.html  bichi.html  michelin.html  eat.html   地图页模板，含构建标记
   static/  map-base.js  theme.js                  共用地图底座
-           geo-controls.js                        定位控件（仅 bichi/michelin 内联）
+           geo-controls.js                        定位控件（bichi/michelin/eat 内联）
 scripts/   extract_data.py  validate_data.py              抽取与校验
+           merge_venues.py                                 bichi + michelin 合并（eat 页数据）
            jslit.py  js_eval_literal.js                   抽取时求值 JS 字面量
            patch_bars_dianping.py  patch_all_stores.py    定点补丁（改 JSON）
            parity_diag.html  parity_geo_diag.html         渲染结果对比探针
 build.py   render.sh
-dist/                                           构建产物，提交进 git
+dist/                                           构建产物，提交进 git（含 index.html 落地页）
 ```
+
+`eat.html` 没有自己的数据文件：它的数据由构建期把 `bichi.json` 与 `michelin.json` **合并生成**（规则见 `scripts/merge_venues.py`），所以不存在需要手工维护的 `eat.json`。
+
+`index.html` 是四张地图的**落地页**（GitHub Pages 的首页），不含 `json` / `merge` 数据，只用 `count` 标记读取条数——所以它里面的「37 家 / 131 家」永远和数据一致，不会写死。
 
 ## 数据流
 
 ```
 data/*.json + src/static/*.js  --build.py-->  dist/*.html
+data/venues/bichi.json + michelin.json  --merge_venues-->  eat 页的 EAT_STORES
 ```
 
 源数据只写 JSON，**不要手改 HTML 里的数据**——那只在构建时生成。改数据请改 `data/`，然后重新构建。
 
+## 三榜合并口径（eat 页）
+
+`eat` 把「必吃榜」「扫街榜」「米其林指南」合成一份 **132 家**的记录，规则只有两条，且都可校验：
+
+1. **去重**：两源**坐标完全一致**（距离 0）判为同一家店。实测恰好 13 对，与 bichi 侧 `michelin != 0` 的 13 条一一对应，星级也一致。两源命名不同（如「临湖素食（保利·时光里店）」vs 官方「临湖素食」），所以**不能**靠店名匹配。坐标接近但不等（4 m、8 m 等）的不合并——实测那是不同餐厅。
+2. **标签**：合并成一维可多选的 `tags`（`both`/`bichi`/`saojie`/`michelin3`/`michelin2`/`michelin1`/`bib`），`primary` 取优先级最高的一项作为主色分类：
+   双榜 > 必吃 > 扫街 > 三星 > 二星 > 一星 > 必比登。即上榜门店以榜单为主色、米其林走左下角金角标；只被米其林收录的以星级为主色。
+
+字段取值：有 bichi 侧就用 bichi 侧（中文描述与菜系更细、有真实人均），仅米其林收录的用官方字段。米其林侧只有 ¥ 档位、没有具体人均，故其独有门店在页面上如实标注「人均待核实」。
+
+`python3 scripts/validate_data.py` 会断言上述不变量（13 对配对、星级一致、无重复 key/坐标、标签合法、米其林标签条数与米其林数据条数相等），数据更新后若有漏合并/错合并会直接报错。
+
 ## 构建
 
 ```bash
-python3 scripts/validate_data.py   # 数据自检（key 唯一、坐标范围、枚举、必填字段）
+python3 scripts/validate_data.py   # 数据自检（key 唯一、坐标范围、枚举、必填字段、合并不变量）
 python3 build.py                   # 内联 JSON 与共用 JS，输出 dist/
 python3 build.py --check           # 只校验，不写盘
 ```
@@ -72,7 +92,26 @@ const VENUES = [ /* 构建生成，勿手改 */ ];
 
 /* @@BUILD:js src/static/map-base.js@@ */
 /* @@BUILD:end@@ */
+
+/* @@BUILD:merge data/venues/bichi.json,data/venues/michelin.json -> EAT_STORES@@ */
+const EAT_STORES = [ /* 构建生成：多源合并，勿手改 */ ];
+/* @@BUILD:end@@ */
 ```
+
+`merge` 标记的多个数据源用逗号分隔（源名取 JSON 文件名），构建期调用 `merge_venues.merge_sources()` 合成一份再内联。
+
+`index.html` 里还有一个不产出 JS 的标记：把数据条数写进 HTML 文本。
+
+```html
+<span class="count">
+  /* @@BUILD:count data/venues/bars.json@@ */
+  0
+  /* @@BUILD:end@@ */
+  家
+</span>
+```
+
+`count` 只接受数据源（逗号分隔，同 `merge` 的多源写法），不接受 `-> 目标名`，替换结果就是条数（如 `37`）。标记必须**整行出现**且起止缩进一致——所以它不能写成行内。
 
 ## 变更后如何验证
 
@@ -101,15 +140,15 @@ cp dist/*.html scripts/parity_diag.html /tmp/b/          # 新版本
 # http://localhost:8765/parity_geo_diag.html#shanghai_bichi_saojie_2026.html
 ```
 
-（`bars` 的定位实现是页面自己的，它不给 🧭 / ✕ 按钮设 id，所以这个探针只适用于 `bichi` 与 `michelin`。）
+（`bars` 的定位实现是页面自己的，它不给 🧭 / ✕ 按钮设 id，所以这个探针只适用于 `bichi`、`michelin` 与 `eat`。）
 
 详情弹窗与筛选计数用 `scripts/parity_ui_diag.html`：点地图标记 → 点列表行 → 开筛选 → 复位，每步读详情卡标题/类型/地址块/导航按钮与列表行数、计数文案。三页都能跑。
 
-注意它依赖的类名各页不同：`bars` 的列表行是 `.venue-item`，`bichi` 与 `michelin` 是 `.rest-item`；筛选复位要点第 0 个「全部」chip，因为 chip 再点一次并不会取消筛选。
+注意它依赖的类名各页不同：`bars` 的列表行是 `.venue-item`，`bichi` / `michelin` / `eat` 是 `.rest-item`；筛选复位要点第 0 个「全部」chip，因为 chip 再点一次并不会取消筛选。`eat` 页的筛选按钮是标签多选（`data-tag` + `.cat-btn`），探针里按 `.cat-btn` 第 0 个「全部」复位仍然适用，但标签是**可叠加多选**，与 `bichi` 的「榜单多选」语义一致、与 `michelin` 的「单选」不同。
 
 ## 本地预览
 
-直接用浏览器打开 `dist/*.html` 即可（`file://` 也能正常工作）。
+打开 `dist/index.html` 就是四张图的总入口；也可以直接用浏览器打开任一张 `dist/*.html`（`file://` 也能正常工作）。
 
 需要 http 环境时：
 
@@ -117,17 +156,21 @@ cp dist/*.html scripts/parity_diag.html /tmp/b/          # 新版本
 python3 -m http.server 8000    # 然后访问 http://localhost:8000/dist/
 ```
 
-## 部署（帽子云）
+## 部署（GitHub Pages）
 
-- 仓库：`FrankJIE09/shanghai_map_pages`
-- 分支：`main`
-- **构建命令：留空**
-- **输出目录：`dist`**
+站点：`https://frankjie09.github.io/shanghai_map_pages/` —— 打开就是 `dist/index.html` 这张落地页。
 
-因为 `dist/` 已提交进 git，平台不需要跑构建，直接当静态站点发布即可。
+发布由 `.github/workflows/deploy-pages.yml` 完成：`main` 每次推送（或手动 `workflow_dispatch`）时，把 `dist/` 整个目录作为 Pages 产物上传发布。
+
+- 仓库 `Settings → Pages → Build and deployment → Source` 需选 **GitHub Actions**（只需设一次；用 `POST /repos/{owner}/{repo}/pages` 带 `build_type=workflow` 也能开）。
+- 工作流**不构建**，只在发布前跑一次 `python3 build.py --check` 当门禁：产物必须与源模板一致、落地页链接不得断开，否则拒发。
+- 因此 **改了 `data/` 就要跑 `./render.sh` 并提交 `dist/`**。`build.py` 里 `EXPECT` 记的条数是「数据体量」的护栏：数据增删后条数变了，`--check` 会报错要求你同步更新 `EXPECT`（落地页 `count` 标记的条数会自动算，不用手改）。
+- 首次启用前需确认 `gh` / git 凭据带 `workflow` scope（`gh auth refresh -s workflow`），否则推送 `.github/workflows/*` 会被拒。
+
+`dist/` 已提交进 git，所以旧平台（帽子云等）那种「构建命令留空 + 输出目录 `dist`」的静态托管方式同样仍然可用。
 
 ## 与旧仓库的关系
 
-这三个页面原本在 `gemini_htmls` 仓库中，数据内联在 HTML 里。本仓库把它拆成「JSON 源 + 构建期 内联」并抽出了共用的地图底座。
+这些页面原本在 `gemini_htmls` 仓库中，数据内联在 HTML 里。本仓库把它拆成「JSON 源 + 构建期内联」并抽出了共用的地图底座；`eat`（三榜合并总览）是本仓库新增的页面，`gemini_htmls` 里没有对应快照。
 
-`gemini_htmls` 里的同名页面是**冻结的历史快照**，不再更新；那个仓库的 `index.html` 目前仍指向它们，尚未切到本仓库部署的地址。
+`gemini_htmls` 里的同名页面是**冻结的历史快照**，不再更新。本仓库现在自己有一张 `dist/index.html` 落地页作为四张图的总入口（地址见「部署」一节），`gemini_htmls` 的 `index.html` 可以改成指向它。

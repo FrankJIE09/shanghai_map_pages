@@ -19,7 +19,7 @@ SCHEMAS = {
         "required": [
             "key", "name", "coords", "district", "addr", "type", "genre", "avg", "close",
             "open_days", "live", "capacity", "booking", "id_check", "ticket", "status",
-            "metro", "vibe", "note", "uneasy", "src_tier", "src_url", "updated",
+            "metro", "vibe", "note", "src_tier", "src_url", "updated",
         ],
         "enums": {
             "type": ["精酿", "鸡尾酒", "威士忌", "爵士现场", "Livehouse", "音乐剧场",
@@ -28,7 +28,7 @@ SCHEMAS = {
             "id_check": ["none", "实名一证一票", "身份证强实名(人脸核验)"],
             "status": ["active", "suspended", "closed"],
         },
-        "bool": ["live", "uneasy"],
+        "bool": ["live"],
         "list_enum": {"src_tier": ["A", "B", "C", "D", "🗂"]},
     },
     "data/venues/bichi.json": {
@@ -165,6 +165,97 @@ def check_records(errors, rel, cfg):
     print("  {:<34} {:>3} 条  {}".format(rel, len(recs), cfg["label"]))
 
 
+def check_merged(errors, verbose=True):
+    """校验 bichi + michelin 的合并结果（eat 页数据）。
+
+    合并靠「坐标完全一致」去重，所以这里把该规则的成立条件也一并断言，
+    避免以后数据更新后悄悄产生漏合并/错合并。
+    """
+    import merge_venues
+
+    bichi = load("data/venues/bichi.json")
+    michelin = load("data/venues/michelin.json")
+
+    # 去重要求同源内坐标不重复，否则「坐标 -> 单条」的索引会有歧义
+    for rel, recs in (("data/venues/bichi.json", bichi), ("data/venues/michelin.json", michelin)):
+        seen = {}
+        for r in recs:
+            c = tuple(r.get("coords") or [])
+            if c in seen:
+                errors.append("{}: 坐标重复（{} 与 {}），合并去重会产生歧义".format(
+                    rel, seen[c], r.get("name")))
+            seen[c] = r.get("name")
+
+    # 不变量：bichi 侧 michelin != 0 的每条，都恰好对应一条坐标完全一致的米其林记录，
+    # 且星级一致 —— 实测正是这 13 对，这也是坐标去重规则可靠的原因。
+    by_coords = {tuple(m["coords"]): m for m in michelin}
+    pairs = 0
+    for b in bichi:
+        level = b.get("michelin", 0)
+        twin = by_coords.get(tuple(b["coords"]))
+        if not level:
+            if twin is not None:
+                errors.append("bichi: {} 与米其林 {} 坐标完全相同（{}）但 michelin=0，"
+                              "请确认是否漏标".format(b.get("name"), twin.get("name"), twin["category"]))
+            continue
+        if twin is None:
+            errors.append("bichi: {} 标了 michelin={} 但在米其林数据里找不到同坐标记录".format(
+                b.get("name"), level))
+            continue
+        want = "bib" if level == -1 else "michelin{}".format(level)
+        if twin["category"] != want:
+            errors.append("bichi: {} 的 michelin={} 与米其林 category={} 不一致".format(
+                b.get("name"), level, twin["category"]))
+        pairs += 1
+
+    recs = merge_venues.merge_sources([("bichi", bichi), ("michelin", michelin)])
+
+    expect_n = len(bichi) + len(michelin) - pairs
+    if len(recs) != expect_n:
+        errors.append("merge: 合并后 {} 条，预期 {} + {} - {} = {}".format(
+            len(recs), len(bichi), len(michelin), pairs, expect_n))
+
+    seen_keys, seen_coords = set(), set()
+    for r in recs:
+        name = r.get("name", "?")
+        if r["key"] in seen_keys:
+            errors.append("merge: key 重复 {}".format(r["key"]))
+        seen_keys.add(r["key"])
+        c = tuple(r["coords"])
+        if c in seen_coords:
+            errors.append("merge: 坐标重复（{}）".format(name))
+        seen_coords.add(c)
+
+        if not r["tags"]:
+            errors.append("merge: {} 没有任何标签".format(name))
+            continue
+        bad = [t for t in r["tags"] if t not in merge_venues.PRIMARY_ORDER]
+        if bad:
+            errors.append("merge: {} 含非法标签 {}".format(name, bad))
+        if r["primary"] not in r["tags"]:
+            errors.append("merge: {} 的 primary={} 不在 tags {}".format(name, r["primary"], r["tags"]))
+        elif r["primary"] != merge_venues._primary_of(r["tags"]):
+            errors.append("merge: {} 的 primary={} 不符合优先级顺序 {}".format(
+                name, r["primary"], merge_venues.PRIMARY_ORDER))
+        if r["michelin"] != merge_venues._level_of(r["tags"]):
+            errors.append("merge: {} 的 michelin={} 与 tags {} 不符".format(
+                name, r["michelin"], r["tags"]))
+        if "avg" in r and r["avg"] is not None and not isinstance(r["avg"], int):
+            errors.append("merge: {} 的 avg 必须是整数或 null".format(name))
+        if not r["sources"]:
+            errors.append("merge: {} 缺少 sources".format(name))
+
+    # 米其林标签条数必须与米其林数据条数一致（既不漏也不重）
+    with_michelin = sum(1 for r in recs if r["michelin"] != 0)
+    if with_michelin != len(michelin):
+        errors.append("merge: 带米其林标签的 {} 条，米其林数据 {} 条，对不上".format(
+            with_michelin, len(michelin)))
+
+    if verbose:
+        print("  {:<34} {:>3} 条  bichi + michelin 合并（去重 {} 对）".format(
+            "data/venues/eat.json（构建期生成）", len(recs), pairs))
+
+
 def check_roads(errors):
     roads = load(ROADS_JSON)
     if not isinstance(roads, list) or not roads:
@@ -230,6 +321,10 @@ def validate_all(verbose=True):
         check_roads(errors)
     except json.JSONDecodeError as e:
         errors.append("{}: JSON 解析失败 {}".format(ROADS_JSON, e))
+    try:
+        check_merged(errors, verbose=verbose)
+    except (json.JSONDecodeError, ValueError) as e:
+        errors.append("合并 bichi/michelin 失败: {}".format(e))
     for rel in AREA_FILES:
         if os.path.exists(os.path.join(ROOT, rel)):
             check_points(errors, rel, AREA_KINDS)
