@@ -172,6 +172,33 @@
   }
   .card--night .cta{ filter:none; }
 
+  /* ===== 可折叠卡片（酒吧）：默认收起成一行，点击展开 ===== */
+  .card--fold{ display:block; align-self:start; }
+  .fold-head{
+    display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+    margin:6px 0 0;
+    list-style:none; cursor:pointer;   /* 去掉原生三角，整行可点 */
+  }
+  .fold-head::-webkit-details-marker{ display:none; }
+  .fold-head:focus-visible{ outline:2px dashed var(--accent); outline-offset:5px; border-radius:6px; }
+  .fold-title{ flex:1 1 auto; min-width:0; }
+  .card--fold .fold-name{ margin:0; font-size:20px; font-weight:700; letter-spacing:.03em; }
+  .fold-sub{ display:block; margin-top:3px; font-size:12px; font-weight:600; color:var(--accent); }
+  .fold-hint{
+    margin-left:auto; flex:none;
+    display:flex; align-items:center; gap:5px;
+    font-size:11px; font-weight:600; color:var(--night-dim);
+    white-space:nowrap;
+  }
+  .chev{ display:inline-block; transition:transform .2s ease; }
+  .card--fold[open] .chev{ transform:rotate(180deg); }
+  .fold-hint-close{ display:none; }
+  .card--fold[open] .fold-hint-close{ display:inline; }
+  .card--fold[open] .fold-hint-open{ display:none; }
+  .fold-body{ margin-top:16px; }
+  .fold-body .desc{ margin-top:0; }
+  .fold-body .cta{ margin-top:0; padding-top:14px; display:inline-block; }
+
   /* ===== 说明区 ===== */
   .notes{
     margin-top:clamp(26px,4vw,42px);
@@ -223,25 +250,34 @@
 
   <main class="grid">
 
-    <a class="card card--night" href="shanghai_bars_livehouse_2026.html" style="--accent:#FF3D81">
-      <div class="card-top">
+    <details class="card card--fold card--night" style="--accent:#FF3D81">
+      <summary class="fold-head">
         <span class="emoji">🌃</span>
+        <span class="fold-title">
+          <h2 class="handwritten fold-name">上海酒吧 × Livehouse</h2>
+          <span class="fold-sub">夜行探店地图 · 入夜后的四件事</span>
+        </span>
         <span class="count">
           37
           家
         </span>
+        <span class="fold-hint">
+          <span class="fold-hint-open">点击展开</span>
+          <span class="fold-hint-close">收起</span>
+          <span class="chev" aria-hidden="true">▾</span>
+        </span>
+      </summary>
+      <div class="fold-body">
+        <p class="desc">
+          一张图串起<b>喝一杯</b>（精酿 / 鸡尾酒 / 威士忌）、<b>听爵士</b>、<b>看现场</b>（Livehouse / 音乐剧场）、
+          <b>蹦到天亮</b>（电音俱乐部 / 大型夜店）共 8 类。含来源等级、最近地铁、实名与预约要求，并单列停业沿革供对照。
+        </p>
+        <div class="tags">
+          <span>精酿 / 鸡尾酒</span><span>爵士现场</span><span>Livehouse</span><span>夜店</span><span>最近地铁</span>
+        </div>
+        <a class="cta" href="shanghai_bars_livehouse_2026.html">打开夜间地图</a>
       </div>
-      <h2 class="handwritten">上海酒吧 × Livehouse </h2>
-      <p class="sub">夜行探店地图 · 入夜后的四件事</p>
-      <p class="desc">
-        一张图串起<b>喝一杯</b>（精酿 / 鸡尾酒 / 威士忌）、<b>听爵士</b>、<b>看现场</b>（Livehouse / 音乐剧场）、
-        <b>蹦到天亮</b>（电音俱乐部 / 大型夜店）共 8 类。含来源等级、最近地铁、实名与预约要求，并单列停业沿革供对照。
-      </p>
-      <div class="tags">
-        <span>精酿 / 鸡尾酒</span><span>爵士现场</span><span>Livehouse</span><span>夜店</span><span>最近地铁</span>
-      </div>
-      <span class="cta">打开夜间地图</span>
-    </a>
+    </details>
 
     <a class="card" href="shanghai_eat_2026.html" style="--accent:#7C3AED">
       <div class="card-top">
@@ -308,7 +344,7 @@
   <section class="notes">
     <h3 class="handwritten">📌 使用与数据说明</h3>
     <ul>
-      <li><b>怎么用：</b>点任意一张卡片进入地图；进入后可直接用右上角的 <b>🛣️ / 📍</b> 开关切换道路与地标层级，用标签筛选榜单，点图钉看详情。</li>
+      <li><b>怎么用：</b>点卡片进入地图（<b>酒吧</b>那张先点一下展开，再点里面的「打开夜间地图」）；进入后可直接用右上角的 <b>🛣️ / 📍</b> 开关切换道路与地标层级，用标签筛选榜单，点图钉看详情。</li>
       <li><b>坐标与导航：</b>坐标统一为 <b>WGS-84</b>。街道近似点位误差约 ±150–400 m，出行请以到店导航为准。</li>
       <li><b>不编造数据：</b>人均与营业时间取自公开店铺页；查不到的一律显示「待核实」，不做跨店套用或同类推算。</li>
       <li><b>时效信息：</b>演出、票价与入场规则随时变动，请以秀动 / 大麦等官方渠道的实时排期为准；榜单与地址的数据截止日期见各页页脚。</li>
