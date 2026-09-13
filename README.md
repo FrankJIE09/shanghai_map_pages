@@ -22,12 +22,20 @@ src/
   static/  map-base.js  theme.js                  共用地图底座
            geo-controls.js                        定位控件（bichi/michelin/eat 内联）
            venue-links.js                        详情卡的「导航 / 百度店铺页」链接（四页内联）
+           mobile-boot.js                        首屏前给 <html> 打手机端标记
+           mobile-shell.js                       手机端外壳行为（抽屉 / 返回键 / 深链 / 分享）
+           mobile.css                            手机端外壳样式（只在窄屏命中）
+           tailwind.css  tailwind.src.css        静态 Tailwind（构建期生成 / 源）
+           vendor/leaflet/                       vendored Leaflet（构建期内联，含 VERSION）
 scripts/   extract_data.py  validate_data.py              抽取与校验
            extract_metro.py                               地铁数据抽取（离线维护，不在构建链路上）
            merge_venues.py                                 bichi + michelin 合并（eat 页数据）
            jslit.py  js_eval_literal.js                   抽取时求值 JS 字面量
            patch_bars_dianping.py  patch_all_stores.py    定点补丁（改 JSON）
+           build_css.sh                                   生成 src/static/tailwind.css（偶发）
+           vendor_leaflet.sh                              更新 vendored Leaflet（偶发）
            parity_diag.html  parity_geo_diag.html  parity_ui_diag.html   渲染结果对比探针
+tailwind.config.js                   只给 scripts/build_css.sh 用的 Tailwind 静态构建配置
 build.py   render.sh
 index.html                                      手写的平台入口页（转发到 dist/index.html，不参与构建）
 dist/                                           构建产物，提交进 git（含 index.html 落地页）
@@ -90,6 +98,89 @@ python3 build.py --check           # 只校验，不写盘
 
 `build.py` 会把每个生成区的 sha256 记进 `dist/.build-manifest.json`。若检测到 dist 里的生成内容被手改过，会报错退出，加 `--force` 才覆盖。
 
+### 零运行时依赖（构建期内联 CSS / JS）
+
+产物是**自包含单文件**：Tailwind、Leaflet、四个页面的共用脚本、全部数据都在构建期内联，页面里没有任何 `<script src>` / `<link rel="stylesheet">` / 字体的外部请求。`--check` 有四组正面断言守着这件事，破坏了会直接构建失败：
+
+- **无外链**：产物里不许再有 http(s) 的 JS/CSS 与 Google Fonts 请求（弱网 / 离线 / 大陆访问 CDN 不稳时会白屏或裸排版）。
+- **运行时真的进来了**：页面用了 Leaflet 就必须能在产物里找到 Leaflet（这条是踩坑加的——只删 CDN 标签、忘了加内联标记时，「无外链」反而更绿，而页面会在运行时丢 `L is not defined`，地图整块空白）。
+- **Tailwind 类名覆盖**：产物里每个静态 `class="…"` 的类名都要能在内联 CSS 里找到定义。改页面加了新类名却忘了重建 CSS，浏览器不报错、只是那个元素悄悄没了样式。JS 里拼出来的类名（`class="…${x}…"`）不判，没法与变量名区分。
+- **手机端外壳结构**：`data-m-sheet` 不许和 `#detail-card` 落在同一个标签上（`mobile.css` 给后者的 `position: relative !important` 会顶掉抽屉的 `fixed`，闭合态的详情卡会浮在视口正中——桌面端看不出来，只有手机上有；bars 页真踩过）、百度链接不许带 `target="_blank"`（App 调起必须同 tab 走 `location.href`，新标签会被当弹窗拦掉）、有 `#m-bar` 就必须有抽屉。
+
+两份需要**手工、偶发**重建的内联资源（产物都提交进 git，日常改数据 / 改文案不用碰）：
+
+```bash
+./scripts/build_css.sh       # 改了页面、新增了 Tailwind 类名之后：生成 src/static/tailwind.css
+./scripts/vendor_leaflet.sh  # 只在要升级 Leaflet 版本时：下载 Leaflet 到 src/static/vendor/leaflet/
+```
+
+`build_css.sh` 需要 npx（首次会去下 `tailwindcss@3.4.17`）；它把 `src/pages/*.html` 与 `src/static/*.js` 扫一遍生成静态 CSS（约 19KB），替代原来的 `cdn.tailwindcss.com`——那个是在浏览器里跑 JIT，手机上会「先裸排版、样式晚一步跳出来」，离线打开则完全没有样式。`vendor_leaflet.sh` 会把 Leaflet CSS 里的三张图片转成 data URI（内联后相对路径无处可寻），并去掉 JS 的 `sourceMappingURL`。
+
+## 手机端
+
+四个地图页共用一套「全屏地图 + 底部抽屉」外壳，样式在 `src/static/mobile.css`，行为在 `src/static/mobile-shell.js`，**只在窄屏（≤900px）生效**，桌面端一个选择器都不命中、原有三栏布局与 `lg:sticky` 详情卡照旧。
+
+标记打在 `<html>` 上（`src/static/mobile-boot.js` 在 `<head>` 里同步执行，避免首屏先闪一下桌面布局）：
+
+| 标记 | 含义 |
+| --- | --- |
+| `html.m-mobile` | 窄屏：启用全屏地图 + 抽屉外壳 |
+| `html.m-touch` | 粗指针（手机 / 平板）：只做触控尺寸修正，不改布局 |
+| `html[data-m-open="xxx"]` | 当前打开的抽屉名，由 `mobile-shell.js` 读写 |
+
+页面只需要在 DOM 上打 `[data-m-*]` 标记，不需要为手机端写第二套 HTML：
+
+| 标记 | 作用 |
+| --- | --- |
+| `[data-m-pane="map"]` | 地图卡片 → 铺满视口（`dvh` + safe-area） |
+| `[data-m-sheet="xxx"]` + `data-m-title` | 该块在手机上变成固定底部抽屉，标题栏与抓手由 shell 注入 |
+| `[data-m-open="xxx"]` / `data-m-close` | 抽屉开关；`data-m-scroll="#sel"` 打开后滚到该元素；再点一次收起 |
+| `[data-m-hide]` | 手机上不需要的块 |
+
+外壳另外做了四件事：**返回键**在抽屉打开时是「收起抽屉」而不是退出网页（走 `history.pushState`，点 ✕ 与按返回键同一条路径）；**深链** `#v=<key>` 直接打开某家店的详情，可分享可收藏；**分享**优先用 `navigator.share`（系统分享面板），不支持就复制链接；**触控细节**见下一节。触屏上另有一处行为差异：地铁站名在 `pointer: coarse` 时提前常显（没有 hover 可用，见 `src/static/map-base.js`）。
+
+### 触控细节（`@media (pointer: coarse)` 里）
+
+桌面端一行都不命中，改这些不会动到电脑上的排版：
+
+| 项 | 触屏上 | 桌面 |
+| --- | --- | --- |
+| 筛选 chip / 分类 / 排序 | `min-height: 34px` | 25px（原样） |
+| 「↺ 重置筛选」 | `min-height: 34px` | 27px（原样） |
+| 复选框 / 单选框 | 本体 20px，外层 `label` 撑到 34px | 13px |
+| 搜索框等输入 | `font-size: 16px` | 12px（原样） |
+| hover 效果 | 全部包在 `@media (hover: hover)` 里，触屏下不生效 | 正常 |
+| 地铁站名常显门槛 | z15 | z16（z15 靠悬停） |
+
+34px 是刻意取的折中：iOS HIG 建议 44pt、Material 建议 48dp，但筛选区是一排排胶囊，全按 44px 会把抽屉撑长一屏多；30px 一档实测偏小（无头审计里 `#reset-btn` 只有 23–27px，复选框连外层 `label` 一起才 16px）。复选框放大用的是 `label:has(> input[type=checkbox])`，浏览器不支持 `:has()` 时这两条会被整条丢弃、退回原样，不会更糟。
+
+顶栏与抽屉都吃 `env(safe-area-inset-*)`，所以页面 head 里配了 `apple-mobile-web-app-status-bar-style: black-translucent`（iOS 加到主屏后内容顶到状态栏下面，靠 safe-area 让开）。四个地图页还有 `theme-color: #16141C`，让安卓 Chrome 的地址栏跟着深色地图走；落地页是浅底，配的是 `#FAF5EB`。
+
+**没有做 Service Worker / PWA**：产物本来就是自包含单文件，存到本地即可离线打开；而 SW 要额外引入一份带缓存版本号的独立文件，一旦缓存策略写错会长期给用户喂旧页面（且很难撤回），收益与风险不成比例。真要做离线，建议先确定发布环境（GitHub Pages 之外还有帽子云）再决定缓存键与失效策略。
+
+### 怎么验手机端
+
+`scripts/` 下的 parity 探针是桌面语义的，验手机端用无头 Chrome 直接量：
+
+```bash
+# ?notrans=1 关过渡：headless 的动画时钟不推进，transform 会停在闭合态的插值上，量不到真实位置
+# --virtual-time-budget 要给够：外壳是 setTimeout 链推进的（打开→量→返回→量…）
+google-chrome --headless=new --window-size=500,844 --virtual-time-budget=20000 \
+  --dump-dom "http://localhost:8000/dist/shanghai_bars_livehouse_2026.html?notrans=1#v=beer_aunt" \
+  | grep -E 'data-m-open|m-bar'
+```
+
+要看的量：`html.class` 是否含 `m-mobile`、抽屉闭合时是否**完全在视口外**、打开时上沿 y 是否贴到视口底部、`#m-bar` 在桌面端是否 `display:none`、有没有横向溢出、控制台有没有 JS 错误。验证「跳 App」的分流用 `--user-agent` 换 iOS / 安卓 / 微信的 UA，读 `#detail-poi` 的 `href` 与 `data-kind`。
+
+三个 headless 特有的坑（踩过、会直接给出假结论）：
+
+1. **触屏模拟要用 `primaryPointerType=2`**（Blink 的枚举：`1=None`、`2=Coarse`、`4=Fine`），`=1` 或 `=4` 都不会让 `matchMedia('(pointer: coarse)')` 为真，触控那套 CSS 就永远测不到：
+   `--blink-settings=primaryPointerType=2,availablePointerTypes=2,primaryHoverType=1,availableHoverTypes=1`
+2. **量缩放要先关动画**：`map.options.zoomAnimation = false; map._zoomAnimated = false; map.setView(center, z, {animate:false})`，否则 `setZoom()` 会「开始」但永不提交，`getZoom()` 一直停在初始级别，读到的全是错位一档的旧状态。
+3. **`window.onload` 在 `--dump-dom` 下常常不触发**，地图不会初始化。注入的探针里要兜一手：没找到 `.leaflet-container` 就手动调一次 `window.onload()`。
+
+验「触控尺寸」这类要真手指才碰得到的规则时，别去模拟 `:hover`（合成 `mouseover` 事件不会让 `:hover` 生效），直接从 CSSOM 读：`document.styleSheets` 里筛出 `conditionText` 含 `pointer` / `hover` 的 `MEDIA_RULE`，看规则条数、是否 `matchMedia(...).matches`、以及带 `:hover` 的选择器有没有全部落在 `(hover: hover)` 条件里。
+
 ## 补数据
 
 `data/venues/*.json` 是唯一数据源。批量补字段用两个补丁脚本，它们只改 JSON，不再碰 HTML：
@@ -121,6 +212,21 @@ python3 scripts/patch_all_stores.py             # 写回 bichi.json
 
 **想升级到第 1 档（不用 AK）**：在百度地图 App 里搜到店 → 分享 → 复制 `j.map.baidu.com/xxxx` 短链，写进该条的 `baidu_url`，重跑 `./render.sh`。不必 181 家全补——只有「检索会落在一列候选上」的重名/连锁店才值得手工补，其余靠第 3 档就够。
 
+### 手机端点「在百度地图打开」：按平台分流 + 三档降级
+
+上面那张表管的是**落点**（店铺页 / 检索页）；手机上还要决定**用 App 开还是用网页开**。以前两个按钮只指 `api.map.baidu.com/...&output=html`——那是调起 API 的 web 端，手机上只会再开一个网页，进不了 App。现在的分流（`src/static/venue-links.js`）：
+
+| 环境 | 行为 |
+| --- | --- |
+| iOS 且该条有 `baidu_url` | 直接用 `j.map.baidu.com` 短链，交给百度自己决定开 App 还是开网页（通用链接） |
+| 其余手机（含安卓） | 用 `baidumap://map/...` scheme 直接调起 App；**2.2 秒内没离开页面**（多半是没装 App 或被拦）就回落到网页版链接，绝不制造死链 |
+| 微信内置浏览器 | 一律走网页版：微信会拦掉 scheme，试了只会白点一次 |
+| 桌面 | 一律走网页版：桌面本来也没有 App |
+
+两个坑：**scheme 调起必须同 tab 导航**（`location.href`），不能用 `target="_blank"`——`_blank` 在移动浏览器里常被当弹窗拦掉，失败后还留一个空白标签页回不去，所以四个页面的这两个 `<a>` 都去掉了 `target`/`rel`；**`src` 参数按平台分开**（`ios.` / `andr.` / 网页版 `webapp.`），官方要求必传，不传不保证服务。回落计时器会被 `visibilitychange` / `pagehide` 取消，避免用户从 App 返回时被莫名跳到网页版。
+
+排查时读两个 `<a>` 上的 `data-kind`，它标的是**这一档的真实落点**：`marker` / `direction` 是导航按钮，`search` / `detail` / `short` 是店铺页按钮（`detail` = 直达 POI 详情，必须有 `baidu_uid`；`short` = `j.map` 短链；`search` = 按店名检索），带 `+app` 后缀表示这个是 scheme、会先试调起 App，不带就是网页版地址。注意没有 uid 时**即使走 App 也是检索**（`baidumap://…/place/search`），标签是 `search+app` 而不是 `detail+app`——别把「能调起 App」当成「能直达店铺页」。（这条标签修过一次：原先按 `app` 是否非空来定，安卓上没 uid 的词条也被标成 `detail+app`，与「出厂状态全是检索」的实际落点不符。）
+
 ## 构建标记
 
 模板 `<script>` 内用 JS 注释标记注入点：
@@ -133,10 +239,15 @@ const VENUES = [ /* 构建生成，勿手改 */ ];
 /* @@BUILD:js src/static/map-base.js@@ */
 /* @@BUILD:end@@ */
 
+/* @@BUILD:css src/static/vendor/leaflet/leaflet.css@@ */
+/* @@BUILD:end@@ */
+
 /* @@BUILD:merge data/venues/bichi.json,data/venues/michelin.json -> EAT_STORES@@ */
 const EAT_STORES = [ /* 构建生成：多源合并，勿手改 */ ];
 /* @@BUILD:end@@ */
 ```
+
+`css` 把 CSS 文件整段内联进 `<style>`（Tailwind、Leaflet、mobile.css 都走这条）。它是「原样拷贝」，不跑任何 CSS 处理，所以内联的资源里不能出现 `</style`（构建期会拦住）。
 
 `merge` 标记的多个数据源用逗号分隔（源名取 JSON 文件名），构建期调用 `merge_venues.merge_sources()` 合成一份再内联。
 
@@ -195,7 +306,7 @@ cp dist/*.html scripts/parity_diag.html /tmp/b/          # 版本 B（同一版�
 
 ## 本地预览
 
-打开 `dist/index.html` 就是四张图的总入口；也可以直接用浏览器打开任一张 `dist/*.html`（`file://` 也能正常工作）。
+打开 `dist/index.html` 就是四张图的总入口；也可以直接用浏览器打开任一张 `dist/*.html`（`file://` 也能正常工作）。产物已经完全自包含——样式、脚本、数据、Leaflet 的运行时代码与图片全在单个 HTML 里，**断网也能正常渲染**（只有地图瓦片与百度跳转需要联网）。
 
 需要 http 环境时：
 
