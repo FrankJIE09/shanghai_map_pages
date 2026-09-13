@@ -53,6 +53,11 @@ def _merge_pair(b, m):
     if not rec["note"]:
         rec["note"] = m.get("note", "")
     rec["isNew"] = bool(rec["isNew"] or m.get("isNew"))
+    # 百度 POI 身份（可选）：两边谁有就用谁，都没有则页面退化为关键词检索
+    # （见 src/static/venue-links.js 的三档降级）
+    for f in ("baidu_uid", "baidu_url", "baidu_uid_at"):
+        if not rec.get(f) and m.get(f):
+            rec[f] = m[f]
     return rec
 
 
@@ -86,6 +91,9 @@ def _from_bichi(b):
         "note": b.get("note", ""),
         "isNew": bool(b.get("isNew")),
         "sources": ["bichi"],
+        "baidu_uid": b.get("baidu_uid"),
+        "baidu_url": b.get("baidu_url"),
+        "baidu_uid_at": b.get("baidu_uid_at"),
     }
 
 
@@ -113,6 +121,9 @@ def _from_michelin(m):
         "note": m.get("note", ""),
         "isNew": bool(m.get("isNew")),
         "sources": ["michelin"],
+        "baidu_uid": m.get("baidu_uid"),
+        "baidu_url": m.get("baidu_url"),
+        "baidu_uid_at": m.get("baidu_uid_at"),
     }
 
 

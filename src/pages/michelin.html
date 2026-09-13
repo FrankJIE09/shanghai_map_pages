@@ -374,8 +374,14 @@
                     <span class="text-xs font-bold text-amber-900 block">🧠 认路落脚点:</span>
                     <p id="detail-tip" class="text-xs text-amber-950 font-medium mt-1 leading-relaxed"></p>
                 </div>
-                <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
-                   class="hidden mt-3 w-full items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2 border-[#1F402B] bg-[#1F402B] text-[#FAF5EB] hover:bg-[#2C5A3C]">🧭 在百度地图打开</a>
+                <!-- 底部两个链接由 src/static/venue-links.js 生成（导航 / 店铺页），
+                     无选中记录时整行隐藏；见 updateNavLink()。 -->
+                <div id="detail-links" class="hidden mt-3 flex-col gap-1.5" style="flex-direction:column">
+                    <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2 border-[#1F402B] bg-[#1F402B] text-[#FAF5EB] hover:bg-[#2C5A3C]">🧭 在百度地图打开</a>
+                    <a id="detail-poi" href="#" target="_blank" rel="noopener noreferrer"
+                       class="flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2 border-[#1F402B] bg-white text-[#1F402B] hover:bg-[#F0F7F2]">🏪 百度店铺页</a>
+                </div>
             </div>
         </div>
 
@@ -452,6 +458,8 @@
     /* @@BUILD:js src/static/map-base.js@@ */
     /* @@BUILD:end@@ */
     /* @@BUILD:js src/static/geo-controls.js@@ */
+    /* @@BUILD:end@@ */
+    /* @@BUILD:js src/static/venue-links.js@@ */
     /* @@BUILD:end@@ */
 
     /* ================= 数据（由 shanghai_wutong_streets.html 抽取） ================= */
@@ -856,19 +864,12 @@
         return geo ? geo.distOf(r) : null;
     }
 
-    /* 详情卡里的百度打开 / 导航按钮 */
+    /* 详情卡底部的「百度导航 / 百度店铺页」：链接构造与 DOM 接线都在
+       src/static/venue-links.js（四页共用），本页只把当前记录与定位喂进去。 */
+    const navLinks = VenueLinks.mount();
+
     function updateNavLink(r) {
-        const nav = document.getElementById('detail-nav');
-        if (!nav) return;
-        if (!r || !r.coords) { nav.style.display = 'none'; return; }
-        const [lat, lng] = r.coords;
-        const name = encodeURIComponent(r.name);
-        const me = geo && geo.pos();
-        nav.href = me
-            ? `https://api.map.baidu.com/direction?origin=latlng:${me[0]},${me[1]}|name:我的位置&destination=latlng:${lat},${lng}|name:${name}&mode=walking&region=上海&output=html&coord_type=wgs84&src=webapp.shanghai-map-pages`
-            : `https://api.map.baidu.com/marker?location=${lat},${lng}&title=${name}&content=${name}&output=html&coord_type=wgs84&src=webapp.shanghai-map-pages`;
-        nav.textContent = me ? '🧭 百度步行导航到店' : '🧭 在百度地图打开';
-        nav.style.display = 'flex';
+        navLinks.update(r, geo && geo.pos());
     }
 
     /* 右上角定位控件（🧭 定位 / ✕ 清除）与「📏 近→远」开关 */
@@ -880,8 +881,10 @@
             onSortChanged: function () { renderList(); },
             onHintReset: function () { updateMarkers(); },
             onClear: function () {
-                const nav = document.getElementById('detail-nav');
-                if (nav) nav.style.display = 'none';
+                /* 清除定位只改变「起点」：导航按钮退回打点；店铺页链接与定位无关，
+                   选中记录还在就整行保留（不再像以前那样把按钮整块藏掉）。 */
+                const r = activeKey ? RESTAURANTS.find(x => x.key === activeKey) : null;
+                if (r) updateNavLink(r); else navLinks.hide();
             }
         });
         geo.init();

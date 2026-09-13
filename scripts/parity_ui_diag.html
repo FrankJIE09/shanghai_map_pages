@@ -39,12 +39,19 @@ function state(d) {
   const type = d.getElementById('detail-type');
   const addr = d.getElementById('detail-addr-box');
   const nav = d.getElementById('detail-nav');
+  const poi = d.getElementById('detail-poi');
+  const row = d.getElementById('detail-links');
+  // 详情卡底部两个链接（导航 / 店铺页）现在包在 #detail-links 里，显隐由容器管，
+  // 所以不能再只看 #detail-nav 的内联 display —— 那样会漏报「整行被收起」。
+  const rowShown = row && getComputedStyle(row).display !== 'none';
+  const poiKind = poi && poi.dataset ? (poi.dataset.kind || '?') : '-';
   return {
     detail: clean(title ? title.textContent : ''),
     dType: clean(type ? type.textContent : ''),
     dCard: card ? (getComputedStyle(card).display === 'none' ? 'none' : 'visible') : 'missing',
     dAddr: addr ? (addr.classList.contains('hidden') ? 'hidden' : 'shown') : 'missing',
-    dNav: clean(nav ? nav.textContent : '') + (nav && nav.style.display === 'none' ? '(none)' : ''),
+    dNav: clean(nav ? nav.textContent : '') + (rowShown ? '' : '(none)') +
+      '|poi=' + JSON.stringify(clean(poi ? poi.textContent : '')) + '/' + poiKind,
     rows: list ? list.children.length : -1,
     count: clean(cnt ? cnt.textContent : '') || clean(hint ? hint.textContent : '').slice(0, 22),
   };

@@ -32,6 +32,17 @@ function stubGeo(w) {
 
 function listSel(d) { return d.querySelector('#venue-list') ? '#venue-list' : '#rest-list'; }
 
+/** 详情卡底部链接现在落在哪个百度端点上：marker / direction / place-detail / place-search。
+    旧探针只看 `api.map.baidu.com/navigation?`（上古写法），早就不适用了，这里跟着
+    src/static/venue-links.js 的实际取值改掉，免得回归时读到假的 'marker-mode'。 */
+function endpoint(d, id) {
+  const el = d.getElementById(id);
+  if (!el || !el.href) return 'none';
+  const m = /api\.map\.baidu\.com\/([a-z/]+)\?/.exec(el.href);
+  if (m) return m[1].replace('/', '-');
+  return el.href.indexOf('j.map.baidu.com') >= 0 ? 'short-link' : 'other';
+}
+
 function firstItems(d) {
   const el = d.querySelector(listSel(d));
   if (!el) return 'none';
@@ -58,7 +69,11 @@ function snap(tag) {
     'markers=' + q('.leaflet-marker-pane > *'),
     'asked=' + (g && g._asked ? g._asked() : 'n/a'),
     'nav=' + JSON.stringify(((d.getElementById('detail-nav') || {}).textContent || 'none').trim()),
-    'navHref=' + ((function (el) { return el && el.href ? (el.href.indexOf('/navigation?') >= 0 ? 'nav-mode' : 'marker-mode') : 'none'; })(d.getElementById('detail-nav'))),
+    'navHref=' + endpoint(d, 'detail-nav'),
+    'poiHref=' + endpoint(d, 'detail-poi'),
+    'linkRow=' + (function (row) {
+      return row ? (getComputedStyle(row).display === 'none' ? 'hidden' : 'shown') : 'missing';
+    })(d.getElementById('detail-links')),
     'first3=' + JSON.stringify(firstItems(d)),
   ].join(' ');
 }

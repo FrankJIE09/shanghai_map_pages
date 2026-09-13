@@ -87,6 +87,9 @@ LNG_RANGE = (120.80, 122.20)
 
 HHMM = re.compile(r"^\d{1,2}:\d{2}$")
 DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+# 百度 POI 的 uid（如 09185c56d24f7e44f1193763 / GaC7fyEEg0CDu3Je）。形态不对外承诺，
+# 所以只做「像 id 的字符串」这一层校验；数据里手填的 uid 与短链由人工保证正确。
+BAIDU_UID = re.compile(r"^[0-9A-Za-z_-]{8,64}$")
 
 
 def load(rel):
@@ -171,6 +174,21 @@ def check_records(errors, rel, cfg):
             elif not all(isinstance(u, str) and u.startswith("http") for u in r["src_url"]):
                 errors.append("{}: src_url 必须都是 http(s) 链接".format(where))
 
+        # 百度 POI 身份：三个字段都是**可选**的，缺省时页面退化为关键词检索，
+        # 不算数据错误（见 src/static/venue-links.js 的三档降级）。
+        if r.get("baidu_uid") is not None:
+            if not (isinstance(r["baidu_uid"], str) and BAIDU_UID.match(r["baidu_uid"])):
+                errors.append("{}: baidu_uid 必须是百度 POI 的 uid 字符串或 null，实际 {!r}".format(
+                    where, r["baidu_uid"]))
+        if r.get("baidu_url") is not None:
+            u = r["baidu_url"]
+            if not (isinstance(u, str) and u.startswith("http")):
+                errors.append("{}: baidu_url 必须是 http(s) 链接或 null，实际 {!r}".format(where, u))
+        if r.get("baidu_uid_at") is not None:
+            if not (isinstance(r["baidu_uid_at"], str) and DATE.match(r["baidu_uid_at"])):
+                errors.append("{}: baidu_uid_at 必须是 YYYY-MM-DD，实际 {!r}".format(
+                    where, r["baidu_uid_at"]))
+
     # 米其林的 category 与 stars / bib 必须自洽
     if rel.endswith("michelin.json"):
         for r in recs:
@@ -184,7 +202,9 @@ def check_records(errors, rel, cfg):
                     errors.append("michelin: {} 的 category={} 但 stars={} / bib={}".format(
                         r.get("name"), cat, stars, bib))
 
-    print("  {:<34} {:>3} 条  {}".format(rel, len(recs), cfg["label"]))
+    n_uid = sum(1 for r in recs if isinstance(r, dict) and r.get("baidu_uid"))
+    extra = "（已补百度 uid {}/{}）".format(n_uid, len(recs)) if n_uid else ""
+    print("  {:<34} {:>3} 条  {}{}".format(rel, len(recs), cfg["label"], extra))
 
 
 def check_merged(errors, verbose=True):

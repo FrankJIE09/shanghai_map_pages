@@ -337,9 +337,16 @@
         <span class="text-xs font-bold block" style="color:var(--ink)">🔗 来源（按等级标注）· 核实日期 <span id="detail-updated"></span></span>
         <ul id="detail-src" class="text-[11px] mt-1.5 flex flex-col gap-1"></ul>
       </div>
-      <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
-         class="hidden mt-3 w-full items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2"
-         style="border-color:var(--cyan);background:var(--cyan);color:#04140F">🧭 在百度地图打开</a>
+      <!-- 底部两个链接由 src/static/venue-links.js 生成（导航 / 店铺页），
+           无选中场所时整行隐藏；见 showDetail()。 -->
+      <div id="detail-links" class="hidden mt-3 flex-col gap-1.5" style="flex-direction:column">
+        <a id="detail-nav" href="#" target="_blank" rel="noopener noreferrer"
+           class="flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2"
+           style="border-color:var(--cyan);background:var(--cyan);color:#04140F">🧭 在百度地图打开</a>
+        <a id="detail-poi" href="#" target="_blank" rel="noopener noreferrer"
+           class="flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg border-2"
+           style="border-color:var(--cyan);background:transparent;color:var(--cyan)">🏪 百度店铺页</a>
+      </div>
     </div>
   </section>
 </main>
@@ -407,6 +414,8 @@
 /* @@BUILD:js src/static/theme.js@@ */
 /* @@BUILD:end@@ */
 /* @@BUILD:js src/static/map-base.js@@ */
+/* @@BUILD:end@@ */
+/* @@BUILD:js src/static/venue-links.js@@ */
 /* @@BUILD:end@@ */
 
 /* ============================================================
@@ -484,6 +493,8 @@ function stopLabel(v){
 /* ================= 状态 ================= */
 let map, activeKey = null, listSort = 'name';
 const markerMap = {};
+/* 详情卡底部的「百度导航 / 百度店铺页」（src/static/venue-links.js，四页共用） */
+const detailLinks = VenueLinks.mount();
 const state = {types:[], genre:'all', price:[], booking:[], idcheck:[], onlyLive:false, onlyLate:false,
                showClosed:true, q:''};
 
@@ -866,11 +877,9 @@ function selectVenue(key, fromMap){
     ul.appendChild(li);
   }
 
-  const nav = document.getElementById('detail-nav');
-  const [lat,lng] = v.coords;
-  nav.href = `https://api.map.baidu.com/marker?location=${lat},${lng}&title=${encodeURIComponent(v.name)}&content=${encodeURIComponent(v.name)}&output=html&coord_type=wgs84&src=webapp.shanghai-map-pages`;
-  nav.style.display = 'flex';
-
+  // 底部「百度导航 / 百度店铺页」：链接构造与 DOM 接线在 src/static/venue-links.js
+  // （四页共用）。本页的定位点是 userLatLng，未定位时为 null -> 退化为打点标点。
+  detailLinks.update(v, userLatLng);
   Object.keys(markerMap).forEach(k => {
     const el = markerMap[k].getElement();
     if (!el) return;
@@ -926,6 +935,11 @@ function clearLocation(){
   if (userCircle) { map.removeLayer(userCircle); userCircle = null; }
   userLatLng = null;
   syncSortBtns(); flashHint('已清除定位', false);
+  // 清除定位只改变「起点」：导航按钮退回打点；店铺页链接与定位无关，保持可用
+  if (activeKey) {
+    const v = VENUES.find(x => x.key === activeKey);
+    if (v) detailLinks.update(v, null);
+  }
 }
 function syncSortBtns(){}
 function initLocate(){

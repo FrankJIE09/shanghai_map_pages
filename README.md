@@ -21,12 +21,13 @@ src/
            bars.html  bichi.html  michelin.html  eat.html   地图页模板，含构建标记
   static/  map-base.js  theme.js                  共用地图底座
            geo-controls.js                        定位控件（bichi/michelin/eat 内联）
+           venue-links.js                        详情卡的「导航 / 百度店铺页」链接（四页内联）
 scripts/   extract_data.py  validate_data.py              抽取与校验
            extract_metro.py                               地铁数据抽取（离线维护，不在构建链路上）
            merge_venues.py                                 bichi + michelin 合并（eat 页数据）
            jslit.py  js_eval_literal.js                   抽取时求值 JS 字面量
            patch_bars_dianping.py  patch_all_stores.py    定点补丁（改 JSON）
-           parity_diag.html  parity_geo_diag.html         渲染结果对比探针
+           parity_diag.html  parity_geo_diag.html  parity_ui_diag.html   渲染结果对比探针
 build.py   render.sh
 index.html                                      手写的平台入口页（转发到 dist/index.html，不参与构建）
 dist/                                           构建产物，提交进 git（含 index.html 落地页）
@@ -102,6 +103,24 @@ python3 scripts/patch_all_stores.py             # 写回 bichi.json
 
 两个脚本都是**幂等**的：重复运行第二次不再有变更。`patch_bars_dianping.py` 里 `NOTE` / `SRC_ADD` 只在 `UPDATES` 命中的 key 上生效——这是原脚本的语义，脚本每次都会把「不生效的遗留条目」列出来，便于清理。`patch_all_stores.py` 里 `AVG` 是人均的唯一来源（先把所有 `avg` 清成 `null` 再写入），所以从 `AVG` 删掉一个 key 就能真正清掉它的人均。
 
+### 百度店铺页（详情卡底部的两个链接）
+
+详情卡底部是 **🧭 导航** 与 **🏪 百度店铺页** 两个按钮，都在 `src/static/venue-links.js`（四页共用），页面只把「当前记录 + 我的位置」喂进去。**两者都不需要任何密钥**——产物必须保持「零密钥、可离线双击打开」。
+
+导航按钮的行为没变：有定位走 `direction` 步行路线，没定位退化为 `marker` 打点。
+
+**店铺页**这里有个百度的硬限制要交代清楚：百度没有「经纬度 → 店铺页」的公开接口。URI API 的 `place/detail` 只认 POI 身份 `uid`，传坐标只能拿到打点或检索列表。所以按钮按数据完备度三档降级，**出厂状态用第 3 档，什么都不用填**：
+
+| 档 | 数据 | 链接 | 落点 |
+| --- | --- | --- | --- |
+| 1 | `baidu_url` | 直接用该链接 | 人工收集的 `j.map.baidu.com` 短链，直达店铺页 |
+| 2 | `baidu_uid` | `api.map.baidu.com/place/detail?uid=…` | 该 POI 的详情页（手上有 uid 时用） |
+| 3 | 都没有 ← **出厂状态** | `api.map.baidu.com/place/search?query=…&region=上海&location=…` | 百度的检索页。名字够独特时**直接落在该店**（实测「啤酒阿姨（南苏州路店）」落点标题就是店名）；连锁/重名会落在候选列表，再点一次 |
+
+三个字段都是**可选字段**，缺省不算数据错误。`validate_data.py` 只校验它们「填了的话得像样」：`baidu_url` 是 http(s)、`baidu_uid` 是 id 形态的字符串、`baidu_uid_at` 是日期。
+
+**想升级到第 1 档（不用 AK）**：在百度地图 App 里搜到店 → 分享 → 复制 `j.map.baidu.com/xxxx` 短链，写进该条的 `baidu_url`，重跑 `./render.sh`。不必 181 家全补——只有「检索会落在一列候选上」的重名/连锁店才值得手工补，其余靠第 3 档就够。
+
 ## 构建标记
 
 模板 `<script>` 内用 JS 注释标记注入点：
@@ -160,7 +179,7 @@ cp dist/*.html scripts/parity_diag.html /tmp/b/          # 版本 B（同一版�
 
 **不要用 `firstTileZ` 判断缩放**——Leaflet 会保留 `fitBounds` 之前的旧瓦片，DOM 里第一个瓦片的 z 可能是初始值，而 `mapstate.z` 才是真实缩放。
 
-定位流程用另一个探针，它会伪造 `navigator.geolocation`，再依次点 🧭 / 📏 / ✕，记录每步的提示条文案、按钮状态、我的位置标记数、精度圆数与名录前三项：
+定位流程用另一个探针，它会伪造 `navigator.geolocation`，再依次点 🧭 / 📏 / ✕，记录每步的提示条文案、按钮状态、我的位置标记数、精度圆数与名录前三项；最后一步「选中一家 + 已定位」会读出详情卡底部的两个链接落点（`navHref` / `poiHref` 取 `marker` / `direction` / `place-detail` / `place-search` / `short-link`，以及整行 `linkRow` 显隐）：
 
 ```bash
 # 两个端口同样各开一个，对比页面标题
@@ -170,7 +189,7 @@ cp dist/*.html scripts/parity_diag.html /tmp/b/          # 版本 B（同一版�
 
 （`bars` 的定位实现是页面自己的，它不给 🧭 / ✕ 按钮设 id，所以这个探针只适用于 `bichi`、`michelin` 与 `eat`。）
 
-详情弹窗与筛选计数用 `scripts/parity_ui_diag.html`：点地图标记 → 点列表行 → 开筛选 → 复位，每步读详情卡标题/类型/地址块/导航按钮与列表行数、计数文案。三页都能跑。
+详情弹窗与筛选计数用 `scripts/parity_ui_diag.html`：点地图标记 → 点列表行 → 开筛选 → 复位，每步读详情卡标题/类型/地址块/**底部两个链接**（导航按钮文案 + 整行显隐 + 店铺页按钮文案与降级档位 `data-kind`）与列表行数、计数文案。三页都能跑。
 
 注意它依赖的类名各页不同：`bars` 的列表行是 `.venue-item`，`bichi` / `michelin` / `eat` 是 `.rest-item`；筛选复位要点第 0 个「全部」chip，因为 chip 再点一次并不会取消筛选。`eat` 页的筛选按钮是标签多选（`data-tag` + `.cat-btn`），探针里按 `.cat-btn` 第 0 个「全部」复位仍然适用，但标签是**可叠加多选**，与 `bichi` 的「榜单多选」语义一致、与 `michelin` 的「单选」不同。
 
