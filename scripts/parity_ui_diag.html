@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>ui-diag-loading</title>
+<style>body{font:12px monospace;margin:6px}iframe{width:1280px;height:820px;border:1px solid #999}</style>
+<body>
+<pre id="out">running…</pre>
+<iframe id="f" scrolling="no"></iframe>
+<script>
+// 交互冒烟探针：点店铺标记 / 点列表行 / 点筛选，读出详情卡与计数。
+// 用于「新构建 dist vs 原文件」对比（浏览器快照读不到 Leaflet 与详情卡的文字，只能这样取数）。
+// 用法：parity_ui_diag.html#shanghai_bichi_saojie_2026.html
+const target = decodeURIComponent(location.hash.slice(1)) || 'shanghai_bichi_saojie_2026.html';
+const f = document.getElementById('f');
+const log = [];
+
+// 每页的「筛选一下」动作不同：bars 是开关，另两页是 chip
+const FILTER = {
+  bars: { how: 'checkbox', sel: '#only-live' },
+  bichi: { how: 'chip', sel: '#cuisine-chips .chip', nth: 1 },
+  michelin: { how: 'chip', sel: '#price-chips .chip', nth: 1 },
+};
+
+function listSel(d) { return d.querySelector('#venue-list') ? '#venue-list' : '#rest-list'; }
+const clean = s => (s || '').replace(/\s+/g, ' ').trim();
+
+/** 由文件名判断当前是哪一页，用于挑筛选动作。 */
+function pageKey() {
+  if (target.indexOf('bars') >= 0) return 'bars';
+  if (target.indexOf('bichi') >= 0) return 'bichi';
+  return 'michelin';
+}
+
+function state(d) {
+  const list = d.querySelector(listSel(d));
+  const cnt = d.getElementById('list-count');
+  const hint = d.getElementById('map-hint');
+  const title = d.getElementById('detail-title');
+  const card = d.getElementById('detail-card');
+  const type = d.getElementById('detail-type');
+  const addr = d.getElementById('detail-addr-box');
+  const nav = d.getElementById('detail-nav');
+  return {
+    detail: clean(title ? title.textContent : ''),
+    dType: clean(type ? type.textContent : ''),
+    dCard: card ? (getComputedStyle(card).display === 'none' ? 'none' : 'visible') : 'missing',
+    dAddr: addr ? (addr.classList.contains('hidden') ? 'hidden' : 'shown') : 'missing',
+    dNav: clean(nav ? nav.textContent : '') + (nav && nav.style.display === 'none' ? '(none)' : ''),
+    rows: list ? list.children.length : -1,
+    count: clean(cnt ? cnt.textContent : '') || clean(hint ? hint.textContent : '').slice(0, 22),
+  };
+}
+
+function fmt(tag, s) {
+  return tag + ' detail=' + JSON.stringify(s.detail) + ' type=' + JSON.stringify(s.dType) +
+    ' card=' + s.dCard + ' addr=' + s.dAddr + ' nav=' + JSON.stringify(s.dNav) +
+    ' rows=' + s.rows + ' count=' + JSON.stringify(s.count);
+}
+
+function markerEls(d) {
+  // areaLabels / landmarks 各有自己的 pane，所以 marker pane 里只有店铺标记
+  return Array.from(d.querySelectorAll('.leaflet-marker-pane > *'));
+}
+
+function run() {
+  const d = f.contentDocument;
+  if (!d) { document.title = 'UIERR no contentDocument'; return; }
+  try {
+    log.push(fmt('0_initial', state(d)));
+
+    // 1) 点地图上的店铺标记 → 应弹详情
+    const ms = markerEls(d);
+    log.push('markers=' + ms.length);
+    let clicked = false;
+    for (let i = 0; i < ms.length && !clicked; i++) {
+      const before = state(d).detail;
+      ms[i].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: f.contentWindow }));
+      const after = state(d).detail;
+      if (after && after !== before) clicked = true;
+    }
+    log.push(fmt(clicked ? '1_marker_click' : '1_marker_click_NOOP', state(d)));
+
+    // 2) 点列表首行 → 详情应换成那一家
+    const list = d.querySelector(listSel(d));
+    const row = list && list.querySelector('.venue-item, .rest-item');
+    if (row) {
+      row.click();
+      log.push(fmt('2_list_click', state(d)) + ' row=' + JSON.stringify(clean(row.textContent).slice(0, 20)));
+    } else {
+      log.push('2_list_click SKIP（找不到列表行）');
+    }
+
+    // 3) 筛选：开 → 复位（chip 用第 0 个「全部」复位，开关再点一次）
+    const cfg = FILTER[pageKey()];
+    let el = null, label = '', reset = null;
+    if (cfg.how === 'checkbox') {
+      el = d.querySelector(cfg.sel);
+      reset = el;
+      label = 'checkbox ' + cfg.sel;
+    } else {
+      const chips = Array.from(d.querySelectorAll(cfg.sel));
+      el = chips[cfg.nth];
+      reset = chips[0];
+      label = 'chip ' + JSON.stringify(clean(el ? el.textContent : ''));
+    }
+    if (el) {
+      el.click();
+      log.push(fmt('3_filter_on', state(d)) + ' via=' + JSON.stringify(label));
+      if (reset) reset.click();
+      log.push(fmt('4_filter_reset', state(d)));
+    } else {
+      log.push('3_filter SKIP（找不到 ' + cfg.sel + '）');
+    }
+  } catch (e) {
+    log.push('ERR ' + e.message);
+  }
+  document.title = 'UI[' + target.slice(11, 20) + '] ' + log.join('  ##  ');
+  document.getElementById('out').textContent = log.join('\n\n');
+}
+
+f.addEventListener('load', function () { setTimeout(run, 1800); });
+f.src = target;
+setTimeout(function () { if (document.title === 'ui-diag-loading') run(); }, 7000);
+</script>
+</body>

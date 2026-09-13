@@ -53,10 +53,12 @@ function snap(tag) {
     'hintColor=' + (hint ? hint.style.color || '-' : '-'),
     'clear=' + (clr ? (clr.style.display === 'none' ? 'hidden' : clr.style.display || 'default') : 'none'),
     'sort=' + (sb ? JSON.stringify(sb.textContent) + (sb.classList.contains('active') ? '+active' : '') : 'none'),
-    'dots=' + q('.user-dot'),
+    '    dots=' + q('.user-dot'),
     'circles=' + q('.leaflet-overlay-pane svg path'),
     'markers=' + q('.leaflet-marker-pane > *'),
     'asked=' + (g && g._asked ? g._asked() : 'n/a'),
+    'nav=' + JSON.stringify(((d.getElementById('detail-nav') || {}).textContent || 'none').trim()),
+    'navHref=' + ((function (el) { return el && el.href ? (el.href.indexOf('/navigation?') >= 0 ? 'nav-mode' : 'marker-mode') : 'none'; })(d.getElementById('detail-nav'))),
     'first3=' + JSON.stringify(firstItems(d)),
   ].join(' ');
 }
@@ -82,6 +84,16 @@ function run() {
     log.push(snap('3_sort_off'));
     click(d, 'locate-clear');
     log.push(snap('4_cleared'));
+
+    // 再定位一次并点开一家店：详情卡里的导航按钮应变成「步行导航到店」
+    click(d, 'locate-btn');
+    const ms = Array.from(d.querySelectorAll('.leaflet-marker-pane > *'));
+    let picked = false;
+    for (let i = 0; i < ms.length && !picked; i++) {
+      ms[i].dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: w }));
+      if ((d.getElementById('detail-title') || {}).textContent) picked = true;
+    }
+    log.push(snap('5_detail_after_locate'));
   } catch (e) {
     log.push('ERR ' + e.message);
   }
