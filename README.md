@@ -140,6 +140,10 @@ python3 build.py --check           # 只校验，不写盘
 
 外壳另外做了四件事：**返回键**在抽屉打开时是「收起抽屉」而不是退出网页（走 `history.pushState`，点 ✕ 与按返回键同一条路径）；**深链** `#v=<key>` 直接打开某家店的详情，可分享可收藏；**分享**优先用 `navigator.share`（系统分享面板），不支持就复制链接；**触控细节**见下一节。触屏上另有一处行为差异：地铁站名在 `pointer: coarse` 时提前常显（没有 hover 可用，见 `src/static/map-base.js`）。
 
+手机上**点地图上的店铺标记就直接把介绍卡片推上来**（不用先去名录里翻），卡片开着时再点另一个标记会换成那家店；写 `#v=<key>` 深链、返回键收起，都与点名录那条路完全一致。
+
+> 这里踩过一个坑，改 `mobile-shell.js` 时值得留意：抽屉的开关是「document 上代理 `[data-m-open]` 的点击」，而抽屉打开时 `<html>` 上也挂着 `data-m-open="detail"`。于是用 `e.target.closest('[data-m-open]')` 时，点标记这条路径会**在同一次点击里**先由标记把抽屉打开、事件继续冒泡到 document 后又被外壳当成「再点一次开关」而立刻收起（走 `history.back`），表现就是「卡片闪一下就没了、也不报错」。点名录那条路不中招，纯粹是因为页面的 document 监听器是在外壳之后注册的、那时属性还没写上。现在统一写成 `[data-m-open]:not(html)`（见 `openerEls()` 的注释），并由 `mobile_probe.sh marker` 这一步守着。
+
 ### 触控细节（`@media (pointer: coarse)` 里）
 
 桌面端一行都不命中，改这些不会动到电脑上的排版：
@@ -182,24 +186,27 @@ google-chrome --headless=new --window-size=500,844 --virtual-time-budget=20000 \
 
 验「触控尺寸」这类要真手指才碰得到的规则时，别去模拟 `:hover`（合成 `mouseover` 事件不会让 `:hover` 生效），直接从 CSSOM 读：`document.styleSheets` 里筛出 `conditionText` 含 `pointer` / `hover` 的 `MEDIA_RULE`，看规则条数、是否 `matchMedia(...).matches`、以及带 `:hover` 的选择器有没有全部落在 `(hover: hover)` 条件里。
 
-上面这些坑都固化进了一个可一键复跑的脚本 —— `scripts/mobile_probe.sh`（探针在 `scripts/mobile_probe.js`），它把 5 个页面 × 7 种视口 × 4 种 UA 的 700 多条断言跑完并给出退出码，全绿才退出 0：
+上面这些坑都固化进了一个可一键复跑的脚本 —— `scripts/mobile_probe.sh`（探针在 `scripts/mobile_probe.js`），它把 5 个页面 × 7 种视口 × 4 种 UA 的 800 多条断言跑完并给出退出码，全绿才退出 0：
 
 ```bash
 python3 build.py                  # 产物要先是最新的
-./scripts/mobile_probe.sh         # 全部：几何 + 行为 + 触控 + 分流
-./scripts/mobile_probe.sh css     # 只跑其中一项：geom | behave | css | links
+./scripts/mobile_probe.sh         # 全部：几何 + 行为 + 点标记 + 触控 + 分流
+./scripts/mobile_probe.sh css     # 只跑其中一项：geom | behave | marker | css | links
 VERBOSE=1 ./scripts/mobile_probe.sh geom   # 连 INFO 行（实测数值）一起打出来
 KEEP=1 ./scripts/mobile_probe.sh  # 保留 /tmp 临时目录，便于手翻产物
 ```
 
-四组各管什么：
+五组各管什么：
 
 | 组 | 覆盖 | 典型断言 |
 | --- | --- | --- |
 | `geom` | 360×640 / 390×844 / 640×360（横屏）/ 768×1024 / 899×800 / 901×800 / 1440×900 | 窄屏地图铺满视口且 `position:fixed`、闭合抽屉完全在视口外、无横向溢出、`#m-bar` 在桌面端 `display:none`、无 JS 错误 |
 | `behave` | 每个抽屉都开一遍 | 打开写 `history.state`、返回键只收抽屉不退出网页、Esc 收起、点名录写 `#v=` 深链并自动开详情抽屉、分享拿到的 URL 就是当前地址 |
+| `marker` | 触屏 UA + 粗指针各一遍 | 点地图上的标记直接弹出介绍卡片、卡片开头在视口内且抽屉贴住底边、写 `#v=` 深链、卡片开着时点另一个标记会换店、返回键收起卡片而不退出网页 |
 | `css` | 触屏（`pointer:coarse`）与桌面各一遍 | 触屏上可点控件最小边 ≥32px、chip 实高 ≥34px、复选框 ≥20px、输入框 ≥16px；带 `:hover` 的规则全部落在 `(hover: hover)` 里；桌面端尺寸不被放大 |
 | `links` | 4 页 × 2 档数据 × 4 种 UA | 按「iOS 短链 / 其余手机 scheme / 微信与桌面网页版」分流；两个链接都没有 `target`；`data-kind` 与数据完备度一致 |
+
+`marker` 那组是为了守住「点标记直接出卡片」：这条路径的抽屉不是在「点顶栏按钮」那条路上打开的，而是在同一个点击事件的冒泡途中被打开，很容易被外壳自己的开关逻辑当成「再点一次」而立刻收起（详见上一节那个坑）。断言里刻意检查了「抽屉贴住视口底边」与「卡片开头可见」两个几何量——它们能同时挡住「没打开」和「打开了但抽屉跑到屏幕外」两种坏法；卡片本身比抽屉高时由抽屉内部滚动，所以不要求整张都放得下（bars 就是这样）。
 
 `links` 那项的「2 档数据」是必要的：出厂状态**一条 `baidu_url` / `baidu_uid` 都没有**，只跑真实数据的话，「有短链」「有 uid」两条分支永远测不到。脚本会复制一份产物、临时给一条词条补上这两个字段再跑一遍（`data=rich`），并用 `#v=<key>` 深链把两档都定位到**同一条词条**上，否则比的不是同一家店。补充一句：`scripts/parity_*.html` 那套仍然是「同一版本前后对比、靠人眼看 title」，两者是互补关系，不是一个替代另一个。
 

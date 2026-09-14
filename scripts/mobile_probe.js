@@ -149,6 +149,70 @@
         }
     }
 
+    /* ---------------- 地图上点店铺：直接弹出介绍卡片 ---------------- */
+    async function marker() {
+        var detailHost = q('[data-m-sheet="detail"]') || q('[data-m-sheet="panel"]');
+        var sheetName = detailHost ? detailHost.dataset.mSheet : null;
+        var icons = qa('.m-icon');
+        ok('地图上有店铺标记', icons.length > 0, icons.length + ' 个 .m-icon');
+        ok('能找到详情抽屉', !!sheetName, 'detail-card 所在抽屉=' + sheetName);
+        if (!icons.length || !sheetName) return;
+
+        /* 关掉可能已开着的抽屉，回到「地图全屏、没有卡片」的初始态 */
+        var x = q('.m-sheet-x');
+        if (openState() !== null && x) { x.click(); await sleep(400); }
+        ok('初始态没有卡片', openState() === null, 'data-m-open=' + openState());
+
+        // 点第一个标记：应该直接弹出介绍卡片，并写入深链
+        icons[0].click();
+        await sleep(500);
+        var title = q('#detail-title');
+        var card = q('#detail-card');
+        var host = detailHost.getBoundingClientRect();
+        var cs = card ? card.getBoundingClientRect() : null;
+        ok('点地图标记直接弹出介绍卡片', openState() === sheetName,
+            'data-m-open=' + openState() + ' 期望=' + sheetName);
+        ok('卡片内容是该店铺（标题非空）', !!title && String(title.textContent).trim().length > 0,
+            '标题=' + (title ? JSON.stringify(String(title.textContent).trim().slice(0, 24)) : '无 #detail-title'));
+        /* 抽屉要贴住视口底边并可见；卡片本身可能比抽屉高，那就由抽屉内部滚动，
+           所以只要求卡片的「开头」在视口内，不能要求整张都放得下。 */
+        ok('抽屉贴住视口底边且可见',
+            Math.abs(host.bottom - window.innerHeight) <= 2 && host.top < window.innerHeight && host.height > 100,
+            '抽屉 top=' + Math.round(host.top) + ' bottom=' + Math.round(host.bottom) +
+            ' 高=' + Math.round(host.height) + ' 视口高=' + window.innerHeight);
+        ok('卡片的开头在视口内（标题看得见）',
+            !!cs && cs.top >= -1 && cs.top < window.innerHeight,
+            '卡片 top=' + (cs ? Math.round(cs.top) : '-') + ' bottom=' + (cs ? Math.round(cs.bottom) : '-') +
+            '（抽屉内可滚动，不要求整张都放得下）');
+        ok('点标记写入 #v= 深链', !!hashKey(), 'hash=' + location.hash);
+        var firstKey = hashKey();
+
+        /* 卡片开着时再点另一个标记：内容要换成新店，而不是被浏览器当「点空白」收起来 */
+        if (icons.length > 1) {
+            icons[1].click();
+            await sleep(500);
+            var title2 = q('#detail-title');
+            ok('卡片开着时点另一个标记会换成新店', openState() === sheetName && !!hashKey() &&
+                hashKey() !== firstKey,
+                'data-m-open=' + openState() + ' hash=' + location.hash + ' 上一次=' + firstKey);
+            ok('换店后标题跟着变', !!title2 && String(title2.textContent).trim().length > 0,
+                '标题=' + (title2 ? JSON.stringify(String(title2.textContent).trim().slice(0, 24)) : '无'));
+        }
+
+        // 返回键应收起卡片、而不是退出网页（点标记这条路径也要入栈）
+        var path = location.pathname;
+        if (history.state && history.state.mSheet) {
+            history.back();          // 只在确实入过栈时才 back：否则会尝试离开本页而卡住
+            await sleep(450);
+            ok('点标记打开的卡片也能用返回键收起', openState() === null && location.pathname === path,
+                'data-m-open=' + openState() + ' 仍在页内=' + (location.pathname === path));
+        } else {
+            ok('点标记时抽屉有入栈（返回键才有东西可收）', false,
+                'history.state=' + JSON.stringify(history.state) + '（没入栈说明卡片根本没打开）');
+        }
+        ok('没有 JS 错误', errors.length === 0, errors.length ? errors.slice(0, 3).join(';') : '无');
+    }
+
     /* ---------------- 几何：窄屏全屏地图 / 宽屏原布局 ---------------- */
     function geom() {
         var isNarrow = narrow();
@@ -347,7 +411,7 @@
         ok('没有 JS 错误', errors.length === 0, errors.length ? errors.slice(0, 3).join(';') : '无');
     }
 
-    var TABLE = { behave: behave, geom: geom, css: css, links: links };
+    var TABLE = { behave: behave, geom: geom, css: css, links: links, marker: marker };
     (async function () {
         try {
             await boot();

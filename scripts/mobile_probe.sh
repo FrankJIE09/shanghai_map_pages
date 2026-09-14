@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # 手机端外壳验收：无头 Chrome 跑 scripts/mobile_probe.js，全绿才退 0。
 #
-#   ./scripts/mobile_probe.sh              # 跑全部（几何 + 行为 + 触控 + 分流）
-#   ./scripts/mobile_probe.sh geom         # 只跑其中一项：geom|behave|css|links
+#   ./scripts/mobile_probe.sh              # 跑全部（几何 + 行为 + 点标记 + 触控 + 分流）
+#   ./scripts/mobile_probe.sh geom         # 只跑其中一项：geom|behave|marker|css|links
 #   KEEP=1 ./scripts/mobile_probe.sh       # 保留临时目录，便于手翻产物
 #
 # 为什么不用 scripts/parity_*.html 那套：那套是「同版本前后对比」，要人眼看两个
@@ -106,8 +106,8 @@ run() {   # run <页名> <probe> <宽> <高> <ua关键字|-> [data] [hash]
         android) extra=(--user-agent="Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36") ;;
         wechat) extra=(--user-agent="Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.49(0x18003129) NetType/WIFI Language/zh_CN") ;;
     esac
-    # 触屏那档要多等：探针是 setTimeout 链推进的（打开→量→返回→量…）
-    [ "$probe" = "behave" ] && budget=40000
+    # marker / behave 两档要多等：探针是 setTimeout 链推进的（打开→量→返回→量…）
+    case "$probe" in behave|marker) budget=40000 ;; esac
     local out
     # rich 档要加载补过字段的那份副本：data=rich 只改探针的期望，文件得跟着换
     local file="_p_${page}.html"
@@ -157,6 +157,14 @@ if [ "$ONLY" = all ] || [ "$ONLY" = behave ]; then
     for page in $MAP_PAGES; do
         run "$page" behave 390 844 iphone
         run "$page" behave 390 844 wechat
+    done
+fi
+
+if [ "$ONLY" = all ] || [ "$ONLY" = marker ]; then
+    echo "── 地图上点店铺：应直接弹出介绍卡片 ──"
+    for page in $MAP_PAGES; do
+        run "$page" marker 390 844 iphone
+        run "$page" marker 390 844 touch
     done
 fi
 

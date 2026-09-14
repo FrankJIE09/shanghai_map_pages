@@ -2601,6 +2601,16 @@ html.m-mobile [data-m-sheet] h4 { -webkit-user-select: text; user-select: text; 
 
         /* ================= 抽屉 ================= */
 
+        /** 所有「开关按钮」：[data-m-open] 但排除 <html>。
+            为什么必须排除：抽屉开着时 <html> 上就挂着 data-m-open="list|detail|…"。
+            而 `e.target.closest('[data-m-open]')` 会往上找到 <html> 本身——于是**同一次
+            点击**里「某个标记/控件刚把抽屉打开」之后，事件继续冒泡到 document，
+            外壳又被自己这次的点击当成「再点一次开关」，立刻把抽屉关掉（走 history.back）。
+            点地图上的店铺标记就是栽在这里：卡片弹出来又瞬间收回，且不留痕迹。 */
+        function openerEls() {
+            return document.querySelectorAll('[data-m-open]:not(html)');
+        }
+
         function sheetEl(name) {
             return name ? document.querySelector('[data-m-sheet="' + name + '"]') : null;
         }
@@ -2616,7 +2626,9 @@ html.m-mobile [data-m-sheet] h4 { -webkit-user-select: text; user-select: text; 
             openName = name || null;
             if (openName) root.setAttribute('data-m-open', openName);
             else root.removeAttribute('data-m-open');
-            const btns = document.querySelectorAll('[data-m-open]');
+            // 只同步真正的开关按钮（<html> 上也挂着 data-m-open 表示当前抽屉，
+            // 它不是一个可点的开关，别给它写 aria-pressed）
+            const btns = openerEls();
             for (let i = 0; i < btns.length; i++) {
                 btns[i].setAttribute('aria-pressed',
                     String(btns[i].getAttribute('data-m-open') === openName));
@@ -2800,7 +2812,11 @@ html.m-mobile [data-m-sheet] h4 { -webkit-user-select: text; user-select: text; 
         /* ================= 接线 ================= */
 
         function onDocClick(e) {
-            const opener = e.target.closest ? e.target.closest('[data-m-open]') : null;
+            /* 只认真正的开关按钮：`[data-m-open]:not(html)`。
+               见 openerEls() 的注释——这里如果写成 `closest('[data-m-open]')`，
+               就会匹配到 <html>（抽屉打开状态的载体），把「刚被同一次点击打开的抽屉」
+               当成「再点一次」而立即收起。 */
+            const opener = e.target.closest ? e.target.closest('[data-m-open]:not(html)') : null;
             if (opener) {
                 e.preventDefault();
                 const name = opener.getAttribute('data-m-open');
