@@ -34,6 +34,7 @@ scripts/   extract_data.py  validate_data.py              抽取与校验
            patch_bars_dianping.py  patch_all_stores.py    定点补丁（改 JSON）
            build_css.sh                                   生成 src/static/tailwind.css（偶发）
            vendor_leaflet.sh                              更新 vendored Leaflet（偶发）
+           mobile_probe.sh  mobile_probe.js               手机端验收（无头 Chrome，可一键复跑）
            parity_diag.html  parity_geo_diag.html  parity_ui_diag.html   渲染结果对比探针
 tailwind.config.js                   只给 scripts/build_css.sh 用的 Tailwind 静态构建配置
 build.py   render.sh
@@ -180,6 +181,29 @@ google-chrome --headless=new --window-size=500,844 --virtual-time-budget=20000 \
 3. **`window.onload` 在 `--dump-dom` 下常常不触发**，地图不会初始化。注入的探针里要兜一手：没找到 `.leaflet-container` 就手动调一次 `window.onload()`。
 
 验「触控尺寸」这类要真手指才碰得到的规则时，别去模拟 `:hover`（合成 `mouseover` 事件不会让 `:hover` 生效），直接从 CSSOM 读：`document.styleSheets` 里筛出 `conditionText` 含 `pointer` / `hover` 的 `MEDIA_RULE`，看规则条数、是否 `matchMedia(...).matches`、以及带 `:hover` 的选择器有没有全部落在 `(hover: hover)` 条件里。
+
+上面这些坑都固化进了一个可一键复跑的脚本 —— `scripts/mobile_probe.sh`（探针在 `scripts/mobile_probe.js`），它把 5 个页面 × 7 种视口 × 4 种 UA 的 700 多条断言跑完并给出退出码，全绿才退出 0：
+
+```bash
+python3 build.py                  # 产物要先是最新的
+./scripts/mobile_probe.sh         # 全部：几何 + 行为 + 触控 + 分流
+./scripts/mobile_probe.sh css     # 只跑其中一项：geom | behave | css | links
+VERBOSE=1 ./scripts/mobile_probe.sh geom   # 连 INFO 行（实测数值）一起打出来
+KEEP=1 ./scripts/mobile_probe.sh  # 保留 /tmp 临时目录，便于手翻产物
+```
+
+四组各管什么：
+
+| 组 | 覆盖 | 典型断言 |
+| --- | --- | --- |
+| `geom` | 360×640 / 390×844 / 640×360（横屏）/ 768×1024 / 899×800 / 901×800 / 1440×900 | 窄屏地图铺满视口且 `position:fixed`、闭合抽屉完全在视口外、无横向溢出、`#m-bar` 在桌面端 `display:none`、无 JS 错误 |
+| `behave` | 每个抽屉都开一遍 | 打开写 `history.state`、返回键只收抽屉不退出网页、Esc 收起、点名录写 `#v=` 深链并自动开详情抽屉、分享拿到的 URL 就是当前地址 |
+| `css` | 触屏（`pointer:coarse`）与桌面各一遍 | 触屏上可点控件最小边 ≥32px、chip 实高 ≥34px、复选框 ≥20px、输入框 ≥16px；带 `:hover` 的规则全部落在 `(hover: hover)` 里；桌面端尺寸不被放大 |
+| `links` | 4 页 × 2 档数据 × 4 种 UA | 按「iOS 短链 / 其余手机 scheme / 微信与桌面网页版」分流；两个链接都没有 `target`；`data-kind` 与数据完备度一致 |
+
+`links` 那项的「2 档数据」是必要的：出厂状态**一条 `baidu_url` / `baidu_uid` 都没有**，只跑真实数据的话，「有短链」「有 uid」两条分支永远测不到。脚本会复制一份产物、临时给一条词条补上这两个字段再跑一遍（`data=rich`），并用 `#v=<key>` 深链把两档都定位到**同一条词条**上，否则比的不是同一家店。补充一句：`scripts/parity_*.html` 那套仍然是「同一版本前后对比、靠人眼看 title」，两者是互补关系，不是一个替代另一个。
+
+如果哪天要在这套里加用例：注意端口。脚本会先写一个带随机 token 的文件再确认能读回来（被上次跑剩的 `http.server` 占着端口、目录却已删掉时，页面会静默 404、探针一片空白），端口被占就自动换 8987–8999 里的下一个，结束时把服务关掉。
 
 ## 补数据
 
