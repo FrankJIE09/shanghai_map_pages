@@ -32,6 +32,7 @@ PAGES = {
     "src/pages/bichi.html": "shanghai_bichi_saojie_2026.html",
     "src/pages/michelin.html": "shanghai_michelin_2026.html",
     "src/pages/eat.html": "shanghai_eat_2026.html",
+    "src/pages/seoul-michelin.html": "seoul_michelin_2026.html",
 }
 
 # 产物 -> (店铺数据来源 JSON 列表, 预期条数)。用于 --check 的产物自检。
@@ -39,6 +40,7 @@ PAGES = {
 # 落地页不含任何内联数据，故来源为空、预期条数为 0。
 EXPECT = {
     "index.html": ([], 0),
+    "seoul_michelin_2026.html": (["data/venues/seoul-michelin.json"], 93),
     "shanghai_bars_livehouse_2026.html": (["data/venues/bars.json"], 37),
     "shanghai_bichi_saojie_2026.html": (["data/venues/bichi.json"], 58),
     "shanghai_michelin_2026.html": (["data/venues/michelin.json"], 86),

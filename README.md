@@ -398,3 +398,9 @@ ERROR: 未知服务类型：检测到当前应用非 Some[static] 应用。
 这些页面原本在 `gemini_htmls` 仓库中，数据内联在 HTML 里。本仓库把它拆成「JSON 源 + 构建期内联」并抽出了共用的地图底座；`eat`（三榜合并总览）是本仓库新增的页面，`gemini_htmls` 里没有对应快照。
 
 `gemini_htmls` 里的同名页面是**冻结的历史快照**，不再更新。本仓库自己有一张 `dist/index.html` 落地页作为四张图的总入口，线上地址为 <https://frankjie09.github.io/shanghai_map_pages/>；`gemini_htmls` 的 `index.html` 可以改成指向它。
+
+## 首尔米其林地图（新增）
+
+在线地址：https://frankjie09.github.io/shanghai_map_pages/seoul_michelin_2026.html
+
+源模板 `src/pages/seoul-michelin.html`，数据 `data/venues/seoul-michelin.json`，样式和交互 `src/static/seoul-michelin.css` / `seoul-michelin.js`，通过现有 `python3 build.py` 构建为自包含单文件。共 93 家（1 三星、10 二星、31 一星、51 必比登），核对于 2026-11-14。米其林首都圈该名单中的门店均在首尔市内，未补充未经确认的周边餐厅。底图采用 OpenStreetMap，底图与外部导航需要联网。收藏仅存本机，定位仅在浏览器计算距离。

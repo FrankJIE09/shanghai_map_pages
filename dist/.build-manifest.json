@@ -4,8 +4,8 @@
   "pages": {
     "index.html": {
       "source": "src/pages/index.html",
-      "sha256": "a13bae20e5add5fe1d344d49c6698a62b2bf2c57c4c0533fba464c54faf58a39",
-      "bytes": 16835
+      "sha256": "864d93f5631d14bf2bd9af1db907dee886159642c2c5be9c88d1e21e144bcf1f",
+      "bytes": 17531
     },
     "shanghai_bars_livehouse_2026.html": {
       "source": "src/pages/bars.html",
@@ -26,6 +26,11 @@
       "source": "src/pages/eat.html",
       "sha256": "ad4e019326575a56c4c1e2a91c5c6cc8a09ca5f18dea616b6fce93aedd8c60f6",
       "bytes": 528213
+    },
+    "seoul_michelin_2026.html": {
+      "source": "src/pages/seoul-michelin.html",
+      "sha256": "a4b2fd3ac2603c52400799b4183cd448cc6942869c1ea817cf03160272b18ac9",
+      "bytes": 238942
     }
   }
 }
