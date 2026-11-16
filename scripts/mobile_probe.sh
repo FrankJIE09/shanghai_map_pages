@@ -17,9 +17,12 @@ WORK="${WORK:-/tmp/mobile_probe}"
 PORT="${PORT:-8987}"
 ONLY="${1:-all}"
 
-CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+CHROME="${CHROME:-$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)}"
+if [ -z "$CHROME" ] && [ -x "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]; then
+    CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+fi
 if [ -z "$CHROME" ]; then
-    echo "找不到 google-chrome / chromium，无法跑无头验收" >&2
+    echo "找不到 Chrome / Chromium；可用 CHROME 环境变量指定可执行文件" >&2
     exit 2
 fi
 if [ ! -d "$ROOT/dist" ] || [ -z "$(ls -A "$ROOT/dist"/*.html 2>/dev/null)" ]; then
@@ -135,9 +138,11 @@ run() {   # run <页名> <probe> <宽> <高> <ua关键字|-> [data] [hash]
     return 0
 }
 
-ALL_PAGES=$(cd "$WORK" && ls _p_*.html | grep -v '_rich' | sed 's/^_p_//;s/\.html$//' | sort)
+ALL_PAGES=$(cd "$WORK" && ls _p_*.html | sed 's/^_p_//;s/\.html$//' |
+    grep -E '^(index|shanghai_(bars_livehouse|bichi_saojie|michelin|eat)_2026)$' | sort)
 # 落地页没有手机外壳（[data-m-*] 标记与 mobile.css 都不内联），行为 / 分流 / 触控
 # 那三项对它没有意义，只跟着验几何。
+# 首尔使用独立布局与交互，由独立探针验收，不能套用这里的上海抽屉断言。
 MAP_PAGES=$(echo "$ALL_PAGES" | grep -v '^index$')
 
 if [ "$ONLY" = all ] || [ "$ONLY" = geom ]; then
@@ -179,7 +184,7 @@ fi
 if [ "$ONLY" = all ] || [ "$ONLY" = links ]; then
     echo "── 分流：四种 UA × 两档数据该落哪一档 ──"
     for page in $MAP_PAGES; do
-        key=$(grep -P "^${page}\t" "$WORK/keys.tsv" 2>/dev/null | cut -f2)
+        key=$(awk -F '\t' -v page="$page" '$1 == page { print $2; exit }' "$WORK/keys.tsv")
         hash=""
         [ -n "$key" ] && hash="#v=${key}"
         for data in plain rich; do

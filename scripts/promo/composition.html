@@ -1,112 +1,40 @@
 <!doctype html>
-<html lang="zh-CN">
-<meta charset="utf-8">
-<title>探店地图 · 15 秒宣传片</title>
+<html lang="zh-CN"><meta charset="utf-8"><title>城市探店地图 · 七城宣传片</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden}
-body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:#143b32;color:#f8f4e8}
-#stage{width:1920px;height:1080px;position:relative;overflow:hidden}
-.scene{position:absolute;inset:0;display:none;overflow:hidden}
-.paper{background:#f4efe3;color:#193e33}.forest{background:#123d32}.night{background:#13131f}
-.grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff07 1px,transparent 1px),linear-gradient(90deg,#ffffff07 1px,transparent 1px);background-size:60px 60px}
-.paper .grid{background-image:linear-gradient(#173e3207 1px,transparent 1px),linear-gradient(90deg,#173e3207 1px,transparent 1px)}
-.brand{position:absolute;left:82px;top:58px;display:flex;gap:16px;align-items:center;z-index:20}
-.brand .mark{width:45px;height:45px;border:2px solid currentColor;border-radius:50% 50% 50% 6px;transform:rotate(-45deg);display:grid;place-items:center}
-.mark i{display:block;width:12px;height:12px;background:currentColor;border-radius:50%}
-.brand strong{font-size:26px;letter-spacing:3px}.brand small{display:block;font-size:10px;letter-spacing:4.6px;opacity:.6;margin-top:4px}
-.edition{position:absolute;right:84px;top:68px;font-size:19px;letter-spacing:3px;opacity:.65;z-index:20}
-.eyebrow{font-size:21px;letter-spacing:5px;font-weight:600;margin-bottom:27px;color:#cfe27e}
-.paper .eyebrow{color:#967451}.night .eyebrow{color:#71deea}
-h1,h2,p{margin:0}h1,h2{font-family:"Songti SC","STSong",serif;font-weight:700;letter-spacing:-2px;line-height:1.22}
-.copy{position:absolute;left:82px;z-index:10}.copy h2{font-size:88px}.copy p{font-size:27px;letter-spacing:1px;line-height:1.7;margin-top:31px;opacity:.72}
-.pill{display:inline-block;padding:13px 23px;border:1px solid #b5c99d66;border-radius:50px;font-size:22px;letter-spacing:2px;margin-right:10px}
-.paper .pill{border-color:#193e3333}.tags{margin-top:40px}
-.card{position:absolute;overflow:hidden;background:#fff;border:1px solid #fff7;border-radius:24px;box-shadow:0 25px 80px #0003}
-.card img{width:100%;display:block}.browserbar{height:38px;background:#fcf9f0;border-bottom:1px solid #293a2914;display:flex;align-items:center;padding:0 18px;gap:7px;color:#6e786f;font:13px -apple-system,sans-serif;letter-spacing:.4px}
-.browserbar i{width:7px;height:7px;background:#c5c9be;border-radius:50%;display:block}.browserbar span{margin-left:18px}
-.foot{position:absolute;bottom:53px;left:82px;right:82px;display:flex;align-items:center;justify-content:space-between;font-size:16px;letter-spacing:3px;opacity:.64;z-index:30}
-.rail{height:2px;position:absolute;bottom:26px;left:82px;width:1756px;background:#ffffff26;z-index:30}.paper .rail{background:#193e3322}.rail i{display:block;height:100%;width:0;background:#cfe27e}.paper .rail i{background:#967451}
-.big-num{font-family:Georgia,serif;font-size:105px;line-height:1;margin-top:50px;color:#1e4a39}.big-num span{font-family:-apple-system,"PingFang SC",sans-serif;font-size:21px;margin-left:12px;letter-spacing:2px;color:#52655b}
-.route{position:absolute;right:70px;top:150px;width:1110px;height:800px;opacity:.3}
-.label{position:absolute;border-radius:60px;background:#f5f1e4;color:#204536;padding:15px 27px;box-shadow:0 8px 24px #0002;font-size:22px;letter-spacing:3px;z-index:5}
-.phone{position:absolute;width:354px;height:803px;padding:9px;border:2px solid #575264;background:#14131b;border-radius:35px;box-shadow:0 30px 80px #0007;overflow:hidden;z-index:6}
-.phone img{display:block;width:100%;border-radius:24px}.phone .camera{position:absolute;top:15px;left:145px;width:65px;height:13px;background:#111;border-radius:15px}
-#s0 .hero-map{width:1080px;left:875px;top:195px;transform:rotate(-7deg);border:12px solid #e8e6d8;border-radius:28px}
-#s0 .hero-map img{height:756px;object-fit:cover;object-position:55% 50%}
-#s0 .copy{top:274px}#s0 h1{font-size:137px}#s0 .copy p{font-size:29px;margin-top:35px}
-#s0 .pin{position:absolute;left:1250px;top:428px;width:90px;height:90px;border:3px solid #f1ce72;border-radius:50%;z-index:6;box-shadow:0 0 0 20px #e4cb6a1a}
-#s1 .copy{top:275px}#s1 .screen{left:710px;top:208px;width:1130px}
-#s1 .screen img{height:738px;object-fit:cover;object-position:top}
-#s2 .copy{top:285px}#s2 .screen{left:1030px;top:294px;width:1040px;border-color:#77627d55;transform:rotate(4deg)}
-#s2 .screen img{height:570px;object-fit:cover}#s2 .phone{left:732px;top:168px}
-#s2 h2{color:#f7efe8}#s2 .copy p{color:#c4b2ce;opacity:1}#s2 .glow{position:absolute;left:800px;top:0;width:1100px;height:1100px;background:radial-gradient(ellipse,#78315938,transparent 67%)}
-#s3 .copy{top:294px}#s3 .copy h2{font-size:79px}#s3 .screen{left:720px;top:208px;width:1120px}#s3 .screen img{height:731px;object-fit:cover;object-position:top}
-#s3 .stamp{position:absolute;left:80px;top:742px;color:#a94454;border:1px solid #a9445455;padding:14px 23px;font-size:24px;letter-spacing:3px;border-radius:4px}
-#s4 .copy{top:260px}#s4 h2{font-size:106px}#s4 .copy p{font-size:31px;color:#d0dec5;opacity:1}
-#s4 .card{left:1140px;top:210px;width:640px;transform:rotate(8deg);border:9px solid #eee8d9;border-radius:20px}#s4 .card img{height:450px;object-fit:cover}
-#s4 .card.second{left:1030px;top:580px;width:660px;transform:rotate(-7deg)}#s4 .card.second img{height:360px;object-fit:cover}
-.cta{display:inline-flex;margin-top:48px;padding:20px 31px;background:#d0e482;color:#193d31;font-size:28px;gap:51px;align-items:center;border-radius:8px;font-weight:600}.cta b{font-size:36px;font-weight:400}
-.url{margin-top:28px;font-size:21px;letter-spacing:.5px;color:#b6c9b0}
-#cut{position:absolute;inset:0;background:#123d32;pointer-events:none;opacity:0;z-index:99}
+*{box-sizing:border-box}html,body{margin:0;width:1920px;height:1080px;overflow:hidden}body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:#f8f4ec;color:#30292d}#stage{width:1920px;height:1080px;position:relative;overflow:hidden}.scene{position:absolute;inset:0;display:none;overflow:hidden}.paper{background:#f8f4ec;color:#30292d}.wine{background:#683343;color:#fcf5eb}.dark{background:#29252a;color:#fcf5eb}.grain{position:absolute;inset:0;background-image:radial-gradient(#9b7e6320 .6px,transparent .7px);background-size:7px 7px;opacity:.3}.brand{position:absolute;left:82px;top:53px;display:flex;align-items:center;gap:17px;z-index:20}.brand b{font-size:40px;line-height:1;font-weight:400;color:#b68d72}.brand strong{font-size:25px;letter-spacing:3px;font-weight:600}.brand small{display:block;font-size:10px;letter-spacing:4px;font-weight:400;opacity:.6;margin-top:5px}.edition{position:absolute;right:82px;top:64px;font-size:17px;letter-spacing:3px;opacity:.64;z-index:20}.copy{position:absolute;left:82px;z-index:10}.eyebrow{font-size:21px;font-weight:600;letter-spacing:4px;color:#a77868;margin-bottom:25px}.wine .eyebrow,.dark .eyebrow{color:#e2ba9a}h1,h2,p{margin:0}h1,h2{font-family:"Songti SC","STSong",serif;line-height:1.25;font-weight:600;letter-spacing:-1px}.copy h2{font-size:85px}.copy p{font-size:27px;line-height:1.8;margin-top:30px;color:#7a6c69}.wine .copy p,.dark .copy p{color:#dcc7c9}.pills{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px;max-width:650px}.pill{border:1px solid #cbb5a6;border-radius:100px;font-size:22px;padding:10px 21px;letter-spacing:1px}.wine .pill,.dark .pill{border-color:#c6a19b66}.card{position:absolute;overflow:hidden;border:1px solid #d5c8bc;border-radius:20px;background:#fffdf9;box-shadow:0 22px 65px #21131d20}.card img{width:100%;height:100%;object-fit:cover;display:block}.browserbar{height:38px;display:flex;align-items:center;gap:7px;padding:0 18px;border-bottom:1px solid #e8dfd7;background:#fffaf2;color:#86766b;font-size:14px;letter-spacing:.5px}.browserbar i{height:7px;width:7px;background:#c6bcb2;border-radius:50%}.browserbar span{margin-left:14px}.screen img{height:calc(100% - 38px);object-fit:contain;background:#fffdf9}.foot{position:absolute;bottom:49px;left:82px;right:82px;display:flex;align-items:center;justify-content:space-between;z-index:30;font-size:15px;letter-spacing:2px;color:#8d7c71}.wine .foot,.dark .foot{color:#ccb6b4}.rail{height:2px;position:absolute;bottom:27px;left:82px;width:1756px;background:#cab9ab66;z-index:30}.rail i{display:block;height:2px;background:#9d4b5f}.wine .rail i,.dark .rail i{background:#e4c29f}.stat{font:93px/1.1 Georgia,serif;color:#a04b5e;margin-top:40px}.stat small{font:22px -apple-system,"PingFang SC",sans-serif;margin-left:15px;color:#87746b}.wine .stat{color:#f2d6b2}.wine .stat small{color:#e0c7bd}.cityline{font-size:22px;letter-spacing:3px;line-height:1.9;margin-top:28px;color:#7f6f68;max-width:660px}.wine .cityline{color:#ead9cc}.motion{will-change:transform,opacity}.country{position:absolute;left:82px;top:157px;font-size:19px;letter-spacing:4px;color:#a78e7c}.country b{color:#873c50;font-size:21px}.wine .country,.wine .country b{color:#eed2be}.badge{position:absolute;background:#fffaf1;border:1px solid #d8c2b4;border-radius:50px;padding:13px 23px;color:#834154;font-size:21px;box-shadow:0 8px 18px #30242d10;z-index:9}.phone{position:absolute;width:357px;height:798px;padding:8px;background:#29252a;border:2px solid #76656c;border-radius:36px;box-shadow:0 24px 65px #21131d30;overflow:hidden}.phone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:26px}.feature-list{margin-top:40px;display:grid;gap:20px;font-size:26px;color:#7d6a65}.feature-list span{display:flex;align-items:center;gap:17px}.feature-list b{font-size:19px;font-weight:500;border:1px solid #d3bdab;width:35px;height:35px;border-radius:50%;display:grid;place-items:center;color:#9e5664}.mini{position:absolute;border:1px solid #d5c8bc;border-radius:17px;background:#fffdf9;overflow:hidden;box-shadow:0 12px 35px #21131d12;width:800px;height:330px}.mini img{position:absolute;right:0;top:0;width:540px;height:100%;object-fit:cover;object-position:center}.mini .info{position:absolute;left:0;top:0;bottom:0;width:260px;background:#fffdf9;padding:36px 27px;z-index:2;border-right:1px solid #e4d9ce}.mini h3{font-family:"Songti SC",serif;font-size:41px;margin:0 0 5px}.mini .en{font:italic 20px Georgia,serif;color:#a08470}.mini .year{font-size:17px;color:#9a7e6a;margin-top:23px}.mini .num{font:36px Georgia,serif;margin-top:12px;color:#9f495b}.mini .num small{font:17px -apple-system,"PingFang SC",sans-serif;margin-left:8px;color:#8c776a}.url{font-size:24px;color:#d3b9b3;margin-top:27px;letter-spacing:.3px}.cta{margin-top:39px;display:inline-flex;align-items:center;gap:90px;padding:19px 29px;background:#ead3b7;color:#643244;border-radius:7px;font-size:29px;font-weight:600}.cta b{font-weight:400;font-size:35px}
+#s0 .copy{top:255px}#s0 h1{font-size:106px}#s0 h1 em{color:#a14b5e;font-style:normal}#s0 .hero{left:895px;top:186px;width:1010px;height:755px;transform:rotate(-4deg);border:10px solid #f1e7dc}#s0 .hero img{object-position:center}#s0 .meta{font-size:24px;color:#8f6a55;margin-top:36px;letter-spacing:4px}
+#s1 .copy{top:261px}#s1 .screen{left:730px;top:183px;width:1100px;height:746px}#s1 .copy h2{font-size:77px}#s1 .copy p{font-size:25px}
+#s2 .heading{position:absolute;left:82px;top:158px;font-size:66px;font-family:"Songti SC",serif;font-weight:600}#s2 .subtitle{position:absolute;right:90px;top:198px;font-size:23px;color:#8c7869;letter-spacing:1px}
+#s3 .copy{top:246px}#s3 .screen{left:730px;top:183px;width:1100px;height:746px}#s3 .copy h2{font-size:87px}#s3 .fine{font-size:20px;color:#d4b8b4;margin-top:16px;line-height:1.8}
+#s4 .copy{top:272px}#s4 .screen{left:730px;top:183px;width:1100px;height:746px}#s4 h2{font-size:76px}
+#s5 .copy{top:263px}#s5 .phone.first{left:900px;top:150px}#s5 .phone.second{left:1305px;top:150px}#s5 .step{position:absolute;top:968px;font-size:20px;letter-spacing:3px;color:#917666}
+#s6 .copy{top:251px}#s6 h2{font-size:99px}#s6 .card{left:1120px;top:190px;width:650px;height:405px;border:8px solid #eedfd1;transform:rotate(5deg)}#s6 .second{left:1030px;top:592px;transform:rotate(-5deg);height:340px}#s6 .copy p{font-size:28px}
+#cut{position:absolute;inset:0;background:#f7f1e7;opacity:0;z-index:100;pointer-events:none}
 </style>
 <div id="stage">
-  <section id="s0" class="scene forest">
-    <div class="grid"></div><svg class="route" viewBox="0 0 1110 800"><path d="M50 680 C160 670 80 90 450 110 S970 290 1020 20" fill="none" stroke="#d7e58b" stroke-width="2" stroke-dasharray="10 14"/></svg>
-    <div class="card hero-map motion"><img src="sources/shanghai-map.png"></div>
-    <div class="label" style="left:1090px;top:174px;transform:rotate(-7deg)">SHANGHAI · 上海</div>
-    <div class="pin"></div>
-    <div class="copy"><div class="eyebrow">A CITY WORTH EXPLORING</div><h1>下一站，<br>去哪儿？</h1><p>跟着味道，重新认识一座城。</p><div class="tags"><span class="pill">上海</span><span class="pill">首尔</span></div></div>
-  </section>
-  <section id="s1" class="scene paper">
-    <div class="grid"></div><div class="copy"><div class="eyebrow">01 / SHANGHAI DINING</div><h2>三张榜单，<br>一张地图。</h2><p>必吃 · 扫街 · 米其林<br>筛选口味，点开店铺详情。</p><div class="big-num">131<span>家餐饮 · 合并去重</span></div></div>
-    <div class="card screen motion"><div class="browserbar"><i></i><i></i><i></i><span>上海餐饮总览 · 实际页面</span></div><img id="eat-shot" src="sources/eat-overview.png"></div>
-  </section>
-  <section id="s2" class="scene night">
-    <div class="grid"></div><div class="glow"></div><div class="copy"><div class="eyebrow">02 / AFTER HOURS</div><h2>好饭之后，<br>好戏开场。</h2><p>酒吧 · Livehouse · 夜店<br>37 处夜生活灵感。</p><div class="tags"><span class="pill">手机也能逛</span></div></div>
-    <div class="card screen motion"><img src="sources/night-map.png"></div>
-    <div class="phone motion"><img id="night-shot" src="sources/bars-mobile.png"></div>
-    <div class="label" style="left:1180px;top:225px;background:#262133;color:#73e3ec;border:1px solid #79e7ef66">SHANGHAI AFTER DARK</div>
-  </section>
-  <section id="s3" class="scene paper">
-    <div class="grid"></div><div class="copy"><div class="eyebrow">03 / NEXT STOP, SEOUL</div><h2>换座城市，<br>继续探店。</h2><p>首尔米其林 · 93 家收录<br>星级餐厅与必比登，一起发现。</p></div><div class="stamp">서울 · SEOUL</div>
-    <div class="card screen motion"><div class="browserbar"><i></i><i></i><i></i><span>首尔米其林 2026 · 实际页面</span></div><img id="seoul-shot" src="sources/seoul-overview.png"></div>
-  </section>
-  <section id="s4" class="scene forest">
-    <div class="grid"></div><div class="card motion"><img src="sources/shanghai-map.png"></div><div class="card second motion"><img src="sources/seoul-map.png"></div>
-    <div class="label" style="left:1300px;top:190px;transform:rotate(8deg)">上海</div><div class="label" style="left:1440px;top:885px;transform:rotate(-7deg)">首尔</div>
-    <div class="copy"><div class="eyebrow">YOUR NEXT STOP STARTS HERE</div><h2>把下一站，<br>放进地图。</h2><p>上海 × 首尔 · 打开即探索</p><div class="cta">打开探店地图 <b>↗</b></div><div class="url">frankjie09.github.io/shanghai_map_pages</div></div>
-  </section>
-  <div class="brand"><div class="mark"><i></i></div><div><strong>探店地图</strong><small>THE DINING ATLAS</small></div></div>
-  <div class="edition">SHANGHAI × SEOUL / 2026</div>
-  <div class="foot"><span id="chapter">从一顿好饭，开始探索</span><span style="font-size:14px;letter-spacing:.3px">地图 © OpenStreetMap contributors · © CARTO</span><span id="counter">01 — 05</span></div><div class="rail"><i></i></div>
-  <div id="cut"></div>
+<section id="s0" class="scene paper"><div class="grain"></div><div class="copy"><div class="eyebrow">THE DINING ATLAS / 全新城市指南</div><h1>七座城市，<br><em>下一餐</em>有方向。</h1><p>从街巷烟火，到值得专程的一餐。</p><div class="meta">7 座城市　·　10 张主题地图</div><div class="cityline">中国：上海 · 北京 · 苏州 · 南京 · 杭州 · 香港<br>韩国：首尔</div></div><div class="card hero motion"><img src="sources/shanghai-map.jpg"></div><div class="badge" style="left:1150px;top:155px;transform:rotate(-4deg)">真实地图，随味出发。</div></section>
+<section id="s1" class="scene paper"><div class="grain"></div><div class="country"><b>中国</b> / CHINA · SHANGHAI</div><div class="copy"><div class="eyebrow">01 / 上海 · 焕新体验</div><h2>同一张好地图，<br>看见城市好味。</h2><p>米其林、街巷美食与夜生活<br>都用这一套清晰好逛的界面。</p><div class="pills"><span class="pill">筛选</span><span class="pill">收藏</span><span class="pill">导航</span></div></div><div class="card screen motion"><div class="browserbar"><i></i><i></i><i></i><span>上海米其林地图 · 实际页面</span></div><img src="sources/shanghai-overview.jpg"></div></section>
+<section id="s2" class="scene paper"><div class="grain"></div><div class="heading">从北京，到江南。</div><div class="subtitle">中国 / 最新已发布指南 · 星级餐厅与必比登</div><div class="mini motion" style="left:102px;top:302px"><div class="info"><h3>北京</h3><div class="en">Beijing</div><div class="year">2027 已发布版</div><div class="num">65<small>家餐厅</small></div></div><img src="sources/beijing-map.jpg"></div><div class="mini motion" style="left:1018px;top:302px"><div class="info"><h3>苏州</h3><div class="en">Suzhou</div><div class="year">2026 沪苏浙版</div><div class="num">21<small>家餐厅</small></div></div><img src="sources/suzhou-map.jpg"></div><div class="mini motion" style="left:102px;top:661px"><div class="info"><h3>南京</h3><div class="en">Nanjing</div><div class="year">2026 沪苏浙版</div><div class="num">25<small>家餐厅</small></div></div><img src="sources/nanjing-map.jpg"></div><div class="mini motion" style="left:1018px;top:661px"><div class="info"><h3>杭州</h3><div class="en">Hangzhou</div><div class="year">2026 沪苏浙版</div><div class="num">47<small>条名录记录</small></div></div><img src="sources/hangzhou-map.jpg"></div></section>
+<section id="s3" class="scene wine"><div class="grain"></div><div class="country"><b>中国</b> / CHINA · HONG KONG</div><div class="copy"><div class="eyebrow">02 / 新增香港</div><h2>香港，<br>也在地图上。</h2><p>街坊小馆，维港餐桌。<br>一城粤味，慢慢寻。</p><div class="stat">147<small>条餐厅记录</small></div><div class="fine">146 个已核实点位 · 港币价位档<br>坐标待核实的餐厅，仅保留名录。</div></div><div class="card screen motion"><div class="browserbar"><i></i><i></i><i></i><span>香港米其林 2026 · 实际页面</span></div><img src="sources/hong-kong-overview.jpg"></div></section>
+<section id="s4" class="scene paper"><div class="grain"></div><div class="country"><b>韩国</b> / KOREA · SEOUL</div><div class="copy"><div class="eyebrow">03 / 下一站，首尔</div><h2>换座城市，<br>继续好好吃饭。</h2><p>从精致韩餐到街头风味。<br>韩文搜索，一键打开地图。</p><div class="stat">93<small>家星级与必比登餐厅</small></div></div><div class="card screen motion"><div class="browserbar"><i></i><i></i><i></i><span>首尔米其林地图 · 实际页面</span></div><img src="sources/seoul-overview.jpg"></div></section>
+<section id="s5" class="scene paper"><div class="grain"></div><div class="copy"><div class="eyebrow">04 / 随身的城市指南</div><h2>从想吃，<br>到出发。</h2><p>手机上，也能轻松找到下一站。</p><div class="feature-list"><span><b>1</b>搜店名，筛口味</span><span><b>2</b>看详情，存心愿</span><span><b>3</b>复制地址，打开导航</span></div></div><div class="phone first motion"><img src="sources/mobile-search.jpg"></div><div class="phone second motion"><img src="sources/mobile-detail.jpg"></div><div class="step" style="left:969px">搜索名录</div><div class="step" style="left:1380px">店铺详情</div></section>
+<section id="s6" class="scene dark"><div class="grain"></div><div class="copy"><div class="eyebrow">YOUR NEXT STOP IS ON THE MAP</div><h2>把下一站，<br>放进地图。</h2><p>中国六城，韩国首尔。<br>七座城市，十张主题地图。</p><div class="cta">打开城市探店地图 <b>↗</b></div><div class="url">frankjie09.github.io/shanghai_map_pages/</div></div><div class="card motion"><img src="sources/hong-kong-map.jpg"></div><div class="card second motion"><img src="sources/shanghai-map.jpg"></div></section>
+<div class="brand"><b>✳</b><div><strong>城市探店地图</strong><small>THE DINING ATLAS</small></div></div><div class="edition">CHINA · KOREA / 7 CITIES</div><div class="foot"><span id="chapter">01 / 07</span><span>地图 © OpenStreetMap contributors · 非米其林官方产品</span><span>实际页面 · 2026.11</span></div><div class="rail"><i id="progress"></i></div><div id="cut"></div>
 </div>
 <script>
-// Pure frame-time rendering; no timers, random values, CSS animation, or network fetches.
-const cuts=[0,2.5,6,9,12,15], names=['从一顿好饭，开始探索','上海 · 三榜餐饮总览','上海 · 夜生活地图','首尔 · 米其林地图','SHANGHAI_MAP_PAGES · 开源探店地图'];
+const starts=[0,3,6.5,10.5,14,17,21],ends=[3,6.5,10.5,14,17,21,24];
+const ease=t=>1-Math.pow(1-Math.max(0,Math.min(1,t)),3);
 const scenes=[...document.querySelectorAll('.scene')];
-const clamp=x=>Math.max(0,Math.min(1,x)),ease=x=>1-Math.pow(1-clamp(x),3);
-window.renderFrame=t=>{
-  const idx=Math.min(4,cuts.findIndex((v,i)=>i<5&&t>=v&&t<cuts[i+1]));
-  const k=idx<0?4:idx,local=t-cuts[k],d=cuts[k+1]-cuts[k],enter=ease(local/.62),p=clamp(local/d);
-  scenes.forEach((s,i)=>s.style.display=i===k?'block':'none');
-  const dark=k===0||k===2||k===4;
-  document.querySelector('#stage').style.color=dark?'#f7f2e6':'#193e33';
-  document.querySelector('.rail').style.background=dark?'#ffffff26':'#193e3322';
-  document.querySelector('.rail i').style.cssText=`width:${t/15*100}%;background:${dark?'#cfe27e':'#967451'}`;
-  document.querySelector('#chapter').textContent=names[k];document.querySelector('#counter').textContent=`0${k+1} — 05`;
-  const copy=scenes[k].querySelector('.copy');copy.style.opacity=.35+.65*enter;copy.style.transform=`translateY(${22*(1-enter)}px)`;
-  scenes[k].querySelectorAll('.motion').forEach((el,i)=>{
-    const rotate=k===0?-7:k===2&&i===0?4:k===4?(i===0?8:-7):0;
-    const drift=k===0?16*p:k===4?-10*p:0;
-    el.style.transform=`translate(${(1-enter)*65+drift}px,${-8*p}px) rotate(${rotate}deg) scale(${1+.012*p})`;
-  });
-  document.querySelector('#eat-shot').src=`sources/eat-${local>=1.6&&k===1?'selected':'overview'}.png`;
-  document.querySelector('#night-shot').src=`sources/bars-mobile${local>=1.5&&k===2?'-detail':''}.png`;
-  document.querySelector('#seoul-shot').src='sources/seoul-overview.png';
-  const pin=document.querySelector('.pin');pin.style.transform=`scale(${1+.15*Math.sin(t*3)})`;pin.style.opacity=.7+.3*Math.sin(t*3);
-  // Four-frame dip marks chapter cuts without crossfading scaled UI screenshots.
-  document.querySelector('#cut').style.opacity=k>0?Math.max(0,1-local/.13)*.45:0;
+const initialTransforms=new Map([...document.querySelectorAll('.motion')].map(el=>[el,getComputedStyle(el).transform==='none'?'':getComputedStyle(el).transform]));
+window.renderFrame=function(t){
+  let index=starts.length-1;for(let i=0;i<ends.length;i++)if(t<ends[i]){index=i;break;}
+  const local=t-starts[index],scene=scenes[index],dur=ends[index]-starts[index];
+  scenes.forEach((el,i)=>{el.style.display=i===index?'block':'none';});
+  const copy=scene.querySelector('.copy');if(copy){const amount=ease(local/.65);copy.style.opacity=String(amount);copy.style.transform=`translateY(${(1-amount)*23}px)`;}
+  scene.querySelectorAll('.motion').forEach((el,i)=>{const a=ease((local-i*.09)/.7),drift=Math.min(1,local/dur);el.style.opacity=String(a);el.style.transform=`translateY(${(1-a)*34-drift*6}px) ${initialTransforms.get(el)} scale(${1+drift*.008})`;});
+  const dark=index===3||index===6;document.querySelector('.brand').style.color=dark?'#fcf5eb':'#30292d';document.querySelector('.edition').style.color=dark?'#ead4c9':'#8b7567';document.querySelector('.foot').style.color=dark?'#d5bbb6':'#8d7c71';
+  document.querySelector('#chapter').textContent=String(index+1).padStart(2,'0')+' / 07';document.querySelector('#progress').style.width=Math.max(0,Math.min(100,t/24*100))+'%';
+  const distance=Math.min(...starts.slice(1).map(start=>Math.abs(t-start)));document.querySelector('#cut').style.opacity=String(distance<.065?(1-distance/.065)*.8:0);
 };
 window.renderFrame(0);
 </script>

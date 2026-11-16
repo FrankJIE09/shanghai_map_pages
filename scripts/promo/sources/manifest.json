@@ -1,62 +1,101 @@
 {
-  "repository_commit": "88aff93441617035b2cd77e9a2c4b4fa18f09b65",
+  "repository_commit": "3923af8454a9420efe7edc9ed814977792046e6c",
+  "capture_basis": "Seven-city working tree, including uncommitted page/data updates. Capture report records actual UI actions; source HTML hashes pin each built input.",
+  "page_sha256": {
+    "dist/shanghai_michelin_2026.html": "685df18dc4671dbbaf6f4f1aede30188670185442a75ebe31bf9b375839ebaa2",
+    "dist/beijing_michelin_2027.html": "3c67c630acd0c7b705ed0d13d53570138ab2a53be40a6ebe530755f6f9eb82f3",
+    "dist/suzhou_michelin_2026.html": "96974dc1166f16fb021915a0925c153268014cda641ce86702e7a66bb7722b3d",
+    "dist/nanjing_michelin_2026.html": "3740e82e89bf186071f0d6be28ddde5eb7e2d5234400bd2bfb82d35eae808327",
+    "dist/hangzhou_michelin_2026.html": "512ee00db8400122c49f70b795460403a1b3e1866c7da4e4ec5aec4e55379d89",
+    "dist/hong_kong_michelin_2026.html": "037400d6585153090aaa78440cad91d28fd2ca592f19e0b74d7597d8ba33b0c9",
+    "dist/seoul_michelin_2026.html": "62cf48a2d09afbef3771cd0ae544e4926415a6b86ac6e8387e827ca08774783a",
+    "dist/index.html": "6db823e47aa88596874aad04abdb4fe70a18431f5cd609f611232d07a913777c",
+    "dist/shanghai_eat_2026.html": "f63ae95d93c083283c196f5668e4fb4846435d34d80e392411494408ebabfb0c"
+  },
   "images": [
     {
-      "file": "bars-mobile-detail.png",
+      "file": "shanghai-overview.jpg",
+      "width": 1325,
+      "height": 872,
+      "bytes": 361033,
+      "sha256": "488f089fa1b2d651e0ac63259cf53808c720b49031b03cdfd00a42f5fd0062d5"
+    },
+    {
+      "file": "shanghai-map.jpg",
+      "width": 923,
+      "height": 650,
+      "bytes": 286271,
+      "sha256": "53087ce2347939c4d18f8df3d1dd715be60ea40c9f3a93ae4dc832f5c0a1ba4c"
+    },
+    {
+      "file": "beijing-map.jpg",
+      "width": 923,
+      "height": 650,
+      "bytes": 297594,
+      "sha256": "9bf9ef5dc36d5db95bd924a0ae747927dae96cf99332ec4b67f6e0b7bcef016b"
+    },
+    {
+      "file": "suzhou-map.jpg",
+      "width": 923,
+      "height": 650,
+      "bytes": 266501,
+      "sha256": "06cca1677cf902cdf42b691197116d0da7a516b0aaa2accd6cba97e4939fb84b"
+    },
+    {
+      "file": "nanjing-map.jpg",
+      "width": 923,
+      "height": 650,
+      "bytes": 293277,
+      "sha256": "17a69212ed08e13ff2ec55e5da21d38e16929d7f28bde150655cc51866b4e31a"
+    },
+    {
+      "file": "hangzhou-map.jpg",
+      "width": 923,
+      "height": 650,
+      "bytes": 287044,
+      "sha256": "424d33170bd8ea8baca4edc1990b7a640cf6585b12e9de8383f1bbb994209f40"
+    },
+    {
+      "file": "hong-kong-overview.jpg",
+      "width": 1325,
+      "height": 872,
+      "bytes": 303015,
+      "sha256": "01f1bb4170b0fd314d5decf8be093fabcde4eaac2307e71e450d18f4d0acd259"
+    },
+    {
+      "file": "hong-kong-map.jpg",
+      "width": 923,
+      "height": 650,
+      "bytes": 227135,
+      "sha256": "1dd044e4f0278c144e53323535fb0cf7915bbed268a7868fdb78d6b10d5a4626"
+    },
+    {
+      "file": "seoul-overview.jpg",
+      "width": 1325,
+      "height": 872,
+      "bytes": 390921,
+      "sha256": "60ac8cf5a0d97dba9c026adc0dd3e6b5273780cdfd7630c188647f17d1981ab0"
+    },
+    {
+      "file": "home.jpg",
+      "width": 1440,
+      "height": 1240,
+      "bytes": 208090,
+      "sha256": "8f7dfe827ee356b2d52fd10157e8d07ad12ba93091a82bb495d48bd43f3d5396"
+    },
+    {
+      "file": "mobile-search.jpg",
       "width": 430,
-      "height": 1000,
-      "bytes": 176561,
-      "sha256": "72074c511d720dd633ae884b98eaafbc51b8724b2a662b492d07323b9b01904b"
+      "height": 960,
+      "bytes": 42639,
+      "sha256": "6b75e8125008b0456eee50c74fa61a0a15cdc52c25a53935fe3e526e3bbf2786"
     },
     {
-      "file": "bars-mobile.png",
+      "file": "mobile-detail.jpg",
       "width": 430,
-      "height": 1000,
-      "bytes": 453463,
-      "sha256": "6cc3e10ed8e72d832fa6767da605e4c214719983f6eb4fe1fa320f7bf72c8193"
-    },
-    {
-      "file": "eat-overview.png",
-      "width": 1440,
-      "height": 940,
-      "bytes": 633254,
-      "sha256": "d0d3e07fb44252eb9e0ee4ed47a30a280ec228d38ad715b2bd03dd53df06e4ef"
-    },
-    {
-      "file": "eat-selected.png",
-      "width": 1440,
-      "height": 940,
-      "bytes": 525008,
-      "sha256": "461042442bf82fd8500c86d3d057cf46bfc849537c512e40d5de70ae2f9293af"
-    },
-    {
-      "file": "night-map.png",
-      "width": 1230,
-      "height": 602,
-      "bytes": 769673,
-      "sha256": "0d45d53c17c862d4a0e7400c9389ab0351bb89a3e6b1337b75ac2347e930d3ec"
-    },
-    {
-      "file": "seoul-map.png",
-      "width": 924,
-      "height": 527,
-      "bytes": 913553,
-      "sha256": "0a7311d3bfe35b631cf6426705159111dac6fe2adff90aef615081d44e7f1247"
-    },
-    {
-      "file": "seoul-overview.png",
-      "width": 1440,
-      "height": 940,
-      "bytes": 1024388,
-      "sha256": "2adf099b0e92eb0d75b008115a39ff2c88f15e9eff993b4570b3170bd4bf9c45"
-    },
-    {
-      "file": "shanghai-map.png",
-      "width": 700,
-      "height": 600,
-      "bytes": 423274,
-      "sha256": "1adf0c43f537e35d5f8e4367df56f157784d6361e1db45c8623811bdc6e6afbf"
+      "height": 960,
+      "bytes": 62595,
+      "sha256": "d2debe4e69fc15de2a688d7adb3a1ebb4a67ab390b78725ef4ea7742a6260cb3"
     }
-  ],
-  "capture_basis": "Local dist/ at capture time; saved screenshots are authoritative. Working tree may contain edits beyond repository_commit."
+  ]
 }

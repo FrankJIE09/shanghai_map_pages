@@ -58,6 +58,9 @@ def _merge_pair(b, m):
     for f in ("baidu_uid", "baidu_url", "baidu_uid_at"):
         if not rec.get(f) and m.get(f):
             rec[f] = m[f]
+    for f in ("url", "officialId", "officialName", "directoryStatus", "directoryNote"):
+        if m.get(f):
+            rec[f] = m[f]
     return rec
 
 
@@ -124,6 +127,11 @@ def _from_michelin(m):
         "baidu_uid": m.get("baidu_uid"),
         "baidu_url": m.get("baidu_url"),
         "baidu_uid_at": m.get("baidu_uid_at"),
+        "url": m.get("url"),
+        "officialId": m.get("officialId"),
+        "officialName": m.get("officialName"),
+        "directoryStatus": m.get("directoryStatus"),
+        "directoryNote": m.get("directoryNote"),
     }
 
 

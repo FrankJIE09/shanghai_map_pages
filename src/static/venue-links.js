@@ -42,7 +42,7 @@ window.VenueLinks = (function () {
     const SRC_WEB = 'webapp.shanghai-map-pages';   // 网页版来源（百度统计参数）
     const SRC_IOS = 'ios.shanghai-map-pages';      // iOS 调起 App 的来源
     const SRC_ANDROID = 'andr.shanghai-map-pages'; // 安卓调起 App 的来源
-    const REGION = '上海';
+    const REGION = typeof ATLAS_CONFIG !== 'undefined' ? ATLAS_CONFIG.cityName : '上海';
     const RADIUS = 2000;                       // 关键词检索的周边半径（米）：容错 ±400 m 的街道近似点
     const APP_TIMEOUT = 2200;                  // 调起 App 的等待上限（毫秒），到点视为「没装 App」
 

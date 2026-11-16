@@ -91,6 +91,13 @@
             var s = host ? size(host) : null;
             ok('打开抽屉 ' + name, openState() === name && !!s && s.bottom <= window.innerHeight + 1 && s.bottom > 0,
                 'data-m-open=' + openState() + ' 抽屉=' + JSON.stringify(s));
+            var anchorSelector = btns[i].getAttribute('data-m-scroll');
+            var anchor = host && anchorSelector ? host.querySelector(anchorSelector) : null;
+            var heading = host && host.querySelector('.m-sheet-top');
+            if (anchor && heading) {
+                var gap = anchor.getBoundingClientRect().top - heading.getBoundingClientRect().bottom;
+                ok('筛选起点未被抽屉标题遮住 ' + name, gap >= -1, '标题与筛选间距=' + Math.round(gap) + 'px');
+            }
             btns[i].click();
             await sleep(320);
             ok('再点一次收起 ' + name, openState() === null, 'data-m-open=' + openState());

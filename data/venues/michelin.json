@@ -4,10 +4,10 @@
     "name": "唐阁",
     "category": "michelin2",
     "coords": [
-      31.208949,
-      121.445604
+      31.221,
+      121.474
     ],
-    "desc": "唐阁主营经典粤菜，团队由行政总厨苏师傅带领，以优质食材呈现粤式珍馐百味。菜单选择繁多，融入季节元素的时令菜单是最大亮点。推介菜式包括肉质爽口的虾籽葱爆大虾球，以及外皮酥脆、咸香鲜嫩的招牌脆皮鸡。…",
+    "desc": "位于上海新天地朗廷酒店5楼，主理人谭仕业以湛江食材演绎经典粤菜，招牌包括三葱爆龙虾与菠萝木烧猪。酒店官网列午餐11:30–14:00、晚餐17:30–21:00，周一店休；预约电话021-2330 2430。营业安排以餐厅确认为准。",
     "mnemonic": "黄浦区新天地马当路99号朗廷酒店5楼",
     "icon": "🍽️",
     "stars": 2,
@@ -15,8 +15,14 @@
     "cuisine": "粤菜",
     "address": "黄浦区新天地马当路99号朗廷酒店5楼",
     "price": "¥¥¥¥ 奢华",
-    "note": "新晋二星",
-    "isNew": true
+    "note": "2026新晋二星 · 酒店官网近似定位，请按街道地址导航",
+    "isNew": true,
+    "sourceUrl": "https://www.langhamhotels.com/sc/the-langham/shanghai/dine/tang-court/",
+    "verifiedAt": "2026-11-16",
+    "coordinateSource": "https://www.langhamhotels.com/en/the-langham/shanghai/discover/our-location/",
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/t-ang-court-506725",
+    "officialName": "唐阁",
+    "officialId": "506725"
   },
   {
     "key": "ji_pin_court",
@@ -35,7 +41,10 @@
     "address": "徐汇区乌鲁木齐南路55号3楼",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/ji-pin-court",
+    "officialName": "吉品轩",
+    "officialId": "563684"
   },
   {
     "key": "michelin_8_half_otto_e_mezzo_bombana",
@@ -54,7 +63,10 @@
     "address": "黄浦区圆明园路169号协进大楼6-7楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/8-%C2%BD-otto-e-mezzo-bombana",
+    "officialName": "8 ½ Otto e Mezzo Bombana",
+    "officialId": "506702"
   },
   {
     "key": "yong_yi_ting",
@@ -73,7 +85,10 @@
     "address": "浦东新区浦东南路111号浦东文华东方酒店LG层",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yong-yi-ting",
+    "officialName": "雍颐庭",
+    "officialId": "506747"
   },
   {
     "key": "moose_pudong",
@@ -92,7 +107,10 @@
     "address": "浦东新区浦东南路899号陆家嘴中心9楼",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/moose-pudong",
+    "officialName": "鹿园 (浦东新区)",
+    "officialId": "570576"
   },
   {
     "key": "lu_style_1203592",
@@ -111,7 +129,10 @@
     "address": "黄浦区黄陂南路838弄环宇荟2楼207室",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/lu-style-1203592",
+    "officialName": "鲁采 (黄浦)",
+    "officialId": "1203592"
   },
   {
     "key": "oriental_sense_palate",
@@ -130,7 +151,10 @@
     "address": "黄浦区思南路57号",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/oriental-sense-palate",
+    "officialName": "东方景宴",
+    "officialId": "1196388"
   },
   {
     "key": "obscura",
@@ -149,7 +173,10 @@
     "address": "静安区西康路538号唐香文化空间",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/obscura",
+    "officialName": "Obscura",
+    "officialId": "1196363"
   },
   {
     "key": "canton_table",
@@ -168,7 +195,10 @@
     "address": "黄浦区中山东一路3号外滩三号5楼",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/canton-table",
+    "officialName": "三号黄浦会",
+    "officialId": "1192026"
   },
   {
     "key": "ming_court_570629",
@@ -187,7 +217,10 @@
     "address": "闵行区申虹路333号康得思酒店B1层",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/ming-court-570629",
+    "officialName": "明阁 (闵行)",
+    "officialId": "570629"
   },
   {
     "key": "cheng_long_hang_huangpu",
@@ -206,7 +239,10 @@
     "address": "黄浦区九江路216号",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/cheng-long-hang-huangpu",
+    "officialName": "成隆行蟹王府 (黄浦)",
+    "officialId": "506499"
   },
   {
     "key": "vivant_by_johnny_pham",
@@ -225,7 +261,10 @@
     "address": "黄浦区北海路279号",
     "price": "¥¥¥¥ 奢华",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/vivant-by-johnny-pham",
+    "officialName": "Vivant by Johnny Pham",
+    "officialId": "1219313"
   },
   {
     "key": "maison_lameloise_563686",
@@ -244,7 +283,10 @@
     "address": "浦东新区银城中路501号上海中心68楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/maison-lameloise-563686",
+    "officialName": "莱美露滋",
+    "officialId": "563686"
   },
   {
     "key": "narisawa_1209925",
@@ -263,7 +305,10 @@
     "address": "普陀区莫干山路600号千树L7-05",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/narisawa-1209925",
+    "officialName": "Narisawa",
+    "officialId": "1209925"
   },
   {
     "key": "wang_lu",
@@ -282,7 +327,9 @@
     "address": "浦东新区海阳西路666弄15号前滩31乐荟3楼01-02",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "directoryStatus": "not-listed",
+    "directoryNote": "保留2026年度发布名单中的收录记录。2026-11-16核对米其林上海实时目录时未找到该店；不单凭目录缺失判定停业。既有营业状态证据仍保留在原介绍与备注中，出发前请再向餐厅核实。"
   },
   {
     "key": "taian_table",
@@ -301,7 +348,10 @@
     "address": "长宁区镇宁路465弄161号愚园里1号楼101-102号",
     "price": "¥¥¥¥ 奢华",
     "note": "上海唯一三星，五度蝉联",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/taian-table",
+    "officialName": "泰安门",
+    "officialId": "506724"
   },
   {
     "key": "imperial_treasure_fine_chinese_cuisine_huangpu",
@@ -320,7 +370,10 @@
     "address": "黄浦区北京东路99号益丰‧外滩源4楼402-403号",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/imperial-treasure-fine-chinese-cuisine-huangpu",
+    "officialName": "御宝轩",
+    "officialId": "506748"
   },
   {
     "key": "fu_he_hui",
@@ -339,7 +392,10 @@
     "address": "长宁区愚园路1037号",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/fu-he-hui",
+    "officialName": "福和慧",
+    "officialId": "506521"
   },
   {
     "key": "tou_zao",
@@ -358,7 +414,10 @@
     "address": "静安区南京西路1376号上海商城东峰211号",
     "price": "¥¥¥¥ 奢华",
     "note": "新晋二星",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/tou-zao",
+    "officialName": "头灶",
+    "officialId": "1205570"
   },
   {
     "key": "da_vittorio_570570",
@@ -377,7 +436,10 @@
     "address": "黄浦区中山东二路600号BFC外滩金融中心N3幢3楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/da-vittorio-570570",
+    "officialName": "Da Vittorio",
+    "officialId": "570570"
   },
   {
     "key": "bao_li_xuan",
@@ -396,7 +458,10 @@
     "address": "静安区山西北路108弄上海总商会大楼3楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/bao-li-xuan",
+    "officialName": "宝丽轩",
+    "officialId": "570569"
   },
   {
     "key": "amazing_chinese_cuisine_changning",
@@ -415,7 +480,10 @@
     "address": "长宁区虹桥路1665号B5别墅",
     "price": "¥¥¥¥ 奢华",
     "note": "新晋二星",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/amazing-chinese-cuisine-changning",
+    "officialName": "菁禧荟 (长宁)",
+    "officialId": "506682"
   },
   {
     "key": "the_house_of_rong",
@@ -434,7 +502,10 @@
     "address": "静安区南阳路170号",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/the-house-of-rong",
+    "officialName": "荣府宴",
+    "officialId": "563697"
   },
   {
     "key": "canton_8_runan_street",
@@ -453,7 +524,10 @@
     "address": "黄浦区汝南街63号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/canton-8-runan-street",
+    "officialName": "喜粤8号 (黄浦）",
+    "officialId": "506732"
   },
   {
     "key": "fabula",
@@ -472,7 +546,10 @@
     "address": "静安区威海路720号2-3楼",
     "price": "¥¥¥¥ 奢华",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/fabula",
+    "officialName": "Fabula",
+    "officialId": "1245581"
   },
   {
     "key": "sheng_yong_xing",
@@ -491,7 +568,10 @@
     "address": "黄浦区广东路20号外滩5号5楼",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/sheng-yong-xing",
+    "officialName": "晟永兴 (黄浦)",
+    "officialId": "1196394"
   },
   {
     "key": "jin_xuan",
@@ -510,7 +590,10 @@
     "address": "浦东新区世纪大道8号丽思卡尔顿酒店53楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/jin-xuan",
+    "officialName": "金轩",
+    "officialId": "506679"
   },
   {
     "key": "xin_rong_ji_west_nanjing_road",
@@ -529,7 +612,10 @@
     "address": "静安区南京西路688号688广场2楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/xin-rong-ji-west-nanjing-road",
+    "officialName": "新荣记 (南京西路)",
+    "officialId": "570583"
   },
   {
     "key": "il_ristorante_niko_romito_563683",
@@ -548,7 +634,10 @@
     "address": "静安区山西北路108弄宝格丽酒店47楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/il-ristorante-niko-romito-563683",
+    "officialName": "Il Ristorante - Niko Romito",
+    "officialId": "563683"
   },
   {
     "key": "yong_fu",
@@ -567,7 +656,10 @@
     "address": "黄浦区茂名南路59号锦江饭店锦北楼11-12楼",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yong-fu",
+    "officialName": "甬府 (黄浦)",
+    "officialId": "537127"
   },
   {
     "key": "seventh_son_jingan",
@@ -586,7 +678,10 @@
     "address": "静安区威海路500号丰盛商业中心2楼R2-01",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/seventh-son-jingan",
+    "officialName": "家全七福",
+    "officialId": "506660"
   },
   {
     "key": "fu_1015",
@@ -605,7 +700,10 @@
     "address": "长宁区愚园路1015号",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/fu-1015",
+    "officialName": "福一零一五",
+    "officialId": "506524"
   },
   {
     "key": "yue_hai_tang",
@@ -624,7 +722,10 @@
     "address": "闵行区号文路161号万金中心",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yue-hai-tang",
+    "officialName": "粤海棠",
+    "officialId": "1203823"
   },
   {
     "key": "wu_you_xian",
@@ -643,7 +744,10 @@
     "address": "黄浦区茂名南路7号1-103室",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/wu-you-xian",
+    "officialName": "屋有鲜",
+    "officialId": "1200089"
   },
   {
     "key": "moose_changning",
@@ -662,7 +766,10 @@
     "address": "长宁区新华路119弄1号",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/moose-changning",
+    "officialName": "鹿园 (长宁)",
+    "officialId": "563687"
   },
   {
     "key": "le_comptoir_de_pierre_gagnaire",
@@ -681,7 +788,10 @@
     "address": "徐汇区建国西路480号建业里嘉佩乐酒店",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/le-comptoir-de-pierre-gagnaire",
+    "officialName": "le Comptoir de Pierre Gagnaire",
+    "officialId": "537028"
   },
   {
     "key": "lao_zheng_xing_huangpu",
@@ -700,7 +810,10 @@
     "address": "黄浦区福州路556号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/lao-zheng-xing-huangpu",
+    "officialName": "老正兴",
+    "officialId": "506688"
   },
   {
     "key": "gastro_esthetics_at_dadong",
@@ -719,7 +832,10 @@
     "address": "静安区南京西路1601号越洋广场5楼",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/gastro-esthetics-at-dadong",
+    "officialName": "美 · 大董",
+    "officialId": "506503"
   },
   {
     "key": "fu_1088",
@@ -738,7 +854,10 @@
     "address": "静安区镇宁路375号",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/fu-1088",
+    "officialName": "福一零八八",
+    "officialId": "506522"
   },
   {
     "key": "da_dong_xuhui",
@@ -757,7 +876,10 @@
     "address": "徐汇区淮海中路999号环贸广场6楼602号",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/da-dong-xuhui",
+    "officialName": "大董 (徐汇)",
+    "officialId": "506502"
   },
   {
     "key": "huaiyang_delights_jingan",
@@ -776,7 +898,10 @@
     "address": "静安区南京西路1601号越洋广场5楼",
     "price": "¥¥¥ 优质的",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/huaiyang-delights-jingan",
+    "officialName": "三月醉淮扬 (静安)",
+    "officialId": "1245176"
   },
   {
     "key": "ren_he_guan_zhaojiabang_road",
@@ -795,7 +920,10 @@
     "address": "徐汇区肇嘉浜路407号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/ren-he-guan-zhaojiabang-road",
+    "officialName": "人和馆 (徐汇)",
+    "officialId": "1192189"
   },
   {
     "key": "yi_long_court",
@@ -814,7 +942,10 @@
     "address": "黄浦区中山东一路32号外滩32号半岛酒店2楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yi-long-court",
+    "officialName": "逸龙阁",
+    "officialId": "506743"
   },
   {
     "key": "sole",
@@ -833,7 +964,10 @@
     "address": "静安区南京西路1376号上海商城109号商铺",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/sole",
+    "officialName": "景煊",
+    "officialId": "1215114"
   },
   {
     "key": "meet_the_bund",
@@ -852,7 +986,10 @@
     "address": "黄浦区中山东二路600号BFC外滩金融中心南区商场3楼S301",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/meet-the-bund",
+    "officialName": "遇外滩 (中山东二路)",
+    "officialId": "1192044"
   },
   {
     "key": "lei_garden_xuhui",
@@ -871,7 +1008,10 @@
     "address": "徐汇区淮海中路999号环贸广场4楼401号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/lei-garden-xuhui",
+    "officialName": "利苑 (徐汇)",
+    "officialId": "506690"
   },
   {
     "key": "lei_garden_pudong",
@@ -890,7 +1030,10 @@
     "address": "浦东新区世纪大道8号国金中心商场3楼17-18号",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/lei-garden-pudong",
+    "officialName": "利苑 (浦东新区)",
+    "officialId": "506689"
   },
   {
     "key": "fu_1039",
@@ -909,7 +1052,10 @@
     "address": "长宁区愚园路1039号",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/fu-1039",
+    "officialName": "福一零三九",
+    "officialId": "506523"
   },
   {
     "key": "ling_long_1209951",
@@ -928,7 +1074,10 @@
     "address": "黄浦区中山东一路2号外滩华尔道夫酒店1楼105",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/ling-long-1209951",
+    "officialName": "凌珑",
+    "officialId": "1209951"
   },
   {
     "key": "zhou_she_minhang",
@@ -947,7 +1096,10 @@
     "address": "闵行区苏虹路318弄16-101号虹桥丽宝广场116号铺",
     "price": "¥¥¥ 优质的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/zhou-she-minhang",
+    "officialName": "周舍 (闵行)",
+    "officialId": "1204063"
   },
   {
     "key": "yong_fu_hongkou",
@@ -966,7 +1118,10 @@
     "address": "虹口区东大名路1089号北外滩来福士东塔56楼",
     "price": "¥¥¥¥ 奢华",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yong-fu-hongkou",
+    "officialName": "甬府 (虹口)",
+    "officialId": "1204015"
   },
   {
     "key": "the_taste_of_huzhou",
@@ -985,7 +1140,10 @@
     "address": "徐汇区斜土路1422弄12号",
     "price": "¥ 负担得起的",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/the-taste-of-huzhou",
+    "officialName": "菰城宴",
+    "officialId": "1246538"
   },
   {
     "key": "ning_hai_shi_fu",
@@ -1004,7 +1162,10 @@
     "address": "闵行区申长路988号虹桥万科中心5号楼LG2-15D",
     "price": "¥¥ 中档",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/ning-hai-shi-fu",
+    "officialName": "宁海食府",
+    "officialId": "1245178"
   },
   {
     "key": "he_shan_mian_jia",
@@ -1023,7 +1184,10 @@
     "address": "静安区沪太路1190号",
     "price": "¥ 负担得起的",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/he-shan-mian-jia",
+    "officialName": "和膳面家",
+    "officialId": "1244278"
   },
   {
     "key": "lao_di_fang_mian_guan",
@@ -1042,7 +1206,10 @@
     "address": "黄浦区思南路107号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/lao-di-fang-mian-guan",
+    "officialName": "老地方面馆",
+    "officialId": "1214856"
   },
   {
     "key": "yongfu_mini",
@@ -1061,7 +1228,10 @@
     "address": "浦东新区浦东南路899号陆家嘴中心9楼910号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yongfu-mini",
+    "officialName": "甬府小鲜 (浦东新区)",
+    "officialId": "570584"
   },
   {
     "key": "rongjia_noodle_soup_with_yellow_croaker",
@@ -1080,7 +1250,10 @@
     "address": "静安区南京西路688号688广场L105A-1",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/rongjia-noodle-soup-with-yellow-croaker",
+    "officialName": "荣家黄鱼面 (静安)",
+    "officialId": "570579"
   },
   {
     "key": "ho_hung_kee_570572",
@@ -1099,7 +1272,10 @@
     "address": "静安区石门一路288号兴业太古汇南楼L324",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/ho-hung-kee-570572",
+    "officialName": "何洪记",
+    "officialId": "570572"
   },
   {
     "key": "mi_thai_an_fu_road",
@@ -1118,7 +1294,10 @@
     "address": "徐汇区安福路195号2楼",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/mi-thai-an-fu-road",
+    "officialName": "米泰",
+    "officialId": "506695"
   },
   {
     "key": "lu_bo_lang",
@@ -1137,7 +1316,10 @@
     "address": "黄浦区城隍庙豫园老街115号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/lu-bo-lang",
+    "officialName": "绿波廊",
+    "officialId": "506691"
   },
   {
     "key": "lan_xin_jinxian_road",
@@ -1156,7 +1338,10 @@
     "address": "黄浦区进贤路130号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/lan-xin-jinxian-road",
+    "officialName": "兰心 (进贤路)",
+    "officialId": "506686"
   },
   {
     "key": "chun",
@@ -1175,7 +1360,10 @@
     "address": "黄浦区进贤路124号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/chun",
+    "officialName": "春",
+    "officialId": "1203893"
   },
   {
     "key": "tan_1246400",
@@ -1194,7 +1382,10 @@
     "address": "黄浦区豫园商城九曲桥广场松运楼106号1-2楼",
     "price": "¥¥ 中档",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/tan-1246400",
+    "officialName": "坛",
+    "officialId": "1246400"
   },
   {
     "key": "cong_s_kitchen",
@@ -1213,7 +1404,10 @@
     "address": "黄浦区六合路158号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/cong-s-kitchen",
+    "officialName": "聪菜馆",
+    "officialId": "1214840"
   },
   {
     "key": "polux",
@@ -1232,7 +1426,10 @@
     "address": "黄浦区太仓路181弄新天地北里5号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/polux",
+    "officialName": "Polux",
+    "officialId": "570578"
   },
   {
     "key": "nanxiang_steamed_bun_city_god_temple",
@@ -1251,7 +1448,10 @@
     "address": "黄浦区城隍庙豫园路85号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/nanxiang-steamed-bun-city-god-temple",
+    "officialName": "南翔馒头店",
+    "officialId": "570577"
   },
   {
     "key": "rong_cuisine_huangpu",
@@ -1270,7 +1470,10 @@
     "address": "黄浦区太仓路128号1-2楼",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/rong-cuisine-huangpu",
+    "officialName": "荣小馆 (黄浦)",
+    "officialId": "563694"
   },
   {
     "key": "yangzhou_fan_dian_huangpu",
@@ -1289,7 +1492,10 @@
     "address": "黄浦区福建中路345号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yangzhou-fan-dian-huangpu",
+    "officialName": "扬州饭店 (黄浦)",
+    "officialId": "506738"
   },
   {
     "key": "mao_long",
@@ -1308,7 +1514,10 @@
     "address": "黄浦区进贤路134号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/mao-long",
+    "officialName": "茂隆",
+    "officialId": "506692"
   },
   {
     "key": "qiao_ai_lai_lai_xiao_long_huangpu",
@@ -1327,7 +1536,10 @@
     "address": "黄浦区天津路506号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/qiao-ai-lai-lai-xiao-long-huangpu",
+    "officialName": "乔艾莱莱小笼 (黄浦)",
+    "officialId": "1207101"
   },
   {
     "key": "jing_mei_wu_xi_si_fang_mian_guan",
@@ -1346,7 +1558,10 @@
     "address": "静安区延平路128号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/jing-mei-wu-xi-si-fang-mian-guan",
+    "officialName": "井梅无锡面馆 (延平路)",
+    "officialId": "1205606"
   },
   {
     "key": "xiao_tao_mian_guan",
@@ -1365,7 +1580,10 @@
     "address": "徐汇区嘉善路222号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/xiao-tao-mian-guan",
+    "officialName": "小陶面馆",
+    "officialId": "1204647"
   },
   {
     "key": "the_lakeside_veggie",
@@ -1384,7 +1602,10 @@
     "address": "徐汇区瑞平路230号保利时光里L2层016-017号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/the-lakeside-veggie",
+    "officialName": "临湖素食",
+    "officialId": "1203726"
   },
   {
     "key": "a_yong_mian_guan_dongshufang_road",
@@ -1403,7 +1624,10 @@
     "address": "浦东新区东书房路309号",
     "price": "¥ 负担得起的",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/a-yong-mian-guan-dongshufang-road",
+    "officialName": "阿勇面馆 (东书房路)",
+    "officialId": "1246518"
   },
   {
     "key": "blossom_1246455",
@@ -1422,7 +1646,10 @@
     "address": "静安区南京西路1266号恒隆广场501号铺",
     "price": "¥¥ 中档",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/blossom-1246455",
+    "officialName": "瑰禧",
+    "officialId": "1246455"
   },
   {
     "key": "157_shi_fang",
@@ -1441,7 +1668,10 @@
     "address": "长宁区凯旋路1398号长宁国际T10栋101-102单元",
     "price": "¥¥ 中档",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/157-shi-fang",
+    "officialName": "157食坊",
+    "officialId": "1244236"
   },
   {
     "key": "ou_yue_zun_xian",
@@ -1460,7 +1690,10 @@
     "address": "静安区愚园路68号晶品6楼605号",
     "price": "¥¥ 中档",
     "note": "新上榜",
-    "isNew": true
+    "isNew": true,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/ou-yue-zun-xian",
+    "officialName": "瓯越尊鲜",
+    "officialId": "1242989"
   },
   {
     "key": "easeful_cuisine",
@@ -1479,7 +1712,10 @@
     "address": "静安区陕西南路90号2楼",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/easeful-cuisine",
+    "officialName": "逸采 (静安)",
+    "officialId": "1196426"
   },
   {
     "key": "hao_sheng",
@@ -1498,7 +1734,10 @@
     "address": "徐汇区广元路156号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/hao-sheng",
+    "officialName": "豪生酒家",
+    "officialId": "537026"
   },
   {
     "key": "gong_de_lin_jingan",
@@ -1517,7 +1756,10 @@
     "address": "黄浦区南京西路445号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/gong-de-lin-jingan",
+    "officialName": "功德林 (南京西路)",
+    "officialId": "506526"
   },
   {
     "key": "da_hu_chun_middle_sichuan_road",
@@ -1536,7 +1778,10 @@
     "address": "黄浦区四川中路136号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/da-hu-chun-middle-sichuan-road",
+    "officialName": "大壶春 (四川中路)",
+    "officialId": "506504"
   },
   {
     "key": "yu_du_lao_wei_mian_huangpu",
@@ -1555,7 +1800,10 @@
     "address": "黄浦区丽园路501号",
     "price": "¥ 负担得起的",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yu-du-lao-wei-mian-huangpu",
+    "officialName": "渔都老味面",
+    "officialId": "1206387"
   },
   {
     "key": "yu_ge_zhan_jiang_jingan",
@@ -1574,7 +1822,10 @@
     "address": "静安区延安西路358号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yu-ge-zhan-jiang-jingan",
+    "officialName": "渔哥 · 湛江 (静安)",
+    "officialId": "1205818"
   },
   {
     "key": "yunhe_noodle_huangpu",
@@ -1593,7 +1844,10 @@
     "address": "黄浦区长乐路344号",
     "price": "¥¥ 中档",
     "note": "",
-    "isNew": false
+    "isNew": false,
+    "url": "https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurant/yunhe-noodle-huangpu",
+    "officialName": "云和面馆 (黄浦)",
+    "officialId": "1204071"
   },
   {
     "key": "michelin_102_house",
@@ -1612,7 +1866,9 @@
     "icon": "🍽️",
     "desc": "⚠️ 已于 2026-07-08 歇业（外滩罗斯福公馆租约到期未续，官方未公布搬迁或重开计划）。佛山民宅起家的古法粤菜馆，2021年落户外滩罗斯福公馆5楼，主打按季更换的包席套餐，招牌咕噜肉四季常驻，酱烧乳鸽也值得一试。",
     "mnemonic": "黄浦区中山东一路27号罗斯福公馆5楼",
-    "isNew": false
+    "isNew": false,
+    "directoryStatus": "not-listed",
+    "directoryNote": "保留2026年度发布名单中的收录记录。2026-11-16核对米其林上海实时目录时未找到该店；不单凭目录缺失判定停业。既有营业状态证据仍保留在原介绍与备注中，出发前请再向餐厅核实。"
   },
   {
     "key": "bib_a_niang_mian",
@@ -1631,6 +1887,8 @@
     "icon": "🥢",
     "desc": "⚠️ 已于 2026-04-10 永久闭店（2026 榜单 4 月 9 日发布，次日结业，至今未重开）。思南路口的本帮面馆老字号，招牌黄鱼面汤鲜面滑，蟹粉面与辣肉面也很受欢迎，饭点常要排队拼桌。",
     "mnemonic": "黄浦区思南路36-2号",
-    "isNew": false
+    "isNew": false,
+    "directoryStatus": "not-listed",
+    "directoryNote": "保留2026年度发布名单中的收录记录。2026-11-16核对米其林上海实时目录时未找到该店；不单凭目录缺失判定停业。既有营业状态证据仍保留在原介绍与备注中，出发前请再向餐厅核实。"
   }
 ]

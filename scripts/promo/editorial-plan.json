@@ -1,16 +1,18 @@
 {
-  "title": "把下一站，放进地图",
-  "delivery": {"duration_seconds":15,"fps":30,"width":1920,"height":1080,"container":"mp4","video_codec":"h264","pixel_format":"yuv420p","audio_codec":"aac","audio_sample_rate":48000,"platform":"GitHub README: linked full-length GIF + downloadable MP4"},
-  "sources": "sources/capture-report.json; authentic local dist/ screenshots, no substituted app UI or venue data",
+  "title": "七座城市，下一餐有方向",
+  "delivery": {"duration_seconds":24,"fps":30,"width":1920,"height":1080,"container":"mp4","video_codec":"h264","pixel_format":"yuv420p","audio_codec":"aac","audio_sample_rate":48000,"platform":"GitHub README native video + downloadable master + GIF fallback"},
+  "sources": "Authentic screenshots of this repository's built pages. sources/capture-report.json and sources/manifest.json record source hashes, viewports and UI actions. No substituted app UI, invented map tiles or venue data.",
   "beats": [
-    {"id":"opening","start":0,"end":2.5,"headline":"下一站，去哪儿？","picture":"shanghai-map.png","purpose":"Introduce the product through its real map and city theme."},
-    {"id":"dining","start":2.5,"end":6,"headline":"三张榜单，一张地图。","picture":["eat-overview.png","eat-selected.png"],"state_cut":4.1,"purpose":"Show merged listings followed by an actual double-list filter and restaurant detail."},
-    {"id":"nightlife","start":6,"end":9,"headline":"好饭之后，好戏开场。","picture":["night-map.png","bars-mobile.png","bars-mobile-detail.png"],"state_cut":7.5,"purpose":"Move to evening and demonstrate the mobile detail drawer."},
-    {"id":"seoul","start":9,"end":12,"headline":"换座城市，继续探店。","picture":"seoul-overview.png","purpose":"Show the second city and its 93 listed restaurants."},
-    {"id":"cta","start":12,"end":15,"headline":"把下一站，放进地图。","picture":["shanghai-map.png","seoul-map.png"],"purpose":"Resolve with both cities, the product, and a readable project URL."}
+    {"id":"opening","start":0,"end":3,"headline":"七座城市，下一餐有方向。","picture":"shanghai-map.jpg","purpose":"Establish the expanded atlas and its seven real cities; China comes first."},
+    {"id":"shanghai","start":3,"end":6.5,"headline":"同一张好地图，看见城市好味。","picture":"shanghai-overview.jpg","purpose":"Show Shanghai's redesigned real map and directory, with its dining and nightlife collections described."},
+    {"id":"china-cities","start":6.5,"end":10.5,"headline":"从北京，到江南。","picture":["beijing-map.jpg","suzhou-map.jpg","nanjing-map.jpg","hangzhou-map.jpg"],"purpose":"Show four actual Chinese city maps and correctly distinguish Beijing's published 2027 edition from 2026 editions."},
+    {"id":"hong-kong","start":10.5,"end":14,"headline":"香港，也在地图上。","picture":"hong-kong-overview.jpg","purpose":"Introduce Hong Kong within China, with 147 directory records and 146 verified map points."},
+    {"id":"seoul","start":14,"end":17,"headline":"换座城市，继续好好吃饭。","picture":"seoul-overview.jpg","purpose":"Move to Korea only after China; show the existing Seoul map and Korean navigation."},
+    {"id":"mobile","start":17,"end":21,"headline":"从想吃，到出发。","picture":["mobile-search.jpg","mobile-detail.jpg"],"purpose":"Show actual mobile search and restaurant detail for Ren He Guan; no simulated clicks or invented UI."},
+    {"id":"cta","start":21,"end":24,"headline":"把下一站，放进地图。","picture":["hong-kong-map.jpg","shanghai-map.jpg"],"purpose":"Resolve with seven cities, ten theme maps and a readable project address."}
   ],
-  "tracks":{"picture":"Real UI screenshots with camera-style translation/scale, not simulated app recordings","titles":"Chinese editorial headings, location labels and chapter progress","audio":"Original deterministic synthesized city-pop instrumental; no dialogue or external samples"},
-  "transitions":"Motivated chapter cuts with 0.13s green dip; each card and title settles over 0.62s; no scaled-UI crossfades.",
-  "audio":{"target_integrated_lufs":-16,"max_true_peak_db":-1.5,"fade_out_seconds":0.6},
-  "review":{"representative_seconds":[0.8,3.4,5.2,6.8,8.4,10,13.6],"transition_centers":[2.5,4.1,6,7.5,9,12],"checks":["Chinese typography and safe areas","No failed tiles or invented UI","Numeric claims verified from repository data","Full decode and exact 450-frame duration","GIF duration and links"]}
+  "tracks":{"picture":"Saved real product screenshots; composited card motion is editorial camera motion, not an app screen recording","graphics":"Paper/wine typography matching the new product; country and city labels outside the UI","music":"Original deterministic synthesis from make_audio.py, no external samples or dialogue"},
+  "transitions":"Motivated scene cuts with 4-frame paper dips; single-layer slide/scale entrances. No scaled-image crossfades.",
+  "audio":{"target_integrated_lufs":-16,"max_true_peak_db":-1.5,"fade_out_seconds":0.7},
+  "review":{"representative_seconds":[1.2,4.5,8.5,12,15.5,18.8,22.5],"transition_centers":[3,6.5,10.5,14,17,21],"checks":["Country order China then Korea; Hong Kong within China","No unreadable or overlapping titles","Authentic current UI and fully loaded basemap","No claim that all directory records have coordinates","Exactly 720 frames with full decode","Stereo 48kHz audio with measured loudness","Preview assets and checksums from final master"]}
 }

@@ -1,0 +1,27 @@
+{
+  "edition": "2026",
+  "announcedAt": "2026-04-09",
+  "verifiedAt": "2026-11-16",
+  "scope": "2026沪苏浙《米其林指南》南京星级餐厅与必比登推介；不含16家米其林入选餐厅",
+  "counts": {
+    "3": 0,
+    "2": 0,
+    "1": 4,
+    "bib": 21
+  },
+  "sources": [
+    {
+      "label": "米其林官方：2026沪苏浙指南发布及分城市统计",
+      "url": "https://www.michelin.com.cn/news/2026/0409.html"
+    },
+    {
+      "label": "米其林官方：南京完整餐厅目录",
+      "url": "https://guide.michelin.com/sg/zh_CN/jiang-su/nanjing_1029511/restaurants"
+    },
+    {
+      "label": "米其林官方：2026新获奖及晋级餐厅",
+      "url": "https://guide.michelin.com/en/article/michelin-guide-ceremony/michelin-guide-shanghai-jiangsu-zhejiang"
+    }
+  ],
+  "verificationNote": "逐店核对官方目录与餐厅页JSON-LD：中文店名、星级/必比登、2026版年份、地址、菜系、电话、价位档和WGS-84坐标；详情页与目录坐标一致。区名直接提取官方中文地址，未使用第三方推算；未能提取时留空。仅标记发布公告明确列出的本年度新获奖及晋级，不等同于新开业。未核实实时营业时间、临时停业或具体套餐价格，出发前请向餐厅确认。"
+}

@@ -1,0 +1,94 @@
+/* Shared reading and control sizes for the four Shanghai maps.
+   Mobile positioning stays in mobile.css; these rules only change typography,
+   spacing and controls inside the existing sheets. */
+:root { --atlas-focus: #b38a4d; }
+button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible {
+    outline: 3px solid var(--atlas-focus);
+    outline-offset: 3px;
+}
+.atlas-breadcrumb {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    letter-spacing: .06em;
+    opacity: .85;
+}
+#filter-box { padding: 18px; gap: 14px; }
+#search-input { min-height: 44px; font-size: 14px; line-height: 1.5; }
+#filter-box label { font-size: 12px; }
+.chip, .cat-btn, .sort-btn {
+    min-height: 30px;
+    padding: 4px 9px;
+    font-size: 12px;
+    line-height: 20px;
+    border-radius: 7px;
+}
+#reset-btn { min-height: 30px; padding: 4px 10px; font-size: 12px; white-space: nowrap; }
+#cuisine-chips, #district-chips, #price-chips { gap: 6px; }
+#cuisine-chips { max-height: 140px; padding: 2px; }
+.rest-item, .venue-item { padding: 12px; }
+.rest-item .ri-name, .venue-item .vi-name {
+    font-size: 14px;
+    line-height: 1.55;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+.rest-item .ri-sub, .venue-item .vi-sub {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.65;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+#detail-desc, #detail-addr, #detail-tip, #detail-note, #detail-metro {
+    font-size: 14px;
+    line-height: 1.85;
+    overflow-wrap: anywhere;
+}
+#detail-title { padding-right: 30px; line-height: 1.4; }
+#detail-links a, #detail-share { min-height: 44px; font-size: 13px; }
+#stat-line, .stat-line { font-size: 12px; line-height: 1.9; }
+.atlas-notes { font-size: 12px; line-height: 1.9; color: #70685d; }
+.atlas-notes br { display: block; content: ''; margin-bottom: 9px; }
+footer[data-m-sheet="info"] > .sketch-card { font-size: 12px; line-height: 1.9; }
+@media (min-width: 901px) {
+    body > header { padding-top: 24px; padding-bottom: 28px; border-bottom-width: 1px; }
+    body > header > .max-w-7xl { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+    body > header > .max-w-7xl > div:first-child > .flex { flex-direction: column; align-items: flex-start; }
+    body > header h1 { font-size: clamp(28px, 2.8vw, 38px); line-height: 1.35; letter-spacing: .035em; }
+    body > header p { max-width: 74em; font-size: 14px; line-height: 1.85; }
+    body > header h1 > span { display: block; margin-top: 5px; font-size: 15px; letter-spacing: .08em; }
+    .sketch-card { border-width: 1px; box-shadow: 0 5px 20px rgba(25, 20, 15, .08); }
+    main { align-items: start; }
+    main > section { min-width: 0; }
+    #rest-list, #venue-list { padding: 12px; }
+}
+@media (hover: hover) {
+    .atlas-breadcrumb:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+    .sketch-card:hover { transform: none; }
+}
+@media (min-width: 901px) and (hover: hover) {
+    .sketch-card:hover { box-shadow: 0 5px 20px rgba(25, 20, 15, .08); }
+}
+@media (pointer: coarse) {
+    .chip, .cat-btn, .sort-btn, #reset-btn { min-height: 44px; padding-top: 10px; padding-bottom: 10px; }
+    label:has(> input[type="checkbox"]), label:has(> input[type="radio"]) { min-height: 44px; }
+    #clear-cuisine, #clear-price, #clear-genre { min-height: 44px; padding-inline: 10px; }
+    .m-sheet-x { width: 44px; height: 44px; }
+    html.m-mobile #m-bar .m-btn { min-height: 44px; }
+}
+@media (max-width: 900px) {
+    html.m-mobile [data-m-sheet], html.m-mobile .m-sheet-top {
+        background: var(--panel, #fcf9f2);
+        color: var(--ink, #2e2b27);
+    }
+    #filter-box { padding: 16px; }
+    #filter-box > .flex { flex-wrap: wrap; row-gap: 8px; }
+    #detail-card { padding-inline: 18px; }
+    .atlas-notes { padding: 0 18px 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .sketch-card, .chip, .cat-btn, .sort-btn { transition: none; }
+}

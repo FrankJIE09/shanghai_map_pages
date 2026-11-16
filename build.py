@@ -26,26 +26,13 @@ DIST = os.path.join(ROOT, "dist")
 MANIFEST = os.path.join(DIST, ".build-manifest.json")
 
 # 源模板 -> 产物文件名。index.html 是落地页（总入口），发布到 GitHub Pages 的首页。
-PAGES = {
-    "src/pages/index.html": "index.html",
-    "src/pages/bars.html": "shanghai_bars_livehouse_2026.html",
-    "src/pages/bichi.html": "shanghai_bichi_saojie_2026.html",
-    "src/pages/michelin.html": "shanghai_michelin_2026.html",
-    "src/pages/eat.html": "shanghai_eat_2026.html",
-    "src/pages/seoul-michelin.html": "seoul_michelin_2026.html",
-}
+ATLAS_CONFIGS = json.loads(open(os.path.join(ROOT, "data/atlas-pages.json"), encoding="utf-8").read())
+PAGES = {"src/pages/index.html": "index.html", **{p["template"]: p["file"] for p in ATLAS_CONFIGS}}
 
-# 产物 -> (店铺数据来源 JSON 列表, 预期条数)。用于 --check 的产物自检。
-# 多个来源时按 merge_venues 的规则合并（如 eat 页把 bichi + michelin 合成一份）。
-# 落地页不含任何内联数据，故来源为空、预期条数为 0。
-EXPECT = {
-    "index.html": ([], 0),
-    "seoul_michelin_2026.html": (["data/venues/seoul-michelin.json"], 93),
-    "shanghai_bars_livehouse_2026.html": (["data/venues/bars.json"], 37),
-    "shanghai_bichi_saojie_2026.html": (["data/venues/bichi.json"], 58),
-    "shanghai_michelin_2026.html": (["data/venues/michelin.json"], 86),
-    "shanghai_eat_2026.html": (["data/venues/bichi.json", "data/venues/michelin.json"], 131),
-}
+# Published guide totals are checked against source metadata by validate_data.
+EXPECT = {"index.html": ([], 0), **{
+    p["file"]: (p["data"], p["expectedCount"]) for p in ATLAS_CONFIGS
+}}
 
 
 def expected_records(specs):
@@ -152,6 +139,12 @@ def render_page(src_rel, for_check=False):
             if re.search(r"</script", body, re.I):
                 raise SystemExit("{}: {} 里含 </script，不能内联进脚本".format(src_rel, rel))
             return "{}{}".format(ind, indent_block(body, ind))
+        if kind == "html":
+            require(rel)
+            body = read_text(os.path.join(ROOT, rel))
+            if "@@BUILD:" in body:
+                raise SystemExit("{}: HTML partials cannot contain nested build markers".format(rel))
+            return body.rstrip()
         if kind == "css":
             # 构建期内联静态 CSS（tailwind.css / mobile.css / vendor/leaflet/leaflet.css）。
             # 之前是 <script src="https://cdn.tailwindcss.com">：浏览器里跑 JIT，
@@ -297,7 +290,7 @@ def check_inlined_runtime(content, dist_name, problems):
     「更绿」—— 产物确实不再依赖外网，但也彻底没有那个库了。这种错误构建期一片
     安静，浏览器只在运行时丢一句 `L is not defined`，地图整块空白。
     所以这里正面断言：页面里用了 Leaflet，产物里就必须能看见 Leaflet 的运行时。"""
-    if 'id="leaflet-map"' not in content:
+    if 'id="leaflet-map"' not in content and 'id="map"' not in content:
         return
     if LEAFLET_BANNER not in content:
         problems.append(

@@ -72,7 +72,9 @@ window.MobileShell = (function () {
         const target = host.querySelector(anchor);
         if (!target) { host.scrollTop = 0; return; }
         const delta = target.getBoundingClientRect().top - host.getBoundingClientRect().top;
-        host.scrollTop = Math.max(0, host.scrollTop + delta - 48);
+        const heading = host.querySelector('.m-sheet-top');
+        const headingHeight = heading ? heading.getBoundingClientRect().height : 48;
+        host.scrollTop = Math.max(0, host.scrollTop + delta - headingHeight - 8);
     }
 
     function openSheet(name, anchor, pushHistory) {

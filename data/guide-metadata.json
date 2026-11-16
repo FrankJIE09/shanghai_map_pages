@@ -1,0 +1,271 @@
+{
+  "checkedAt": "2026-11-16",
+  "seoul": {
+    "edition": "2026",
+    "announcedAt": "2026-03-05",
+    "verifiedAt": "2026-11-16",
+    "scope": "首尔星级餐厅与必比登推介；不含85家米其林入选餐厅及釜山餐厅",
+    "counts": {
+      "3": 1,
+      "2": 10,
+      "1": 31,
+      "bib": 51
+    },
+    "greenStarCount": 3,
+    "distinctionChanges": {
+      "new": 10,
+      "promoted": 4,
+      "retained": 79
+    },
+    "sources": [
+      {
+        "label": "米其林官方：首尔与釜山2026年度发布",
+        "url": "https://www.michelin.com/en/publications/products-and-services/10-years-michelin-guide-korea"
+      },
+      {
+        "label": "米其林官方：2026星级与绿星名单",
+        "url": "https://guide.michelin.com/kr/en/article/michelin-guide-ceremony/all-the-stars-michelin-guide-seoul-busan-2026"
+      },
+      {
+        "label": "米其林官方：2026新增必比登推介",
+        "url": "https://guide.michelin.com/kr/en/article/michelin-guide-ceremony/korea-bib-gourmand-2026"
+      }
+    ],
+    "verificationNote": "本次核对2026版分类总数、星级名单、新获奖及晋级餐厅、绿星名单；地址、坐标、电话与价位沿用此前官方餐厅页资料，未逐店重新核验。绿星为额外荣誉，不重复计入总数；年度新获奖不等同于新开业。"
+  },
+  "shanghai": {
+    "edition": "2026",
+    "announcedAt": "2026-04-09",
+    "verifiedAt": "2026-11-16",
+    "scope": "上海星级餐厅与必比登推介；不含70家米其林入选餐厅及江苏、浙江餐厅",
+    "counts": {
+      "michelin3": 1,
+      "michelin2": 12,
+      "michelin1": 38,
+      "bib": 35
+    },
+    "sources": [
+      {
+        "label": "米其林官方：上海、江苏、浙江2026年度发布",
+        "url": "https://www.michelin.com/en/publications/products-and-services/michelin-guide-shanghai-jiangsu-zhejiang"
+      }
+    ],
+    "verificationNote": "本次核对2026版分类总数、新晋二星与新获星餐厅；未逐店重新核验全部地址、人均、营业状态。唐阁按酒店官网更正定位及餐厅介绍。2026-11-16另核对米其林官方上海星级及必比登实时目录与第2页（https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurants/3-stars-michelin/2-stars-michelin/1-star-michelin/bib-gourmand）：按中文店名匹配83/86条年度记录，补充官方详情URL、名称及ID；当前目录83家为1家三星、11家二星、38家一星、33家必比登。望庐（浦东）、壹零贰小馆、阿娘面未在当前目录中找到，仍保留2026发布版评级、原坐标与既有营业状态证据，不仅凭目录缺失判定停业。此次链接身份核对不等于重新核验门店实时营业、地址或价格。",
+    "recordUpdates": [
+      {
+        "key": "michelin_tang_court",
+        "verifiedAt": "2026-11-16",
+        "fields": [
+          "coords",
+          "desc",
+          "note"
+        ],
+        "note": "坐标来自酒店官网JSON-LD的GeoCoordinates，原值31.208949,121.445604与马当路地址不符；采用官方31.221,121.474酒店近似点，不宣称餐厅入口精度。更新主理人、营业时段及预约电话。",
+        "sources": [
+          "https://www.langhamhotels.com/en/the-langham/shanghai/discover/our-location/",
+          "https://www.langhamhotels.com/sc/the-langham/shanghai/dine/tang-court/"
+        ]
+      }
+    ]
+  },
+  "otherCollections": {
+    "verificationNote": "必吃榜、扫街榜与夜生活数据未进行全量实时复核；保留原有来源、核实日期与停业/待核实标记，不将本次指南核验日期视为所有门店的最新营业确认。"
+  },
+  "beijing": {
+    "edition": "2027",
+    "announcedAt": "2026-10-27",
+    "verifiedAt": "2026-11-16",
+    "scope": "北京33家星级餐厅与32家必比登推介；不含42家米其林入选餐厅及天津餐厅",
+    "counts": {
+      "3": 2,
+      "2": 5,
+      "1": 26,
+      "bib": 32
+    },
+    "sources": [
+      {
+        "label": "米其林中国：2027北京天津指南正式发布",
+        "url": "https://www.michelin.com.cn/news/2026/1027.html"
+      },
+      {
+        "label": "米其林官方：2027北京天津指南分类统计",
+        "url": "https://guide.michelin.com/en/article/michelin-guide-ceremony/michelin-guide-beijing-tianjin-2027"
+      },
+      {
+        "label": "米其林官方：北京全部星级餐厅",
+        "url": "https://guide.michelin.com/sg/zh_CN/beijing-municipality/beijing/restaurants/all-starred"
+      },
+      {
+        "label": "米其林官方：北京必比登推介",
+        "url": "https://guide.michelin.com/sg/zh_CN/beijing-municipality/beijing/restaurants/bib-gourmand"
+      }
+    ],
+    "verificationNote": "逐店核对米其林官方目录与餐厅页：名称、奖项、2027年度、价位档位、菜系、中文地址、联系电话与官方经纬度。行政区从官方中文地址提取。仅为指南资料核验，不代表餐厅实时营业或有可订座位；未推算人均消费。绿星及未明确记载的年度奖项变化不作推断。"
+  },
+  "suzhou": {
+    "edition": "2026",
+    "announcedAt": "2026-04-09",
+    "verifiedAt": "2026-11-16",
+    "scope": "2026沪苏浙《米其林指南》苏州星级餐厅与必比登推介；不含17家米其林入选餐厅",
+    "counts": {
+      "3": 0,
+      "2": 0,
+      "1": 3,
+      "bib": 18
+    },
+    "sources": [
+      {
+        "label": "米其林官方：2026沪苏浙指南发布及分城市统计",
+        "url": "https://www.michelin.com.cn/news/2026/0409.html"
+      },
+      {
+        "label": "米其林官方：苏州完整餐厅目录",
+        "url": "https://guide.michelin.com/sg/zh_CN/jiang-su/suzhou_1031079/restaurants"
+      },
+      {
+        "label": "米其林官方：2026新获奖及晋级餐厅",
+        "url": "https://guide.michelin.com/en/article/michelin-guide-ceremony/michelin-guide-shanghai-jiangsu-zhejiang"
+      }
+    ],
+    "verificationNote": "逐店核对官方目录与餐厅页JSON-LD：中文店名、星级/必比登、2026版年份、地址、菜系、电话、价位档和WGS-84坐标；详情页与目录坐标一致。区名直接提取官方中文地址，未使用第三方推算；未能提取时留空。仅标记发布公告明确列出的本年度新获奖及晋级，不等同于新开业。未核实实时营业时间、临时停业或具体套餐价格，出发前请向餐厅确认。“工业园区”为官方地址所用片区名称，沿用为筛选项，不将其表述为法定行政区。"
+  },
+  "nanjing": {
+    "edition": "2026",
+    "announcedAt": "2026-04-09",
+    "verifiedAt": "2026-11-16",
+    "scope": "2026沪苏浙《米其林指南》南京星级餐厅与必比登推介；不含16家米其林入选餐厅",
+    "counts": {
+      "3": 0,
+      "2": 0,
+      "1": 4,
+      "bib": 21
+    },
+    "sources": [
+      {
+        "label": "米其林官方：2026沪苏浙指南发布及分城市统计",
+        "url": "https://www.michelin.com.cn/news/2026/0409.html"
+      },
+      {
+        "label": "米其林官方：南京完整餐厅目录",
+        "url": "https://guide.michelin.com/sg/zh_CN/jiang-su/nanjing_1029511/restaurants"
+      },
+      {
+        "label": "米其林官方：2026新获奖及晋级餐厅",
+        "url": "https://guide.michelin.com/en/article/michelin-guide-ceremony/michelin-guide-shanghai-jiangsu-zhejiang"
+      }
+    ],
+    "verificationNote": "逐店核对官方目录与餐厅页JSON-LD：中文店名、星级/必比登、2026版年份、地址、菜系、电话、价位档和WGS-84坐标；详情页与目录坐标一致。区名直接提取官方中文地址，未使用第三方推算；未能提取时留空。仅标记发布公告明确列出的本年度新获奖及晋级，不等同于新开业。未核实实时营业时间、临时停业或具体套餐价格，出发前请向餐厅确认。"
+  },
+  "hangzhou": {
+    "edition": "2026",
+    "announcedAt": "2026-04-09",
+    "verifiedAt": "2026-11-16",
+    "scope": "2026沪苏浙《米其林指南》杭州发布版全部13家星级餐厅与34家必比登推介；不含41家米其林入选餐厅。绿星为独立奖项，不另行重复计数。",
+    "counts": {
+      "3": 0,
+      "2": 2,
+      "1": 11,
+      "bib": 34
+    },
+    "mappedCount": 46,
+    "sources": [
+      {
+        "label": "米其林官方：2026沪苏浙指南发布及杭州统计",
+        "url": "https://www.michelin.com.cn/news/2026/0409.html"
+      },
+      {
+        "label": "米其林官方：杭州当前中文目录",
+        "url": "https://guide.michelin.com/sg/zh_CN/zhe-jiang/hangzhou_1027184/restaurants"
+      },
+      {
+        "label": "米其林官方：杭州当前中文目录第2页",
+        "url": "https://guide.michelin.com/sg/zh_CN/zhe-jiang/hangzhou_1027184/restaurants/page/2"
+      },
+      {
+        "label": "2026发布完整名单（Restaurant Ranking转载）",
+        "url": "https://www.restaurant-ranking.com/news-magazine/restaurant-guides/all-information-about-the-michelin-guide/guide-michelin-china/michelin-guide-shanghai-jiangsu-zhejiang/"
+      }
+    ],
+    "unmappedEntries": [
+      {
+        "id": "hao-shi-tang-1987-wensan-road",
+        "name": "好食堂1987（文三路）",
+        "url": "https://guide.michelin.com/sg/zh_CN/zhe-jiang/hangzhou_1027184/restaurant/hao-shi-tang-1987-wensan-road",
+        "reason": "2026发布名单列入必比登推介；核对时原米其林详情页返回404，ViaMichelin页面返回410，当前杭州官方目录未列出。保留年度名单记录，不据此判定停业；地址、价位和官方坐标未能重新核实，因此不显示地图点位。",
+        "sources": [
+          {
+            "label": "2026发布完整名单（转载）：列好食堂1987（文三路）为必比登",
+            "url": "https://www.restaurant-ranking.com/news-magazine/restaurant-guides/all-information-about-the-michelin-guide/guide-michelin-china/michelin-guide-shanghai-jiangsu-zhejiang/"
+          },
+          {
+            "label": "2025米其林官方完整名单：核对店名、菜系及原收录身份",
+            "url": "https://dgaddcosprod.blob.core.windows.net/cxf-corporate/attachments/i6nksyffjs1qw0ls4wekcdtq-20250509-pr-michelinguide-hangzhou-2025.pdf"
+          },
+          {
+            "label": "米其林原餐厅详情（核对时404）",
+            "url": "https://guide.michelin.com/sg/zh_CN/zhe-jiang/hangzhou_1027184/restaurant/hao-shi-tang-1987-wensan-road"
+          },
+          {
+            "label": "ViaMichelin原餐厅资料（核对时410）",
+            "url": "https://www.viamichelin.com/maps/restaurants/poi/hangzhou-_-1f5a65e6"
+          }
+        ]
+      }
+    ],
+    "verificationNote": "年度发布口径为47家（2家二星、11家一星、34家必比登）；当前官方目录仅46家。46条地图记录已逐店核对官方目录与详情页JSON-LD，2026版年份、评级、中文店名、地址、电话、菜系及WGS-84坐标相符；价位取官方页面的¥档位，区名直接提取中文地址。另保留发布名单中的好食堂1987（文三路）为未定位条目，详见unmappedEntries；缺失坐标不估算，官网缺页不等同于停业。仅标记官方发布公告明确列出的9家新必比登及解香楼晋升二星。未核实实时营业时间、临时停业或具体套餐价格。"
+  },
+  "hong-kong": {
+    "edition": "2026",
+    "announcedAt": "2026-03-19",
+    "verifiedAt": "2026-11-16",
+    "scope": "《香港澳門米芝蓮指南2026》香港發布版全部77家星級餐廳與70家必比登推介；只收錄中國香港特別行政區，不含澳門及72家僅入選餐廳。綠星為獨立獎項，不另行重複計數。",
+    "counts": {
+      "3": 7,
+      "2": 13,
+      "1": 57,
+      "bib": 70
+    },
+    "mappedCount": 146,
+    "sources": [
+      {
+        "label": "米芝蓮官方：2026香港澳門完整發布名單（繁體中文）",
+        "url": "https://guide.michelin.com/hk/zh_HK/article/michelin-guide-ceremony/hong-kong-macau-full-list"
+      },
+      {
+        "label": "米芝蓮官方：2026完整發布名單（英文名稱對照）",
+        "url": "https://guide.michelin.com/hk/en/article/michelin-guide-ceremony/hong-kong-macau-full-list"
+      },
+      {
+        "label": "米芝蓮官方：2026年3月19日正式發布與分類統計",
+        "url": "https://guide.michelin.com/hk/en/article/michelin-guide-ceremony/hong-kong-and-macau-full-selection-release-2026"
+      },
+      {
+        "label": "米芝蓮官方：香港星級與必比登實時目錄（共4頁）",
+        "url": "https://guide.michelin.com/hk/zh_HK/hong-kong-region/restaurants/3-stars-michelin/2-stars-michelin/1-star-michelin/bib-gourmand"
+      }
+    ],
+    "unmappedEntries": [
+      {
+        "id": "chiuchow-delicacies",
+        "name": "潮樂園",
+        "url": "https://guide.michelin.com/hk/zh_HK/hong-kong-region/hong-kong/restaurant/chiuchow-delicacies",
+        "reason": "保留《香港澳門米芝蓮指南2026》官方完整發布名單中的必比登記錄。核對時香港實時目錄未列此店，原官方詳情頁返回404；不單憑目錄缺失判定停業。地址、價位、電話和官方坐標未能重新核實，因此不顯示地圖點位。",
+        "sources": [
+          {
+            "label": "官方2026完整發布名單：香港70家必比登中列有潮樂園",
+            "url": "https://guide.michelin.com/hk/zh_HK/article/michelin-guide-ceremony/hong-kong-macau-full-list"
+          },
+          {
+            "label": "原官方餐廳詳情（核對時404）",
+            "url": "https://guide.michelin.com/hk/zh_HK/hong-kong-region/hong-kong/restaurant/chiuchow-delicacies"
+          },
+          {
+            "label": "米芝蓮官方：潮樂園的潮州菜介紹及原門店連結",
+            "url": "https://guide.michelin.com/hk/zh_HK/article/travel/michelin-restaurants-hotels-hong-kong-island-metro-line-east"
+          }
+        ]
+      }
+    ],
+    "verificationNote": "按2026年3月19日官方發布口徑收錄147家（7家三星、13家二星、57家一星、70家必比登）；目前官方香港目錄為146家，少了潮樂園。146條地圖記錄逐店核對官方目錄及JSON-LD，2026年份、評級、餐廳身份、地址、電話、料理及WGS-84坐標一致，addressCountry均為HKG、貨幣均為HKD；價位直接保留官方$至$$$$檔位，不推算人均，不與人民幣或韓圜換算。district取官方data-dtm-district片區（香港島、九龍東/西、新界東/西），並非香港18個法定行政區；7家未提供片區的記錄留空。潮樂園保留為未定位檔案，不估算坐標，也不憑缺頁判定停業。新入選、晉升及綠星標記僅依官方2026發布名單；未核實實時營業、臨時停業或可訂座位。"
+  }
+}

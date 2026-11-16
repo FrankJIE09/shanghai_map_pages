@@ -15,7 +15,9 @@
     "category": "3",
     "koreanName": "밍글스",
     "koreanAddress": "강남구 도산대로 67길 19, 2층",
-    "key": "seoul_511985"
+    "key": "seoul_511985",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511826",
@@ -33,7 +35,9 @@
     "category": "2",
     "koreanName": "알라 프리마",
     "koreanAddress": "강남구 학동로 17길 13",
-    "key": "seoul_511826"
+    "key": "seoul_511826",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "570663",
@@ -51,7 +55,9 @@
     "category": "2",
     "koreanName": "에빗",
     "koreanAddress": "강남구 도산대로 45길 10-5",
-    "key": "seoul_570663"
+    "key": "seoul_570663",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511965",
@@ -69,7 +75,9 @@
     "category": "2",
     "koreanName": "정식당",
     "koreanAddress": "강남구 선릉로 158길 11",
-    "key": "seoul_511965"
+    "key": "seoul_511965",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511972",
@@ -87,7 +95,9 @@
     "category": "2",
     "koreanName": "권숙수",
     "koreanAddress": "강남구 압구정로 80길 37, 4층",
-    "key": "seoul_511972"
+    "key": "seoul_511972",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511973",
@@ -105,7 +115,9 @@
     "category": "2",
     "koreanName": "라연",
     "koreanAddress": "중구 동호로 249, 신라호텔 23층",
-    "key": "seoul_511973"
+    "key": "seoul_511973",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "570656",
@@ -123,7 +135,9 @@
     "category": "2",
     "koreanName": "미토우",
     "koreanAddress": "강남구 도산대로 70길 24",
-    "key": "seoul_570656"
+    "key": "seoul_570656",
+    "greenStar": true,
+    "distinctionChange": "retained"
   },
   {
     "id": "565615",
@@ -141,7 +155,9 @@
     "category": "2",
     "koreanName": "모수",
     "koreanAddress": "서울시 용산구 회나무로 41길 4",
-    "key": "seoul_565615"
+    "key": "seoul_565615",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "1200922",
@@ -159,7 +175,9 @@
     "category": "2",
     "koreanName": "레스토랑 알렌",
     "koreanAddress": "강남구 테헤란로 231, 센터필드 East 2층 E205호",
-    "key": "seoul_1200922"
+    "key": "seoul_1200922",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "512018",
@@ -177,7 +195,9 @@
     "category": "2",
     "koreanName": "스와니예",
     "koreanAddress": "강남구 강남대로 652, 신사스퀘어 2층 201호",
-    "key": "seoul_512018"
+    "key": "seoul_512018",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1216489",
@@ -195,7 +215,9 @@
     "category": "2",
     "koreanName": "소수헌",
     "koreanAddress": "중구 만리재로 21길 8",
-    "key": "seoul_1216489"
+    "key": "seoul_1216489",
+    "greenStar": false,
+    "distinctionChange": "promoted"
   },
   {
     "id": "1192592",
@@ -213,7 +235,9 @@
     "category": "1",
     "koreanName": "세븐스도어",
     "koreanAddress": "강남구 학동로 97길 41, 4층",
-    "key": "seoul_1192592"
+    "key": "seoul_1192592",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511844",
@@ -231,7 +255,9 @@
     "category": "1",
     "koreanName": "비채나",
     "koreanAddress": "송파구 올림픽로 300, 롯데월드 타워 81층",
-    "key": "seoul_511844"
+    "key": "seoul_511844",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1240835",
@@ -249,7 +275,9 @@
     "category": "1",
     "koreanName": "꼴라쥬",
     "koreanAddress": "강남구 논현로 136길 11, 아난티 앳 강남 2층",
-    "key": "seoul_1240835"
+    "key": "seoul_1240835",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "1202660",
@@ -267,7 +295,9 @@
     "category": "1",
     "koreanName": "이타닉 가든",
     "koreanAddress": "강남구 테헤란로 231, 조선팰리스 호텔 36층",
-    "key": "seoul_1202660"
+    "key": "seoul_1202660",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1213112",
@@ -285,7 +315,9 @@
     "category": "1",
     "koreanName": "에스콘디도",
     "koreanAddress": "용산구 한남대로 20길 61-7, 지하 1층",
-    "key": "seoul_1213112"
+    "key": "seoul_1213112",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "548152",
@@ -303,7 +335,9 @@
     "category": "1",
     "koreanName": "익스퀴진",
     "koreanAddress": "강남구 삼성로 140길 6",
-    "key": "seoul_548152"
+    "key": "seoul_548152",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1212873",
@@ -321,7 +355,9 @@
     "category": "1",
     "koreanName": "가겐 바이 최준호",
     "koreanAddress": "강남구 압구정로 80길 19-1, 2층",
-    "key": "seoul_1212873"
+    "key": "seoul_1212873",
+    "greenStar": false,
+    "distinctionChange": "promoted"
   },
   {
     "id": "1199936",
@@ -339,7 +375,9 @@
     "category": "1",
     "koreanName": "기가스",
     "koreanAddress": "중구 퇴계로 6가길 30, 3층",
-    "key": "seoul_1199936"
+    "key": "seoul_1199936",
+    "greenStar": true,
+    "distinctionChange": "retained"
   },
   {
     "id": "1241139",
@@ -357,7 +395,9 @@
     "category": "1",
     "koreanName": "기와강",
     "koreanAddress": "강남구 논현로 152길 9, 4층",
-    "key": "seoul_1241139"
+    "key": "seoul_1241139",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "565605",
@@ -375,7 +415,9 @@
     "category": "1",
     "koreanName": "고료리 켄",
     "koreanAddress": "강남구 언주로 152길 15-3, 2층",
-    "key": "seoul_565605"
+    "key": "seoul_565605",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "570674",
@@ -393,7 +435,9 @@
     "category": "1",
     "koreanName": "하쿠시",
     "koreanAddress": "강남구 언주로 157길 8-4, 2층",
-    "key": "seoul_570674"
+    "key": "seoul_570674",
+    "greenStar": false,
+    "distinctionChange": "promoted"
   },
   {
     "id": "1202880",
@@ -411,7 +455,9 @@
     "category": "1",
     "koreanName": "레스토랑 주은",
     "koreanAddress": "서울 종로구 경희궁길 36, 경희당 8층",
-    "key": "seoul_1202880"
+    "key": "seoul_1202880",
+    "greenStar": false,
+    "distinctionChange": "promoted"
   },
   {
     "id": "1202955",
@@ -429,7 +475,9 @@
     "category": "1",
     "koreanName": "강민철 레스토랑",
     "koreanAddress": "강남구 도산대로 63길 18, 5층",
-    "key": "seoul_1202955"
+    "key": "seoul_1202955",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "570652",
@@ -447,7 +495,9 @@
     "category": "1",
     "koreanName": "라망 시크레",
     "koreanAddress": "중구 퇴계로 67, 레스케이프 호텔 26층",
-    "key": "seoul_570652"
+    "key": "seoul_570652",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511975",
@@ -465,7 +515,9 @@
     "category": "1",
     "koreanName": "라미띠에",
     "koreanAddress": "강남구 도산대로 67길 30, 2층",
-    "key": "seoul_511975"
+    "key": "seoul_511975",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1209158",
@@ -483,7 +535,9 @@
     "category": "1",
     "koreanName": "레귬",
     "koreanAddress": "강남구 강남대로 652, 신사 스퀘어 2층 207호",
-    "key": "seoul_1209158"
+    "key": "seoul_1209158",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "570655",
@@ -501,7 +555,9 @@
     "category": "1",
     "koreanName": "무니",
     "koreanAddress": "강남구 도산대로 70길 26 지하 2층",
-    "key": "seoul_570655"
+    "key": "seoul_570655",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "565616",
@@ -519,7 +575,9 @@
     "category": "1",
     "koreanName": "무오키",
     "koreanAddress": "강남구 학동로 55길 12-12, 2층",
-    "key": "seoul_565616"
+    "key": "seoul_565616",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "570665",
@@ -537,7 +595,9 @@
     "category": "1",
     "koreanName": "온지음",
     "koreanAddress": "종로구 효자로 49, 4층",
-    "key": "seoul_570665"
+    "key": "seoul_570665",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1241613",
@@ -555,7 +615,9 @@
     "category": "1",
     "koreanName": "레스토랑 산",
     "koreanAddress": "강남구 언주로 168길 6, 지하1층",
-    "key": "seoul_1241613"
+    "key": "seoul_1241613",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "1201705",
@@ -573,7 +635,9 @@
     "category": "1",
     "koreanName": "솔밤",
     "koreanAddress": "강남구 학동로 231, 2층",
-    "key": "seoul_1201705"
+    "key": "seoul_1201705",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "570659",
@@ -591,7 +655,9 @@
     "category": "1",
     "koreanName": "소설한남",
     "koreanAddress": "용산구 한남대로 20길 21-18, 지하 1층",
-    "key": "seoul_570659"
+    "key": "seoul_570659",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1192575",
@@ -609,7 +675,9 @@
     "category": "1",
     "koreanName": "소울",
     "koreanAddress": "용산구 신흥로 26길 35, 지하 2층",
-    "key": "seoul_1192575"
+    "key": "seoul_1192575",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1244365",
@@ -627,7 +695,9 @@
     "category": "1",
     "koreanName": "스시 카네사카",
     "koreanAddress": "강남구 테헤란로 521, 그랜드 인터컨티넨탈 서울 파르나스 1층",
-    "key": "seoul_1244365"
+    "key": "seoul_1244365",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "1195338",
@@ -645,7 +715,9 @@
     "category": "1",
     "koreanName": "스시 마츠모토",
     "koreanAddress": "강남구 도산대로 75길 24",
-    "key": "seoul_1195338"
+    "key": "seoul_1195338",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1215839",
@@ -663,7 +735,9 @@
     "category": "1",
     "koreanName": "뛰뚜아멍",
     "koreanAddress": "성동구 광나루로 11길 20",
-    "key": "seoul_1215839"
+    "key": "seoul_1215839",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1207561",
@@ -681,7 +755,9 @@
     "category": "1",
     "koreanName": "빈호",
     "koreanAddress": "강남구 학동로 43길 38, 논현웰스톤 162호",
-    "key": "seoul_1207561"
+    "key": "seoul_1207561",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1206188",
@@ -699,7 +775,9 @@
     "category": "1",
     "koreanName": "이스트",
     "koreanAddress": "강남구 언주로 170길 26-6, 3층",
-    "key": "seoul_1206188"
+    "key": "seoul_1206188",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "512043",
@@ -717,7 +795,9 @@
     "category": "1",
     "koreanName": "유 유안",
     "koreanAddress": "종로구 새문안로 97, 포시즌스 호텔 11층",
-    "key": "seoul_512043"
+    "key": "seoul_512043",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1195183",
@@ -735,7 +815,9 @@
     "category": "1",
     "koreanName": "윤서울",
     "koreanAddress": "강남구 선릉로 805",
-    "key": "seoul_1195183"
+    "key": "seoul_1195183",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "512045",
@@ -753,7 +835,9 @@
     "category": "1",
     "koreanName": "제로 컴플렉스",
     "koreanAddress": "용산구 서빙고로 59길 11-8",
-    "key": "seoul_512045"
+    "key": "seoul_512045",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1244366",
@@ -771,7 +855,9 @@
     "category": "bib",
     "koreanName": "3대 삼계장인",
     "koreanAddress": "서초구 반포대로 28길 56-3",
-    "key": "seoul_1244366"
+    "key": "seoul_1244366",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "1214619",
@@ -789,7 +875,9 @@
     "category": "bib",
     "koreanName": "알트에이",
     "koreanAddress": "용산구 보광로 109",
-    "key": "seoul_1214619"
+    "key": "seoul_1214619",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1208000",
@@ -807,7 +895,9 @@
     "category": "bib",
     "koreanName": "안암",
     "koreanAddress": "종로구 북촌로 5길 10",
-    "key": "seoul_1208000"
+    "key": "seoul_1208000",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1243214",
@@ -825,7 +915,9 @@
     "category": "bib",
     "koreanName": "안덕",
     "koreanAddress": "종로구 자하문로 17길 18",
-    "key": "seoul_1243214"
+    "key": "seoul_1243214",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "1192572",
@@ -843,7 +935,9 @@
     "category": "bib",
     "koreanName": "베이스 이즈 나이스",
     "koreanAddress": "마포구 도화 2길 20",
-    "key": "seoul_1192572"
+    "key": "seoul_1192572",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511867",
@@ -861,7 +955,9 @@
     "category": "bib",
     "koreanName": "대성집",
     "koreanAddress": "종로구 사직로 5",
-    "key": "seoul_511867"
+    "key": "seoul_511867",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1206023",
@@ -879,7 +975,9 @@
     "category": "bib",
     "koreanName": "담택",
     "koreanAddress": "마포구 동교로12안길 51",
-    "key": "seoul_1206023"
+    "key": "seoul_1206023",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511876",
@@ -897,7 +995,9 @@
     "category": "bib",
     "koreanName": "개성만두 궁",
     "koreanAddress": "종로구 인사동 10길 11-3",
-    "key": "seoul_511876"
+    "key": "seoul_511876",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "548068",
@@ -915,7 +1015,9 @@
     "category": "bib",
     "koreanName": "게방식당",
     "koreanAddress": "강남구 선릉로 131길 17",
-    "key": "seoul_548068"
+    "key": "seoul_548068",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "565609",
@@ -933,7 +1035,9 @@
     "category": "bib",
     "koreanName": "금돼지식당",
     "koreanAddress": "중구 다산로 149",
-    "key": "seoul_565609"
+    "key": "seoul_565609",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1195277",
@@ -951,7 +1055,9 @@
     "category": "bib",
     "koreanName": "꿉당",
     "koreanAddress": "서초구 강남대로 615",
-    "key": "seoul_1195277"
+    "key": "seoul_1195277",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1213544",
@@ -969,7 +1075,9 @@
     "category": "bib",
     "koreanName": "곰탕랩",
     "koreanAddress": "강남구 테헤란로 517, 현대백화점 10층",
-    "key": "seoul_1213544"
+    "key": "seoul_1213544",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1240841",
@@ -987,7 +1095,9 @@
     "category": "bib",
     "koreanName": "고사리 익스프레스",
     "koreanAddress": "중구 퇴계로 85길 12-10",
-    "key": "seoul_1240841"
+    "key": "seoul_1240841",
+    "greenStar": true,
+    "distinctionChange": "new"
   },
   {
     "id": "511947",
@@ -1005,7 +1115,9 @@
     "category": "bib",
     "koreanName": "할매집",
     "koreanAddress": "종로구 사직로 12길 1-5",
-    "key": "seoul_511947"
+    "key": "seoul_511947",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "565636",
@@ -1023,7 +1135,9 @@
     "category": "bib",
     "koreanName": "합정옥",
     "koreanAddress": "마포구 양화로 1길 21, 2층",
-    "key": "seoul_565636"
+    "key": "seoul_565636",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1208640",
@@ -1041,7 +1155,9 @@
     "category": "bib",
     "koreanName": "호라파",
     "koreanAddress": "종로구 자하문로 37-1, 2층",
-    "key": "seoul_1208640"
+    "key": "seoul_1208640",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511953",
@@ -1059,7 +1175,9 @@
     "category": "bib",
     "koreanName": "화해당",
     "koreanAddress": "영등포구 국회대로 62길 15",
-    "key": "seoul_511953"
+    "key": "seoul_511953",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "548161",
@@ -1077,7 +1195,9 @@
     "category": "bib",
     "koreanName": "황금콩밭",
     "koreanAddress": "마포구 마포대로 16길 9",
-    "key": "seoul_548161"
+    "key": "seoul_548161",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511954",
@@ -1095,7 +1215,9 @@
     "category": "bib",
     "koreanName": "황생가 칼국수",
     "koreanAddress": "종로구 북촌로 5길 78",
-    "key": "seoul_511954"
+    "key": "seoul_511954",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511958",
@@ -1113,7 +1235,9 @@
     "category": "bib",
     "koreanName": "자하 손만두",
     "koreanAddress": "종로구 백석동길 12",
-    "key": "seoul_511958"
+    "key": "seoul_511958",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1200341",
@@ -1131,7 +1255,9 @@
     "category": "bib",
     "koreanName": "정면",
     "koreanAddress": "광진구 능동로 13길 88",
-    "key": "seoul_1200341"
+    "key": "seoul_1200341",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511960",
@@ -1149,7 +1275,9 @@
     "category": "bib",
     "koreanName": "진진",
     "koreanAddress": "마포구 월드컵북로 1길 60",
-    "key": "seoul_511960"
+    "key": "seoul_511960",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511964",
@@ -1167,7 +1295,9 @@
     "category": "bib",
     "koreanName": "정인면옥",
     "koreanAddress": "영등포구 국회대로 76길 10",
-    "key": "seoul_511964"
+    "key": "seoul_511964",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1205874",
@@ -1185,7 +1315,9 @@
     "category": "bib",
     "koreanName": "계월",
     "koreanAddress": "성동구 성덕정 3길 8",
-    "key": "seoul_1205874"
+    "key": "seoul_1205874",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "548070",
@@ -1203,7 +1335,9 @@
     "category": "bib",
     "koreanName": "교다이야",
     "koreanAddress": "마포구 성지길 39",
-    "key": "seoul_548070"
+    "key": "seoul_548070",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511978",
@@ -1221,7 +1355,9 @@
     "category": "bib",
     "koreanName": "임병주 산동 칼국수",
     "koreanAddress": "서초구 강남대로 37길 65",
-    "key": "seoul_511978"
+    "key": "seoul_511978",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "511981",
@@ -1239,7 +1375,9 @@
     "category": "bib",
     "koreanName": "만두집",
     "koreanAddress": "강남구 압구정로 338",
-    "key": "seoul_511981"
+    "key": "seoul_511981",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "548110",
@@ -1257,7 +1395,9 @@
     "category": "bib",
     "koreanName": "마포옥",
     "koreanAddress": "마포구 토정로 312",
-    "key": "seoul_548110"
+    "key": "seoul_548110",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1209990",
@@ -1275,7 +1415,9 @@
     "category": "bib",
     "koreanName": "맷돌",
     "koreanAddress": "성동구 성덕정길 63",
-    "key": "seoul_1209990"
+    "key": "seoul_1209990",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "548115",
@@ -1293,7 +1435,9 @@
     "category": "bib",
     "koreanName": "미진",
     "koreanAddress": "종로구 종로 19, 르메이에르 종로타운 116-2호",
-    "key": "seoul_548115"
+    "key": "seoul_548115",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1213578",
@@ -1311,7 +1455,9 @@
     "category": "bib",
     "koreanName": "미필담",
     "koreanAddress": "마포구 성지 3길 22",
-    "key": "seoul_1213578"
+    "key": "seoul_1213578",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1213126",
@@ -1329,7 +1475,9 @@
     "category": "bib",
     "koreanName": "면서울",
     "koreanAddress": "강남구 선릉로 805",
-    "key": "seoul_1213126"
+    "key": "seoul_1213126",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1213942",
@@ -1347,7 +1495,9 @@
     "category": "bib",
     "koreanName": "능동미나리",
     "koreanAddress": "용산구 한강대로 40길 28",
-    "key": "seoul_1213942"
+    "key": "seoul_1213942",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1213070",
@@ -1365,7 +1515,9 @@
     "category": "bib",
     "koreanName": "니시무라멘",
     "koreanAddress": "서울 마포구 동교로 265, 4층",
-    "key": "seoul_1213070"
+    "key": "seoul_1213070",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1241941",
@@ -1383,7 +1535,9 @@
     "category": "bib",
     "koreanName": "오일제",
     "koreanAddress": "용산구 한강대로 62다길 29",
-    "key": "seoul_1241941"
+    "key": "seoul_1241941",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "1214334",
@@ -1401,7 +1555,9 @@
     "category": "bib",
     "koreanName": "옥돌현옥",
     "koreanAddress": "송파구 법원로 55, 송파아이파크 1층 D존",
-    "key": "seoul_1214334"
+    "key": "seoul_1214334",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "548132",
@@ -1419,7 +1575,9 @@
     "category": "bib",
     "koreanName": "옥동식",
     "koreanAddress": "마포구 양화로 7길 44-10",
-    "key": "seoul_548132"
+    "key": "seoul_548132",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "565625",
@@ -1437,7 +1595,9 @@
     "category": "bib",
     "koreanName": "오레노 라멘",
     "koreanAddress": "마포구 독막로 8길 16",
-    "key": "seoul_565625"
+    "key": "seoul_565625",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "512006",
@@ -1455,7 +1615,9 @@
     "category": "bib",
     "koreanName": "필동면옥",
     "koreanAddress": "중구 서애로 26",
-    "key": "seoul_512006"
+    "key": "seoul_512006",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "512013",
@@ -1473,7 +1635,9 @@
     "category": "bib",
     "koreanName": "삼청동 수제비",
     "koreanAddress": "종로구 삼청로 101-1",
-    "key": "seoul_512013"
+    "key": "seoul_512013",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1205878",
@@ -1491,7 +1655,9 @@
     "category": "bib",
     "koreanName": "사루카메",
     "koreanAddress": "마포구 연남로 15",
-    "key": "seoul_1205878"
+    "key": "seoul_1205878",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1215543",
@@ -1509,7 +1675,9 @@
     "category": "bib",
     "koreanName": "서교난면방",
     "koreanAddress": "마포구 동교로 12길 16",
-    "key": "seoul_1215543"
+    "key": "seoul_1215543",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1215537",
@@ -1527,7 +1695,9 @@
     "category": "bib",
     "koreanName": "서령",
     "koreanAddress": "중구 소월로 10",
-    "key": "seoul_1215537"
+    "key": "seoul_1215537",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1240910",
@@ -1545,7 +1715,9 @@
     "category": "bib",
     "koreanName": "소바키리 스즈",
     "koreanAddress": "중구 동호로 12길 98",
-    "key": "seoul_1240910"
+    "key": "seoul_1240910",
+    "greenStar": false,
+    "distinctionChange": "new"
   },
   {
     "id": "512021",
@@ -1563,7 +1735,9 @@
     "category": "bib",
     "koreanName": "스바루",
     "koreanAddress": "서초구 방배중앙로 21길 7",
-    "key": "seoul_512021"
+    "key": "seoul_512021",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "512038",
@@ -1581,7 +1755,9 @@
     "category": "bib",
     "koreanName": "우래옥",
     "koreanAddress": "중구 창경궁로 62-29",
-    "key": "seoul_512038"
+    "key": "seoul_512038",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "548128",
@@ -1599,7 +1775,9 @@
     "category": "bib",
     "koreanName": "양양 메밀 막국수",
     "koreanAddress": "서초구 동광로 15길 10",
-    "key": "seoul_548128"
+    "key": "seoul_548128",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "512041",
@@ -1617,7 +1795,9 @@
     "category": "bib",
     "koreanName": "용금옥",
     "koreanAddress": "종로구 자하문로 41-2",
-    "key": "seoul_512041"
+    "key": "seoul_512041",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "1215678",
@@ -1635,7 +1815,9 @@
     "category": "bib",
     "koreanName": "유한",
     "koreanAddress": "용산구 대사관로 5길 10-5",
-    "key": "seoul_1215678"
+    "key": "seoul_1215678",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "512044",
@@ -1653,7 +1835,9 @@
     "category": "bib",
     "koreanName": "역전회관",
     "koreanAddress": "마포구 토정로 37길 47",
-    "key": "seoul_512044"
+    "key": "seoul_512044",
+    "greenStar": false,
+    "distinctionChange": "retained"
   },
   {
     "id": "565627",
@@ -1671,6 +1855,8 @@
     "category": "bib",
     "koreanName": "유림면",
     "koreanAddress": "중구 서소문로 139-1",
-    "key": "seoul_565627"
+    "key": "seoul_565627",
+    "greenStar": false,
+    "distinctionChange": "retained"
   }
 ]

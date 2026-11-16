@@ -1,0 +1,54 @@
+{
+  "edition": "2026",
+  "announcedAt": "2026-03-19",
+  "verifiedAt": "2026-11-16",
+  "scope": "《香港澳門米芝蓮指南2026》香港發布版全部77家星級餐廳與70家必比登推介；只收錄中國香港特別行政區，不含澳門及72家僅入選餐廳。綠星為獨立獎項，不另行重複計數。",
+  "counts": {
+    "3": 7,
+    "2": 13,
+    "1": 57,
+    "bib": 70
+  },
+  "mappedCount": 146,
+  "sources": [
+    {
+      "label": "米芝蓮官方：2026香港澳門完整發布名單（繁體中文）",
+      "url": "https://guide.michelin.com/hk/zh_HK/article/michelin-guide-ceremony/hong-kong-macau-full-list"
+    },
+    {
+      "label": "米芝蓮官方：2026完整發布名單（英文名稱對照）",
+      "url": "https://guide.michelin.com/hk/en/article/michelin-guide-ceremony/hong-kong-macau-full-list"
+    },
+    {
+      "label": "米芝蓮官方：2026年3月19日正式發布與分類統計",
+      "url": "https://guide.michelin.com/hk/en/article/michelin-guide-ceremony/hong-kong-and-macau-full-selection-release-2026"
+    },
+    {
+      "label": "米芝蓮官方：香港星級與必比登實時目錄（共4頁）",
+      "url": "https://guide.michelin.com/hk/zh_HK/hong-kong-region/restaurants/3-stars-michelin/2-stars-michelin/1-star-michelin/bib-gourmand"
+    }
+  ],
+  "unmappedEntries": [
+    {
+      "id": "chiuchow-delicacies",
+      "name": "潮樂園",
+      "url": "https://guide.michelin.com/hk/zh_HK/hong-kong-region/hong-kong/restaurant/chiuchow-delicacies",
+      "reason": "保留《香港澳門米芝蓮指南2026》官方完整發布名單中的必比登記錄。核對時香港實時目錄未列此店，原官方詳情頁返回404；不單憑目錄缺失判定停業。地址、價位、電話和官方坐標未能重新核實，因此不顯示地圖點位。",
+      "sources": [
+        {
+          "label": "官方2026完整發布名單：香港70家必比登中列有潮樂園",
+          "url": "https://guide.michelin.com/hk/zh_HK/article/michelin-guide-ceremony/hong-kong-macau-full-list"
+        },
+        {
+          "label": "原官方餐廳詳情（核對時404）",
+          "url": "https://guide.michelin.com/hk/zh_HK/hong-kong-region/hong-kong/restaurant/chiuchow-delicacies"
+        },
+        {
+          "label": "米芝蓮官方：潮樂園的潮州菜介紹及原門店連結",
+          "url": "https://guide.michelin.com/hk/zh_HK/article/travel/michelin-restaurants-hotels-hong-kong-island-metro-line-east"
+        }
+      ]
+    }
+  ],
+  "verificationNote": "按2026年3月19日官方發布口徑收錄147家（7家三星、13家二星、57家一星、70家必比登）；目前官方香港目錄為146家，少了潮樂園。146條地圖記錄逐店核對官方目錄及JSON-LD，2026年份、評級、餐廳身份、地址、電話、料理及WGS-84坐標一致，addressCountry均為HKG、貨幣均為HKD；價位直接保留官方$至$$$$檔位，不推算人均，不與人民幣或韓圜換算。district取官方data-dtm-district片區（香港島、九龍東/西、新界東/西），並非香港18個法定行政區；7家未提供片區的記錄留空。潮樂園保留為未定位檔案，不估算坐標，也不憑缺頁判定停業。新入選、晉升及綠星標記僅依官方2026發布名單；未核實實時營業、臨時停業或可訂座位。"
+}

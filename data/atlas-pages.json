@@ -1,0 +1,598 @@
+[
+  {
+    "id": "shanghai-michelin",
+    "city": "shanghai",
+    "kind": "michelin",
+    "edition": "2026",
+    "title": "上海米其林地图",
+    "file": "shanghai_michelin_2026.html",
+    "template": "src/pages/michelin.html",
+    "data": [
+      "data/venues/michelin.json"
+    ],
+    "cityName": "上海",
+    "englishName": "Shanghai",
+    "center": [
+      31.2304,
+      121.4737
+    ],
+    "overview": [
+      31.2,
+      121.44,
+      10
+    ],
+    "eyebrow": "SHANGHAI DINING GUIDE / 沪上寻味",
+    "headline": "从街巷，到主厨餐桌",
+    "subtitle": "梧桐树下的烟火气，黄浦江畔的好风味。让值得期待的下一餐，有迹可循。",
+    "landmarks": [
+      [
+        "外滩",
+        31.2401,
+        121.49
+      ],
+      [
+        "人民广场",
+        31.2304,
+        121.4737
+      ],
+      [
+        "静安寺",
+        31.223,
+        121.4453
+      ],
+      [
+        "新天地",
+        31.2191,
+        121.4751
+      ],
+      [
+        "陆家嘴",
+        31.2382,
+        121.5
+      ],
+      [
+        "徐家汇",
+        31.1935,
+        121.4367
+      ]
+    ],
+    "expectedCount": 86,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "¥"
+  },
+  {
+    "id": "shanghai-eat",
+    "city": "shanghai",
+    "kind": "eat",
+    "edition": "2026",
+    "title": "上海餐饮总览",
+    "file": "shanghai_eat_2026.html",
+    "template": "src/pages/eat.html",
+    "data": [
+      "data/venues/bichi.json",
+      "data/venues/michelin.json"
+    ],
+    "cityName": "上海",
+    "englishName": "Shanghai",
+    "center": [
+      31.2304,
+      121.4737
+    ],
+    "overview": [
+      31.2,
+      121.44,
+      10
+    ],
+    "eyebrow": "SHANGHAI DINING GUIDE / 沪上寻味",
+    "headline": "想吃的上海，都在这里",
+    "subtitle": "必吃榜、扫街榜与米其林，合在一张地图。交叉上榜的门店去重展示，先看看附近，再决定吃什么。",
+    "landmarks": [
+      [
+        "外滩",
+        31.2401,
+        121.49
+      ],
+      [
+        "人民广场",
+        31.2304,
+        121.4737
+      ],
+      [
+        "静安寺",
+        31.223,
+        121.4453
+      ],
+      [
+        "新天地",
+        31.2191,
+        121.4751
+      ],
+      [
+        "陆家嘴",
+        31.2382,
+        121.5
+      ],
+      [
+        "徐家汇",
+        31.1935,
+        121.4367
+      ]
+    ],
+    "expectedCount": 131,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "¥"
+  },
+  {
+    "id": "shanghai-bichi",
+    "city": "shanghai",
+    "kind": "bichi",
+    "edition": "2026",
+    "title": "上海必吃榜 × 扫街榜",
+    "file": "shanghai_bichi_saojie_2026.html",
+    "template": "src/pages/bichi.html",
+    "data": [
+      "data/venues/bichi.json"
+    ],
+    "cityName": "上海",
+    "englishName": "Shanghai",
+    "center": [
+      31.2304,
+      121.4737
+    ],
+    "overview": [
+      31.2,
+      121.44,
+      10
+    ],
+    "eyebrow": "SHANGHAI DINING GUIDE / 沪上寻味",
+    "headline": "街巷烟火，值得绕路",
+    "subtitle": "从小笼、生煎到一桌本帮菜。沿着榜单寻找街头好味，留一点时间，慢慢吃、慢慢逛。",
+    "landmarks": [
+      [
+        "外滩",
+        31.2401,
+        121.49
+      ],
+      [
+        "人民广场",
+        31.2304,
+        121.4737
+      ],
+      [
+        "静安寺",
+        31.223,
+        121.4453
+      ],
+      [
+        "新天地",
+        31.2191,
+        121.4751
+      ],
+      [
+        "陆家嘴",
+        31.2382,
+        121.5
+      ],
+      [
+        "徐家汇",
+        31.1935,
+        121.4367
+      ]
+    ],
+    "expectedCount": 58,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "¥"
+  },
+  {
+    "id": "shanghai-bars",
+    "city": "shanghai",
+    "kind": "bars",
+    "edition": "2026",
+    "title": "上海酒吧 × Livehouse",
+    "file": "shanghai_bars_livehouse_2026.html",
+    "template": "src/pages/bars.html",
+    "data": [
+      "data/venues/bars.json"
+    ],
+    "cityName": "上海",
+    "englishName": "Shanghai",
+    "center": [
+      31.2304,
+      121.4737
+    ],
+    "overview": [
+      31.2,
+      121.44,
+      10
+    ],
+    "eyebrow": "SHANGHAI DINING GUIDE / 沪上寻味",
+    "headline": "天黑以后，上海见",
+    "subtitle": "喝一杯，听一场现场，或者跳舞到深夜。找到合拍的场馆，再核对当晚的演出与预约。",
+    "landmarks": [
+      [
+        "外滩",
+        31.2401,
+        121.49
+      ],
+      [
+        "人民广场",
+        31.2304,
+        121.4737
+      ],
+      [
+        "静安寺",
+        31.223,
+        121.4453
+      ],
+      [
+        "新天地",
+        31.2191,
+        121.4751
+      ],
+      [
+        "陆家嘴",
+        31.2382,
+        121.5
+      ],
+      [
+        "徐家汇",
+        31.1935,
+        121.4367
+      ]
+    ],
+    "expectedCount": 37,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "¥"
+  },
+  {
+    "id": "beijing-michelin",
+    "city": "beijing",
+    "kind": "michelin",
+    "edition": "2027",
+    "title": "北京米其林地图",
+    "file": "beijing_michelin_2027.html",
+    "template": "src/pages/beijing-michelin.html",
+    "data": [
+      "data/venues/beijing-michelin.json"
+    ],
+    "cityName": "北京",
+    "englishName": "Beijing",
+    "center": [
+      39.916,
+      116.407
+    ],
+    "overview": [
+      39.92,
+      116.42,
+      10
+    ],
+    "eyebrow": "BEIJING DINING GUIDE / 京味寻踪",
+    "headline": "一城烟火，百味京华",
+    "subtitle": "从胡同里的家常滋味，到匠心独具的主厨餐桌。循着味道，慢慢认识北京。",
+    "landmarks": [
+      [
+        "故宫",
+        39.9163,
+        116.3972
+      ],
+      [
+        "天坛",
+        39.8822,
+        116.4066
+      ],
+      [
+        "三里屯",
+        39.9367,
+        116.455
+      ],
+      [
+        "王府井",
+        39.915,
+        116.4112
+      ],
+      [
+        "什刹海",
+        39.9415,
+        116.3853
+      ]
+    ],
+    "expectedCount": 65,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "¥"
+  },
+  {
+    "id": "suzhou-michelin",
+    "city": "suzhou",
+    "kind": "michelin",
+    "edition": "2026",
+    "title": "苏州米其林地图",
+    "file": "suzhou_michelin_2026.html",
+    "template": "src/pages/suzhou-michelin.html",
+    "data": [
+      "data/venues/suzhou-michelin.json"
+    ],
+    "cityName": "苏州",
+    "englishName": "Suzhou",
+    "center": [
+      31.309,
+      120.619
+    ],
+    "overview": [
+      31.31,
+      120.65,
+      10
+    ],
+    "eyebrow": "SUZHOU DINING GUIDE / 姑苏风味",
+    "headline": "园林之外，还有好味",
+    "subtitle": "一碗苏式面，一席时令鲜。沿着水巷与园林，寻找姑苏值得停留的一餐。",
+    "landmarks": [
+      [
+        "拙政园",
+        31.3241,
+        120.627
+      ],
+      [
+        "平江路",
+        31.315,
+        120.6294
+      ],
+      [
+        "金鸡湖",
+        31.3107,
+        120.7057
+      ],
+      [
+        "山塘街",
+        31.3263,
+        120.6
+      ]
+    ],
+    "expectedCount": 21,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "¥"
+  },
+  {
+    "id": "nanjing-michelin",
+    "city": "nanjing",
+    "kind": "michelin",
+    "edition": "2026",
+    "title": "南京米其林地图",
+    "file": "nanjing_michelin_2026.html",
+    "template": "src/pages/nanjing-michelin.html",
+    "data": [
+      "data/venues/nanjing-michelin.json"
+    ],
+    "cityName": "南京",
+    "englishName": "Nanjing",
+    "center": [
+      32.045,
+      118.785
+    ],
+    "overview": [
+      32.05,
+      118.8,
+      10
+    ],
+    "eyebrow": "NANJING DINING GUIDE / 金陵寻味",
+    "headline": "在金陵，认真吃一餐",
+    "subtitle": "从秦淮河畔的街巷，到新街口的城市餐桌。把淮扬风味与四时鲜味，放进地图。",
+    "landmarks": [
+      [
+        "夫子庙",
+        32.0202,
+        118.7889
+      ],
+      [
+        "新街口",
+        32.0414,
+        118.7838
+      ],
+      [
+        "玄武湖",
+        32.0799,
+        118.7961
+      ],
+      [
+        "中山陵",
+        32.0617,
+        118.8485
+      ]
+    ],
+    "expectedCount": 25,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "¥"
+  },
+  {
+    "id": "hangzhou-michelin",
+    "city": "hangzhou",
+    "kind": "michelin",
+    "edition": "2026",
+    "title": "杭州米其林地图",
+    "file": "hangzhou_michelin_2026.html",
+    "template": "src/pages/hangzhou-michelin.html",
+    "data": [
+      "data/venues/hangzhou-michelin.json"
+    ],
+    "cityName": "杭州",
+    "englishName": "Hangzhou",
+    "center": [
+      30.258,
+      120.156
+    ],
+    "overview": [
+      30.24,
+      120.17,
+      10
+    ],
+    "eyebrow": "HANGZHOU DINING GUIDE / 钱塘风味",
+    "headline": "湖山之间，寻一口鲜",
+    "subtitle": "从西湖边的杭帮滋味，到钱塘江畔的创意料理。在湖山与城市之间，找到下一餐。",
+    "landmarks": [
+      [
+        "西湖",
+        30.2428,
+        120.15
+      ],
+      [
+        "武林广场",
+        30.2738,
+        120.156
+      ],
+      [
+        "灵隐寺",
+        30.24,
+        120.1006
+      ],
+      [
+        "钱江新城",
+        30.2417,
+        120.2116
+      ]
+    ],
+    "expectedCount": 47,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "¥"
+  },
+  {
+    "id": "hong-kong-michelin",
+    "city": "hong-kong",
+    "kind": "michelin",
+    "edition": "2026",
+    "title": "香港米其林地图",
+    "file": "hong_kong_michelin_2026.html",
+    "template": "src/pages/hong-kong-michelin.html",
+    "data": [
+      "data/venues/hong-kong-michelin.json"
+    ],
+    "cityName": "香港",
+    "englishName": "Hong Kong",
+    "center": [
+      22.305,
+      114.17
+    ],
+    "overview": [
+      22.34,
+      114.12,
+      11
+    ],
+    "eyebrow": "HONG KONG DINING GUIDE / 香港尋味",
+    "headline": "在香港，把好味串起来",
+    "subtitle": "从街坊小馆到维港餐桌，跟着一碗热汤、一笼点心，读懂香港的烟火与精致。",
+    "landmarks": [
+      [
+        "維多利亞港",
+        22.29,
+        114.17
+      ],
+      [
+        "中環",
+        22.2819,
+        114.158
+      ],
+      [
+        "尖沙咀",
+        22.2988,
+        114.1722
+      ],
+      [
+        "旺角",
+        22.3193,
+        114.1694
+      ],
+      [
+        "銅鑼灣",
+        22.28,
+        114.184
+      ]
+    ],
+    "expectedCount": 147,
+    "country": "CN",
+    "countryName": "中国",
+    "countryEnglish": "China",
+    "currency": "$"
+  },
+  {
+    "id": "seoul-michelin",
+    "city": "seoul",
+    "kind": "michelin",
+    "edition": "2026",
+    "title": "首尔米其林地图",
+    "file": "seoul_michelin_2026.html",
+    "template": "src/pages/seoul-michelin.html",
+    "data": [
+      "data/venues/seoul-michelin.json"
+    ],
+    "cityName": "首尔",
+    "englishName": "Seoul",
+    "center": [
+      37.543,
+      127.007
+    ],
+    "overview": [
+      37.48,
+      126.96,
+      10
+    ],
+    "eyebrow": "SEOUL DINING GUIDE / 서울 미식 지도",
+    "headline": "跟着味道，认识首尔",
+    "subtitle": "从江北的老字号，到江南的主厨餐桌。让值得期待的下一餐，有迹可循。",
+    "landmarks": [
+      [
+        "景福宫 경복궁",
+        37.5796,
+        126.977
+      ],
+      [
+        "首尔站 서울역",
+        37.5547,
+        126.9707
+      ],
+      [
+        "南山塔 N서울타워",
+        37.5512,
+        126.9882
+      ],
+      [
+        "弘大入口 홍대입구",
+        37.5572,
+        126.9254
+      ],
+      [
+        "江南站 강남역",
+        37.4979,
+        127.0276
+      ],
+      [
+        "圣水 성수",
+        37.5446,
+        127.0559
+      ],
+      [
+        "蚕室 잠실",
+        37.5133,
+        127.1001
+      ]
+    ],
+    "expectedCount": 93,
+    "country": "KR",
+    "countryName": "韩国",
+    "countryEnglish": "Korea",
+    "currency": "₩"
+  }
+]

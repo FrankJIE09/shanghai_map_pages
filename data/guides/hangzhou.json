@@ -1,0 +1,58 @@
+{
+  "edition": "2026",
+  "announcedAt": "2026-04-09",
+  "verifiedAt": "2026-11-16",
+  "scope": "2026沪苏浙《米其林指南》杭州发布版全部13家星级餐厅与34家必比登推介；不含41家米其林入选餐厅。绿星为独立奖项，不另行重复计数。",
+  "counts": {
+    "3": 0,
+    "2": 2,
+    "1": 11,
+    "bib": 34
+  },
+  "mappedCount": 46,
+  "sources": [
+    {
+      "label": "米其林官方：2026沪苏浙指南发布及杭州统计",
+      "url": "https://www.michelin.com.cn/news/2026/0409.html"
+    },
+    {
+      "label": "米其林官方：杭州当前中文目录",
+      "url": "https://guide.michelin.com/sg/zh_CN/zhe-jiang/hangzhou_1027184/restaurants"
+    },
+    {
+      "label": "米其林官方：杭州当前中文目录第2页",
+      "url": "https://guide.michelin.com/sg/zh_CN/zhe-jiang/hangzhou_1027184/restaurants/page/2"
+    },
+    {
+      "label": "2026发布完整名单（Restaurant Ranking转载）",
+      "url": "https://www.restaurant-ranking.com/news-magazine/restaurant-guides/all-information-about-the-michelin-guide/guide-michelin-china/michelin-guide-shanghai-jiangsu-zhejiang/"
+    }
+  ],
+  "unmappedEntries": [
+    {
+      "id": "hao-shi-tang-1987-wensan-road",
+      "name": "好食堂1987（文三路）",
+      "url": "https://guide.michelin.com/sg/zh_CN/zhe-jiang/hangzhou_1027184/restaurant/hao-shi-tang-1987-wensan-road",
+      "reason": "2026发布名单列入必比登推介；核对时原米其林详情页返回404，ViaMichelin页面返回410，当前杭州官方目录未列出。保留年度名单记录，不据此判定停业；地址、价位和官方坐标未能重新核实，因此不显示地图点位。",
+      "sources": [
+        {
+          "label": "2026发布完整名单（转载）：列好食堂1987（文三路）为必比登",
+          "url": "https://www.restaurant-ranking.com/news-magazine/restaurant-guides/all-information-about-the-michelin-guide/guide-michelin-china/michelin-guide-shanghai-jiangsu-zhejiang/"
+        },
+        {
+          "label": "2025米其林官方完整名单：核对店名、菜系及原收录身份",
+          "url": "https://dgaddcosprod.blob.core.windows.net/cxf-corporate/attachments/i6nksyffjs1qw0ls4wekcdtq-20250509-pr-michelinguide-hangzhou-2025.pdf"
+        },
+        {
+          "label": "米其林原餐厅详情（核对时404）",
+          "url": "https://guide.michelin.com/sg/zh_CN/zhe-jiang/hangzhou_1027184/restaurant/hao-shi-tang-1987-wensan-road"
+        },
+        {
+          "label": "ViaMichelin原餐厅资料（核对时410）",
+          "url": "https://www.viamichelin.com/maps/restaurants/poi/hangzhou-_-1f5a65e6"
+        }
+      ]
+    }
+  ],
+  "verificationNote": "年度发布口径为47家（2家二星、11家一星、34家必比登）；当前官方目录仅46家。46条地图记录已逐店核对官方目录与详情页JSON-LD，2026版年份、评级、中文店名、地址、电话、菜系及WGS-84坐标相符；价位取官方页面的¥档位，区名直接提取中文地址。另保留发布名单中的好食堂1987（文三路）为未定位条目，详见unmappedEntries；缺失坐标不估算，官网缺页不等同于停业。仅标记官方发布公告明确列出的9家新必比登及解香楼晋升二星。未核实实时营业时间、临时停业或具体套餐价格。"
+}

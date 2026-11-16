@@ -1,17 +1,18 @@
 {
-  "url": "https://github.com/user-attachments/assets/d2b43c2b-9421-43d7-8fd2-e2aca74d8767",
+  "url": "https://github.com/user-attachments/assets/43bba7f0-23f8-44f2-9da0-11b288eb7774",
   "source": "docs/media/shanghai-map-promo.mp4",
-  "source_sha256": "7d5804ea29f1d88eb734c3a92d709bda0ca36fdaaf5e17cd78f0287ac85bab88",
-  "uploaded_filename": "shanghai-map-promo-web.mp4",
-  "bytes": 6458421,
-  "sha256": "9e28c2c713552284f7d4e6ea02ffa258bf21896ea5dd2b059b3bd58948ee6b5b",
+  "source_sha256": "533dc43dc0b4eecb391d0585e11dbc519947fff82aecd483efadf4147e96a3db",
+  "uploaded_filename": "city-atlas-promo.mp4",
+  "bytes": 9315902,
+  "sha256": "533dc43dc0b4eecb391d0585e11dbc519947fff82aecd483efadf4147e96a3db",
   "width": 1920,
   "height": 1080,
   "fps": "30/1",
-  "duration_seconds": 15.0,
+  "duration_seconds": 24.0,
   "video_codec": "h264",
   "pixel_format": "yuv420p",
   "audio_codec": "aac",
   "audio_sample_rate": "48000",
-  "full_decode": true
+  "full_decode": true,
+  "upload_method": "GitHub Markdown editor attachment, selected through the native file picker; repository body committed separately with Git."
 }

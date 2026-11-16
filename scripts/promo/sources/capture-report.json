@@ -1,86 +1,219 @@
 {
-  "capturedAt": "2026-11-16T04:59:48.962Z",
-  "method": "Playwright screenshots of local dist/ pages. Shanghai camera centered at 31.225,121.47 / z13 with MapBase.getMap().setView; real controls select the double-list filter, Lai Lai Xiao Long, and Yuyintang B Hall. No DOM/data replacement.",
+  "capturedAt": "2026-11-16T06:27:31.839Z",
+  "method": "Authentic current local dist UI. Desktop images captured through CUA CDP Page.captureScreenshot without resizing the surface; mobile images use the normal CUA screenshot after real search, selection and scroll. No DOM, data or tile replacement. Desktop 1440x1240, mobile 430x960. Current points button used to fit maps; selectors are honest crops.",
   "shots": [
     {
-      "file": "eat-overview.png",
-      "page": "/dist/shanghai_eat_2026.html",
-      "viewport": {
-        "width": 1440,
-        "height": 940
+      "file": "shanghai-overview.jpg",
+      "url": "http://127.0.0.1:8876/dist/shanghai_michelin_2026.html",
+      "selector": "#explorer",
+      "clip": {
+        "height": 872,
+        "scale": 1,
+        "width": 1324.796875,
+        "x": 57.6015625,
+        "y": 314.4921875
       },
-      "selector": null,
-      "hash": ""
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:21:46.281Z"
     },
     {
-      "file": "shanghai-map.png",
-      "page": "/dist/shanghai_eat_2026.html",
-      "viewport": {
-        "width": 1440,
-        "height": 940
-      },
-      "selector": "#leaflet-map",
-      "hash": ""
-    },
-    {
-      "file": "eat-selected.png",
-      "page": "/dist/shanghai_eat_2026.html",
-      "viewport": {
-        "width": 1440,
-        "height": 940
-      },
-      "selector": null,
-      "hash": "#v=both_lailai_xiaolong"
-    },
-    {
-      "file": "night-map.png",
-      "page": "/dist/shanghai_bars_livehouse_2026.html",
-      "viewport": {
-        "width": 1440,
-        "height": 940
-      },
-      "selector": "#leaflet-map",
-      "hash": ""
-    },
-    {
-      "file": "bars-mobile.png",
-      "page": "/dist/shanghai_bars_livehouse_2026.html",
-      "viewport": {
-        "width": 430,
-        "height": 1000
-      },
-      "selector": null,
-      "hash": ""
-    },
-    {
-      "file": "bars-mobile-detail.png",
-      "page": "/dist/shanghai_bars_livehouse_2026.html",
-      "viewport": {
-        "width": 430,
-        "height": 1000
-      },
-      "selector": null,
-      "hash": "#v=yyt_b"
-    },
-    {
-      "file": "seoul-overview.png",
-      "page": "/dist/seoul_michelin_2026.html",
-      "viewport": {
-        "width": 1440,
-        "height": 940
-      },
-      "selector": null,
-      "hash": ""
-    },
-    {
-      "file": "seoul-map.png",
-      "page": "/dist/seoul_michelin_2026.html",
-      "viewport": {
-        "width": 1440,
-        "height": 940
-      },
+      "file": "shanghai-map.jpg",
+      "url": "http://127.0.0.1:8876/dist/shanghai_michelin_2026.html",
       "selector": "#map",
-      "hash": ""
+      "clip": {
+        "height": 650,
+        "scale": 1,
+        "width": 922.796875,
+        "x": 58.6015625,
+        "y": 375.4921875
+      },
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:21:46.370Z"
+    },
+    {
+      "file": "beijing-map.jpg",
+      "url": "http://127.0.0.1:8876/dist/beijing_michelin_2027.html",
+      "selector": "#map",
+      "clip": {
+        "height": 650,
+        "scale": 1,
+        "width": 922.796875,
+        "x": 58.6015625,
+        "y": 375.4921875
+      },
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:23:45.678Z"
+    },
+    {
+      "file": "suzhou-map.jpg",
+      "url": "http://127.0.0.1:8876/dist/suzhou_michelin_2026.html",
+      "selector": "#map",
+      "clip": {
+        "height": 650,
+        "scale": 1,
+        "width": 922.796875,
+        "x": 58.6015625,
+        "y": 375.4921875
+      },
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:24:09.067Z"
+    },
+    {
+      "file": "nanjing-map.jpg",
+      "url": "http://127.0.0.1:8876/dist/nanjing_michelin_2026.html",
+      "selector": "#map",
+      "clip": {
+        "height": 650,
+        "scale": 1,
+        "width": 922.796875,
+        "x": 58.6015625,
+        "y": 375.4921875
+      },
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:24:35.454Z"
+    },
+    {
+      "file": "hangzhou-map.jpg",
+      "url": "http://127.0.0.1:8876/dist/hangzhou_michelin_2026.html",
+      "selector": "#map",
+      "clip": {
+        "height": 650,
+        "scale": 1,
+        "width": 922.796875,
+        "x": 58.6015625,
+        "y": 375.4921875
+      },
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:25:57.607Z"
+    },
+    {
+      "file": "hong-kong-overview.jpg",
+      "url": "http://127.0.0.1:8876/dist/hong_kong_michelin_2026.html",
+      "selector": "#explorer",
+      "clip": {
+        "height": 872,
+        "scale": 1,
+        "width": 1324.796875,
+        "x": 57.6015625,
+        "y": 314.4921875
+      },
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:26:44.566Z"
+    },
+    {
+      "file": "hong-kong-map.jpg",
+      "url": "http://127.0.0.1:8876/dist/hong_kong_michelin_2026.html",
+      "selector": "#map",
+      "clip": {
+        "height": 650,
+        "scale": 1,
+        "width": 922.796875,
+        "x": 58.6015625,
+        "y": 375.4921875
+      },
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:26:44.652Z"
+    },
+    {
+      "file": "seoul-overview.jpg",
+      "url": "http://127.0.0.1:8876/dist/seoul_michelin_2026.html",
+      "selector": "#explorer",
+      "clip": {
+        "height": 872,
+        "scale": 1,
+        "width": 1324.796875,
+        "x": 57.6015625,
+        "y": 314.4921875
+      },
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:27:14.002Z"
+    },
+    {
+      "file": "home.jpg",
+      "url": "http://127.0.0.1:8876/dist/index.html?promo=seven-cities",
+      "selector": null,
+      "clip": null,
+      "viewport": {
+        "height": 1240,
+        "scrollX": 0,
+        "scrollY": 0,
+        "width": 1440
+      },
+      "observedAt": "2026-11-16T06:27:31.839Z"
+    },
+    {
+      "file": "mobile-search.jpg",
+      "url": "http://127.0.0.1:8876/dist/shanghai_eat_2026.html",
+      "selector": null,
+      "clip": null,
+      "viewport": {
+        "height": 960,
+        "width": 430
+      },
+      "observedAt": "2026-11-16T06:14:56.122Z"
+    },
+    {
+      "file": "mobile-detail.jpg",
+      "url": "http://127.0.0.1:8876/dist/shanghai_eat_2026.html#v=both_renheguan",
+      "selector": null,
+      "clip": null,
+      "viewport": {
+        "height": 960,
+        "width": 430
+      },
+      "observedAt": "2026-11-16T06:16:10.586Z",
+      "actions": [
+        "Open Shanghai dining overview",
+        "Switch to directory",
+        "Search 人和馆",
+        "Select both_renheguan",
+        "Scroll down to include navigation, copy address and share controls"
+      ]
     }
   ]
 }

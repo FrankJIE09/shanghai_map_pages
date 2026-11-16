@@ -1,0 +1,32 @@
+<a class="skip-link" href="#directory">跳到探店名录</a>
+<header>
+  <a class="brand" href="index.html"><span class="brandmark" aria-hidden="true">✳</span><span>城市探店地图<small>THE DINING ATLAS</small></span></a>
+  <nav aria-label="页面导航"><a class="home-link" href="index.html">← 所有城市</a><button id="aboutBtn">收录说明 ↗</button></nav>
+</header>
+<section class="intro" aria-labelledby="pageTitle">
+  <div class="intro-copy"><div class="eyebrow" id="cityEyebrow"></div><h1 id="pageTitle"></h1><p id="cityIntro"></p><div class="edition"><label class="collection-picker"><span class="sr-only">切换城市与地图</span><select id="mapPicker" aria-label="切换城市与地图"></select></label><span id="verifiedAt"></span></div></div>
+  <div class="totals" aria-label="收录统计"><div><b id="starTotal">—</b><span id="starLabel">星级餐厅</span></div><i aria-hidden="true">＋</i><div><b id="bibTotal">—</b><span id="bibLabel">必比登推介</span></div><div class="source-note" id="summaryNote">一张地图，两种期待<br>为专程而来，也为日常一餐</div></div>
+</section>
+<div class="view-switch" role="group" aria-label="切换浏览方式"><button data-view="map" aria-pressed="true" aria-controls="mapPanel">⌖ 地图探索</button><button data-view="directory" aria-pressed="false" aria-controls="directory">☷ 探店名录 <span id="mobileCount"></span></button></div>
+<main id="explorer" data-view="map">
+  <section class="map-area" id="mapPanel" aria-label="地图与详情">
+    <div class="map-bar"><span><i class="live-dot" aria-hidden="true"></i> <span id="mapLabel">餐厅分布</span> <small id="mapCount">正在载入…</small></span><div class="map-tools"><details id="metroControl" class="metro-menu" hidden><summary>地铁</summary><div id="metroOptions" class="metro-options"></div></details><button id="landmarks" aria-pressed="true">地标</button><button id="theme" aria-pressed="false">深色</button><button id="fit">当前点位</button><button id="locate">◎ 定位</button></div></div>
+    <div class="map-wrap"><div id="map" aria-label="探店互动地图"></div><div class="map-note"><span id="mapCity"></span><br><span id="mapCaption"></span></div><button id="capital" class="capital">城市全景 ↗</button><div id="legend" class="legend" aria-label="地图图例"></div><div id="tileError" role="status" hidden>底图暂时无法加载，点位及名录仍可使用。<button id="retryTiles">重试</button></div></div>
+    <div id="detail" class="detail" aria-live="polite"><span class="detail-icon" aria-hidden="true">⌖</span><div><div class="eyebrow">YOUR NEXT STOP</div><h2>下一站，从地图上的一点开始</h2><p>点选名录或图钉，查看地址、价位与导航。</p></div></div>
+  </section>
+  <aside id="directory" aria-label="搜索与探店名录">
+    <div class="aside-heading"><div><span class="eyebrow">THE CITY DIRECTORY</span><h2>探店名录 <small id="resultCount" role="status"></small></h2></div><button id="favoriteFilter" aria-pressed="false">♡ 收藏 <span id="favoriteCount">0</span></button></div>
+    <div class="filters">
+      <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" aria-label="搜索店名、地址或菜系" placeholder="店名、地址或菜系" autocomplete="off"><kbd>⌘ K</kbd></label>
+      <div id="categories" class="chips" role="group" aria-label="分类筛选"></div>
+      <div class="selects"><select id="district" aria-label="区域"><option value="">全部区域</option></select><select id="cuisine" aria-label="菜系"><option value="">全部菜系</option></select><select id="price" aria-label="价位"><option value="">全部价位</option></select></div>
+      <details id="advancedFilters" class="advanced"><summary>更多筛选</summary><div class="advanced-options"><label id="newOption"><input type="checkbox" id="onlyNew"> 仅本版新获奖 / 晋级</label><label id="greenOption"><input type="checkbox" id="onlyGreen"> 仅绿星餐厅</label><label id="michelinOption"><input type="checkbox" id="onlyMichelin"> 同时获米其林星级 / 必比登</label><label id="liveOption"><input type="checkbox" id="onlyLive"> 有现场演出</label><label id="closedOption"><input type="checkbox" id="hideClosed"> 隐藏暂停 / 停业场馆</label><label id="bookingOption">预约<select id="booking" aria-label="预约要求"><option value="">不限预约</option></select></label><label id="lateOption"><input type="checkbox" id="onlyLate"> 营业至凌晨2点及以后</label><label id="idOption">入场要求<select id="idCheck" aria-label="实名要求"><option value="">不限实名要求</option></select></label></div></details>
+      <div class="sort-bar"><span id="filterHint">按评级排列</span><div><button id="distance" aria-pressed="false">距离排序</button><button id="reset">重置筛选</button></div></div>
+    </div>
+    <div id="list" class="list"><p class="empty">正在载入探店资料…</p></div>
+    <div class="directory-foot">♡ 收藏保存在本机 · <span id="priceFootnote">价位为官方档位</span></div>
+  </aside>
+</main>
+<footer><span id="footerMotto"></span><p>非榜单官方站点 · <button id="aboutFooter">数据来源与收录范围 ↗</button></p><a id="nextCity" href="index.html">探索其他城市 ↗</a></footer>
+<dialog id="about" aria-labelledby="aboutTitle"><button id="closeAbout" class="close" aria-label="关闭收录说明">×</button><div class="eyebrow">ABOUT THIS MAP</div><h2 id="aboutTitle">按官方名单，循味而行</h2><p id="scopeSummary"></p><div id="scopeDetails"></div><p>定位在设备本地计算直线距离，不代表实际行程。收藏保存在当前浏览器。底图和外部导航需要联网，离线时仍可搜索门店资料。</p><div id="sourceLinks" class="source-links"></div><small id="verificationNote"></small></dialog>
+<div id="toast" role="status"></div>

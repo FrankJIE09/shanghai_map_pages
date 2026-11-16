@@ -8,39 +8,38 @@
     "height": true,
     "loudness": true,
     "pixel_format": true,
-    "subtitle_streams": true,
     "video_codec": true,
     "video_streams": true,
     "width": true
   },
   "decode_stderr": "",
-  "generated_at": "2026-11-16T05:02:57.996265+00:00",
+  "generated_at": "2026-11-16T06:33:34.360877+00:00",
   "loudness": {
-    "input_i": "-16.63",
-    "input_lra": "4.00",
-    "input_thresh": "-26.98",
-    "input_tp": "-1.73",
+    "input_i": "-16.14",
+    "input_lra": "1.50",
+    "input_thresh": "-26.29",
+    "input_tp": "-1.79",
     "normalization_type": "dynamic",
-    "output_i": "-16.23",
-    "output_lra": "1.70",
-    "output_thresh": "-26.44",
-    "output_tp": "-1.68",
-    "target_offset": "0.23"
+    "output_i": "-15.99",
+    "output_lra": "1.50",
+    "output_thresh": "-26.06",
+    "output_tp": "-1.67",
+    "target_offset": "-0.01"
   },
   "passed": true,
   "probe": {
     "chapters": [],
     "format": {
-      "bit_rate": "6647409",
-      "duration": "15.000000",
-      "filename": "docs/media/shanghai-map-promo.mp4",
+      "bit_rate": "3105300",
+      "duration": "24.000000",
+      "filename": "/private/tmp/city-atlas-promo/.final-candidate-candidate-c761de397b7f4884aa72ebacaed1910e.mp4",
       "format_long_name": "QuickTime / MOV",
       "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
       "nb_programs": 0,
       "nb_stream_groups": 0,
       "nb_streams": 2,
       "probe_score": 100,
-      "size": "12463892",
+      "size": "9315902",
       "start_time": "0.000000",
       "tags": {
         "compatible_brands": "isomiso2avc1mp41",
@@ -52,7 +51,7 @@
     "streams": [
       {
         "avg_frame_rate": "30/1",
-        "bit_rate": "6439438",
+        "bit_rate": "2893879",
         "bits_per_raw_sample": "8",
         "chroma_location": "center",
         "closed_captions": 0,
@@ -86,8 +85,8 @@
           "timed_thumbnails": 0,
           "visual_impaired": 0
         },
-        "duration": "15.000000",
-        "duration_ts": 230400,
+        "duration": "24.000000",
+        "duration_ts": 368640,
         "extradata_size": 51,
         "field_order": "progressive",
         "film_grain": 0,
@@ -98,7 +97,7 @@
         "is_avc": "true",
         "level": 40,
         "nal_length_size": "4",
-        "nb_frames": "450",
+        "nb_frames": "720",
         "pix_fmt": "yuv420p",
         "profile": "High",
         "r_frame_rate": "30/1",
@@ -122,7 +121,7 @@
       },
       {
         "avg_frame_rate": "0/0",
-        "bit_rate": "198870",
+        "bit_rate": "202917",
         "bits_per_sample": 0,
         "channel_layout": "stereo",
         "channels": 2,
@@ -151,13 +150,13 @@
           "timed_thumbnails": 0,
           "visual_impaired": 0
         },
-        "duration": "15.000000",
-        "duration_ts": 720000,
+        "duration": "24.000000",
+        "duration_ts": 1152000,
         "extradata_size": 5,
         "id": "0x2",
         "index": 1,
         "initial_padding": 0,
-        "nb_frames": "705",
+        "nb_frames": "1126",
         "profile": "LC",
         "r_frame_rate": "0/0",
         "sample_fmt": "fltp",
@@ -173,18 +172,27 @@
       }
     ]
   },
-  "sha256": "7d5804ea29f1d88eb734c3a92d709bda0ca36fdaaf5e17cd78f0287ac85bab88",
+  "sha256": "533dc43dc0b4eecb391d0585e11dbc519947fff82aecd483efadf4147e96a3db",
   "source": "docs/media/shanghai-map-promo.mp4",
-  "gif": {
-    "file": "docs/media/shanghai-map-promo.gif",
-    "width": 800,
-    "height": 450,
-    "frames": 150,
-    "duration_ms": 15000,
-    "loop": 0,
-    "bytes": 8089184,
-    "sha256": "f8a537490fc09a5b20d75c81052d74bd3f9308a09d3228d4155b7779a370421d",
-    "full_decode": true
-  },
-  "readme_media_links_valid": true
+  "editorial_review": {
+    "result": "passed",
+    "representative_seconds": [
+      1.2,
+      4.5,
+      8.5,
+      12,
+      15.5,
+      18.8,
+      22.5
+    ],
+    "transition_centers": [
+      3,
+      6.5,
+      10.5,
+      14,
+      17,
+      21
+    ],
+    "independent_review": "Seven full-resolution stills and six transitions reviewed; country order, counts, safe areas, readable titles and 3-second CTA confirmed."
+  }
 }

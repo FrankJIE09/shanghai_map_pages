@@ -1,0 +1,31 @@
+{
+  "edition": "2027",
+  "announcedAt": "2026-10-27",
+  "verifiedAt": "2026-11-16",
+  "scope": "北京33家星级餐厅与32家必比登推介；不含42家米其林入选餐厅及天津餐厅",
+  "counts": {
+    "3": 2,
+    "2": 5,
+    "1": 26,
+    "bib": 32
+  },
+  "sources": [
+    {
+      "label": "米其林中国：2027北京天津指南正式发布",
+      "url": "https://www.michelin.com.cn/news/2026/1027.html"
+    },
+    {
+      "label": "米其林官方：2027北京天津指南分类统计",
+      "url": "https://guide.michelin.com/en/article/michelin-guide-ceremony/michelin-guide-beijing-tianjin-2027"
+    },
+    {
+      "label": "米其林官方：北京全部星级餐厅",
+      "url": "https://guide.michelin.com/sg/zh_CN/beijing-municipality/beijing/restaurants/all-starred"
+    },
+    {
+      "label": "米其林官方：北京必比登推介",
+      "url": "https://guide.michelin.com/sg/zh_CN/beijing-municipality/beijing/restaurants/bib-gourmand"
+    }
+  ],
+  "verificationNote": "逐店核对米其林官方目录与餐厅页：名称、奖项、2027年度、价位档位、菜系、中文地址、联系电话与官方经纬度。行政区从官方中文地址提取。仅为指南资料核验，不代表餐厅实时营业或有可订座位；未推算人均消费。绿星及未明确记载的年度奖项变化不作推断。"
+}

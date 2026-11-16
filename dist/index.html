@@ -4,431 +4,281 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="theme-color" content="#FAF5EB">
+<meta name="theme-color" content="#f8f5ef">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>上海探店地图 2026 · 四张地图总入口</title>
-<meta name="description" content="上海探店地图 2026：酒吧 × Livehouse × 夜店、必吃榜 × 扫街榜、米其林指南、餐饮总览，四张可离线打开的单文件地图。">
+<title>城市探店地图 · 中国与韩国</title>
+<meta name="description" content="按国家探索城市风味：中国的上海、北京、苏州、南京、杭州与香港，韩国的首尔。米其林地图、上海餐饮榜单与夜生活专题，支持筛选、收藏及地图导航。">
 <style>
-  :root{
-    --paper:#FAF5EB;
-    --card:#FCF9F2;
-    --card2:#F5EFE2;
-    --ink:#2E2B27;
-    --ink-dim:#6B6357;
-    --stroke:#3E3933;
-    --gold:#B8860B;
-    --night-bg:#14121A;
-    --night-card:#1D1A25;
-    --night-ink:#EDE9F5;
-    --night-dim:#A79FB8;
-    --night-stroke:#4A4360;
-    --night-hard:#0A0810;
-    --night-pink:#FF3D81;
-    --night-cyan:#22D3EE;
-  }
-  *{ box-sizing:border-box; }
-  html{ -webkit-text-size-adjust:100%; }
-  body{
-    margin:0;
-    /* 系统字体栈：原来走 Google Fonts，大陆访问 fonts.googleapis.com 基本超时，
-       手机上等于白等一次网络往返。系统自带中文字体更清晰、零请求。 */
-    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei','Source Han Sans SC','Noto Sans CJK SC','Segoe UI',Roboto,sans-serif;
-    background-color:var(--paper);
-    color:var(--ink);
-    /* 宣纸底纹：极淡的网格 + 角落暖色晕开 */
-    background-image:
-      radial-gradient(circle at 8% 4%, rgba(217,160,91,.16), transparent 46%),
-      radial-gradient(circle at 94% 96%, rgba(124,58,237,.10), transparent 44%),
-      linear-gradient(rgba(62,57,51,.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(62,57,51,.035) 1px, transparent 1px);
-    background-size:auto,auto,26px 26px,26px 26px;
-    background-attachment:fixed;
-    line-height:1.6;
-  }
-  /* 手写标题体：原来用 ZCOOL XiaoWei（Google Fonts），改成系统宋体系栈 */
-  .handwritten{ font-family:'Songti SC','STSong','Source Han Serif SC','Noto Serif CJK SC','SimSun',serif; }
+:root{--paper:#f8f5ef;--card:#fffdf9;--ink:#302d2b;--muted:#726b65;--line:#ded7ce;--wine:#8f3d4c;--sage:#4d665b;--gold:#87672e}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:24px}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.75 -apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+a:focus-visible{outline:3px solid var(--wine);outline-offset:5px;border-radius:4px}
+::selection{background:#ead2d6;color:#572430}
+.wrap{max-width:1160px;margin:auto;padding:0 36px}
+.skip-link{position:absolute;left:16px;top:-100px;background:var(--ink);color:white;padding:12px 18px;z-index:10}
+.skip-link:focus{top:16px}
+.masthead{min-height:90px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);gap:24px}
+.brand{display:flex;align-items:center;gap:11px;min-height:44px;font-size:17px;font-weight:650;letter-spacing:.08em}
+.brand svg{width:28px;height:28px;color:var(--wine)}
+.brand small{display:block;font-size:9px;letter-spacing:.23em;color:var(--muted);line-height:1.6;font-weight:500}
+.nav{display:flex;gap:22px;align-items:center}
+.nav a{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;white-space:nowrap;font-size:13px;color:var(--muted)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:40px;padding:48px 0 42px}
+.eyebrow{margin:0;font-size:10px;font-weight:600;letter-spacing:.18em;color:var(--wine)}
+h1,h2,h3,p{margin-top:0}
+h1{font-family:"Songti SC","STSong","Noto Serif CJK SC",serif;font-size:clamp(31px,4.3vw,49px);font-weight:600;letter-spacing:.035em;line-height:1.35;margin:13px 0 16px}
+h1 span{display:inline-block;color:var(--wine)}
+.lede{max-width:580px;color:var(--muted);font-size:14px;margin-bottom:0;line-height:1.95}
+.hero-index{display:flex;gap:26px;border-left:1px solid var(--line);padding:0 0 3px 30px}
+.hero-index div{display:flex;flex-direction:column;gap:3px;white-space:nowrap}
+.hero-index b{font:42px/1.2 Georgia,"Times New Roman",serif;letter-spacing:-.04em;font-weight:400}
+.hero-index span{font-size:11px;color:var(--muted)}
+.city{margin-bottom:36px;scroll-margin-top:24px}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:15px;padding-top:18px;border-top:1px solid var(--line)}
+.section-title{display:flex;align-items:baseline;gap:12px}
+.section-title h2{font-size:21px;font-weight:650;letter-spacing:.05em;margin:0}
+.section-title h2 span{font:italic 17px Georgia,serif;color:var(--muted);letter-spacing:0;margin-left:8px}
+.section-number{font:11px Georgia,serif;color:var(--wine)}
+.section-head>p{font-size:12px;color:var(--muted);margin:0}
+.map-card{--accent:var(--wine);display:flex;flex-direction:column;position:relative;border:1px solid var(--line);border-radius:10px;background:var(--card);padding:26px 28px;color:var(--ink);transition:border-color .18s,box-shadow .18s,transform .18s;min-width:0}
+.map-card h3,.map-card h4{font-size:21px;line-height:1.5;font-weight:650;letter-spacing:.02em;margin:13px 0 7px}
+.card-kicker{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:10px;color:var(--accent);font-weight:600;letter-spacing:.1em}
+.card-count{white-space:nowrap;letter-spacing:0;font-size:12px;color:var(--muted);font-weight:400}
+.card-count b{font-size:16px;font-weight:600;color:var(--ink);margin-right:3px}
+.desc{font-size:13px;color:var(--muted);line-height:1.9;margin:0 0 17px;max-width:62ch}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 21px;padding:0;list-style:none}
+.tags li{font-size:11px;line-height:1.7;color:var(--muted);background:#f4f0e9;border:1px solid #e9e1d7;border-radius:4px;padding:3px 8px}
+.card-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding-top:16px;border-top:1px solid var(--line);font-size:12px;font-weight:600;color:var(--accent)}
+.card-bottom .arrow{display:inline-flex;justify-content:center;align-items:center;border:1px solid var(--line);border-radius:50%;width:32px;height:32px;font-size:17px;line-height:1;transition:transform .18s}
+.featured{display:grid;grid-template-columns:minmax(0,1fr) 265px;gap:36px;padding:30px 34px;border-color:#d7c1c3;background:linear-gradient(110deg,#fffdf9 55%,#f6edeb)}
+.featured .card-copy{display:flex;flex-direction:column}
+.featured h3{font-family:"Songti SC","STSong",serif;font-size:29px;margin:10px 0 10px}
+.featured .card-bottom{max-width:580px}
+.city-print{display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;isolation:isolate;text-align:center;border-left:1px solid #e5d6d2;padding-left:28px;color:var(--wine)}
+.city-print::before{content:"";position:absolute;width:172px;height:172px;border:1px solid #dfcac9;border-radius:50%;z-index:-1}
+.city-print .stars{font-size:17px;letter-spacing:.4em;padding-left:.4em;color:#b6897a}
+.city-print strong{font:48px/1.35 Georgia,serif;letter-spacing:.025em;font-weight:400}
+.city-print .korean{font-size:14px;letter-spacing:.32em;padding-left:.32em;color:#9b6a67}
+.city-print .print-note{margin:20px 0 0;font-size:9px;letter-spacing:.13em;color:#947d75}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.overview{--accent:var(--sage)}
+.local{--accent:#9b5e3b}
+.michelin{--accent:var(--gold)}
+.night{--accent:#bcb0d2;background:#302d36;border-color:#49414e;color:#f6f1eb}
+.night .desc,.night .card-count{color:#c0b6c5}
+.night .card-count b{color:#f6f1eb}
+.night .tags li{background:#3a3542;color:#d0c4d5;border-color:#514857}
+.night .card-bottom,.night .card-bottom .arrow{border-color:#514857}
+.notes{display:grid;grid-template-columns:190px minmax(0,1fr);gap:36px;border-top:1px solid var(--line);padding:28px 0 32px}
+.notes h2{font-size:17px;font-weight:600;margin:6px 0}
+.notes-intro{font-size:12px;color:var(--muted);line-height:1.8;margin:0}
+.note-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 30px}
+.note-grid h3{font-size:13px;font-weight:600;margin:0 0 5px}
+.note-grid p{font-size:12px;line-height:1.85;color:var(--muted);margin:0}
+footer{display:flex;justify-content:space-between;align-items:center;gap:20px;border-top:1px solid var(--line);padding:20px 0 28px;font-size:11px;color:var(--muted)}
+.footer-brand{font-size:9px;letter-spacing:.16em;white-space:nowrap}
+footer p{margin:0}
+@media(hover:hover){.nav a:hover{color:var(--wine)}.map-card:hover{border-color:#bda398;box-shadow:0 7px 24px #4837280a;transform:translateY(-2px)}.map-card:hover .arrow{transform:translateX(3px)}.night:hover{border-color:#a594b2}}
+@media(max-width:850px){.wrap{padding:0 24px}.hero{gap:24px;padding:36px 0}.hero-index{gap:18px;padding-left:22px}.hero-index b{font-size:35px}.featured{grid-template-columns:minmax(0,1fr) 200px;gap:24px;padding:26px}.city-print{padding-left:20px}.city-print strong{font-size:37px}.city-print::before{width:142px;height:142px}.map-card{padding:23px}.notes{grid-template-columns:150px minmax(0,1fr);gap:24px}}
+@media(max-width:600px){.wrap{padding:0 18px}.masthead{min-height:79px;gap:12px}.brand{font-size:15px;gap:8px}.brand small{font-size:7px;letter-spacing:.16em;white-space:nowrap}.brand svg{width:25px;height:25px}.nav{gap:2px}.nav a{font-size:12px}.nav .about-link{display:none}.hero{display:block;padding:31px 0 29px}.hero h1{font-size:33px;line-height:1.45;margin-top:10px}.lede{font-size:13px}.hero-index{border-left:0;padding:0;margin-top:22px;gap:22px}.hero-index div{flex-direction:row;align-items:baseline;gap:7px}.hero-index b{font-size:26px}.hero-index span{font-size:11px}.section-head{align-items:flex-start;gap:10px;padding-top:16px;margin-bottom:13px}.section-title{gap:8px}.section-title h2{font-size:19px;white-space:nowrap}.section-title h2 span{font-size:15px;margin-left:6px}.section-head>p{font-size:11px;text-align:right;padding-top:4px}.city{margin-bottom:27px}.featured{display:block;padding:22px}.featured h3{font-size:26px}.city-print{display:none}.cards{grid-template-columns:1fr;gap:13px}.map-card{padding:22px}.map-card h3,.map-card h4{font-size:20px}.featured h3{font-size:26px}.desc{font-size:13px;margin-bottom:15px}.tags{margin-bottom:18px}.card-bottom{font-size:13px;padding-top:14px}.notes{display:block;padding:23px 0 26px}.notes-intro{margin-bottom:20px}.note-grid{gap:19px 20px}.note-grid p{font-size:12px}footer{display:block;padding:18px 0 26px}.footer-brand{display:block;margin-bottom:7px}}
+@media(max-width:360px){.wrap{padding:0 14px}.hero h1{font-size:30px}.map-card{padding:20px}.section-head>p{max-width:110px}.note-grid{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 
-  .wrap{ max-width:1120px; margin:0 auto; padding:clamp(28px,5vw,64px) clamp(16px,4vw,32px) 40px; }
+/* 城市目录与上海专题分开排版；重复出现的上海仍计作一座城市。 */
+.city-nav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin:0 0 30px;scroll-margin-top:20px}
+.city-nav a{display:flex;align-items:center;justify-content:center;gap:9px;min-height:48px;border:1px solid var(--line);border-radius:5px;background:var(--card);font-size:13px;white-space:nowrap}
+.city-nav small{font-size:9px;letter-spacing:.04em;color:var(--muted)}
+.collection{margin-bottom:36px;scroll-margin-top:24px}
+.city-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:18px}
+.city-card{grid-column:span 2;padding:23px 25px;scroll-margin-top:24px}
+.city-card-wide{grid-column:span 3}
+.city-card h3{font-size:24px;margin:10px 0 8px}
+.city-card h3 span{font:italic 17px Georgia,serif;color:var(--muted);margin-left:5px}
+.city-card .desc{font-size:13px;min-height:3.8em;margin-bottom:15px}
+.city-card .card-kicker,.topic-cards .card-kicker{flex-wrap:wrap;gap:5px 10px;letter-spacing:.07em}
+.city-card .card-bottom{padding-top:12px}
+.topic-cards{grid-template-columns:repeat(3,minmax(0,1fr))}
+.topic-cards .map-card{padding:23px}
+.topic-cards .desc{font-size:12px}
+.topic-cards .card-count{font-size:11px}
+.topic-cards .card-kicker{font-size:9px}
+@media(hover:hover){.city-nav a:hover{color:var(--wine);border-color:#bda398;background:#faf1ee}}
+@media(max-width:850px){.city-nav a{gap:5px}.city-nav small{font-size:8px}.city-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.city-card,.city-card-wide{grid-column:auto}.city-card .desc{min-height:0}.topic-cards{grid-template-columns:1fr}.topic-cards .desc{font-size:13px}.topic-cards .map-card{padding:23px}.topic-cards .card-kicker{font-size:10px}}
+@media(max-width:600px){.masthead .nav{gap:10px}.masthead .nav a{font-size:11px;min-width:44px}.city-nav{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:24px}.city-nav a{min-height:44px;font-size:13px;gap:7px}.city-nav small{font-size:8px}.city-grid{grid-template-columns:1fr;gap:12px}.city-card,.city-card:last-child{grid-column:auto;padding:19px 22px}.city-card h3{font-size:22px;margin:7px 0}.city-card .desc{margin-bottom:9px}.city-card .card-bottom{border:0;padding-top:3px;font-size:12px}.city-card .card-bottom .arrow{width:28px;height:28px}.collection{margin-bottom:27px}.collection .section-head>p{max-width:135px}.collection .section-title h2 span{display:none}.topic-cards .map-card{padding:22px}.topic-cards .desc{margin-bottom:14px}}
+@media(max-width:360px){.masthead .nav{gap:2px}.masthead .nav a{font-size:10px}.city-nav a{gap:5px}.city-nav small{font-size:7px}.city-card{padding:18px 20px}}
 
-  /* ===== 页头 ===== */
-  .kicker{
-    display:inline-block;
-    font-size:11px; font-weight:700; letter-spacing:.14em;
-    color:#1F402B; background:#D9A05B;
-    padding:3px 9px; border-radius:3px;
-    transform:rotate(-1deg);
-  }
-  h1{
-    font-size:clamp(28px,5.2vw,44px);
-    line-height:1.22;
-    font-weight:700; letter-spacing:.05em;
-    margin:14px 0 0;
-  }
-  h1 .thin{ font-size:.52em; font-weight:400; color:var(--ink-dim); letter-spacing:.02em; }
-  .lede{
-    margin:12px 0 0; max-width:66ch;
-    font-size:clamp(13px,1.5vw,15px); font-weight:300;
-    color:var(--ink-dim);
-  }
-  .lede b{ color:var(--ink); font-weight:600; }
-
-  /* ===== 卡片栅格 ===== */
-  .grid{
-    margin-top:clamp(24px,4vw,40px);
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
-    gap:clamp(14px,2.4vw,22px);
-  }
-  .card{
-    --accent:var(--gold);
-    position:relative;
-    display:flex; flex-direction:column;
-    padding:20px 20px 18px;
-    background:var(--card);
-    border:2px solid var(--stroke);
-    border-radius:14px;
-    box-shadow:4px 4px 0 var(--stroke);
-    color:inherit; text-decoration:none;
-    transition:transform .18s ease, box-shadow .18s ease;
-    overflow:hidden;
-  }
-  /* 顶部主色条 */
-  .card::before{
-    content:''; position:absolute; inset:0 0 auto 0; height:5px;
-    background:var(--accent);
-  }
-  .card:focus-visible{
-    transform:translate(-2px,-2px);
-    box-shadow:6px 6px 0 var(--stroke),0 0 0 3px var(--accent);
-    outline:none;
-  }
-  /* 悬停抬升只在真有悬停能力的设备上生效：触屏点过之后 :hover 会留在卡片上，
-     整页卡片一起「浮」着。键盘焦点态仍按上面的 :focus-visible 走。 */
-  @media (hover:hover){
-    .card:hover{ transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--stroke); }
-  }
-  .card:active{ transform:translate(1px,1px); box-shadow:2px 2px 0 var(--stroke); }
-
-  .card-top{
-    display:flex; align-items:flex-start; justify-content:space-between; gap:12px;
-    margin-top:6px;
-  }
-  .emoji{ font-size:30px; line-height:1; }
-  .count{
-    flex:none;
-    font-size:11px; font-weight:700; letter-spacing:.03em;
-    padding:3px 9px; border-radius:9999px;
-    color:#FAF5EB; background:var(--accent);
-    border:1.5px solid var(--stroke);
-    white-space:nowrap;
-  }
-  .card h2{
-    margin:12px 0 0;
-    font-size:20px; font-weight:700; letter-spacing:.03em;
-  }
-  .card .sub{
-    margin:5px 0 0;
-    font-size:12px; font-weight:600;
-    color:var(--accent);
-    /* 主色偏浅时（金色）保证可读性 */
-    filter:saturate(1.1) brightness(.86);
-  }
-  .card .desc{
-    margin:9px 0 0;
-    font-size:12.5px; line-height:1.7;
-    color:var(--ink-dim);
-  }
-  .card .desc b{ color:var(--ink); font-weight:600; }
-
-  .tags{ margin:14px 0 0; display:flex; flex-wrap:wrap; gap:6px; }
-  .tags span{
-    font-size:10.5px; font-weight:600;
-    padding:2px 8px; border-radius:9999px;
-    color:var(--ink-dim);
-    background:var(--card2);
-    border:1px solid rgba(62,57,51,.22);
-  }
-  .cta{
-    margin-top:auto; padding-top:16px;
-    font-size:12.5px; font-weight:700; letter-spacing:.02em;
-    color:var(--accent); filter:saturate(1.1) brightness(.86);
-  }
-  .cta::after{ content:'→'; display:inline-block; margin-left:6px; transition:transform .18s ease; }
-  @media (hover:hover){
-    .card:hover .cta::after{ transform:translateX(4px); }
-  }
-
-  /* ===== 夜间卡片（酒吧） ===== */
-  .card--night{
-    background:var(--night-card);
-    border-color:var(--night-stroke);
-    box-shadow:4px 4px 0 var(--night-hard);
-    color:var(--night-ink);
-    background-image:radial-gradient(circle at 88% 6%, rgba(34,211,238,.13), transparent 52%),
-                     radial-gradient(circle at 10% 96%, rgba(255,61,129,.14), transparent 54%);
-  }
-  .card--night:focus-visible{ box-shadow:6px 6px 0 var(--night-hard),0 0 0 3px var(--accent); }
-  @media (hover:hover){
-    .card--night:hover{ box-shadow:6px 6px 0 var(--night-hard); }
-  }
-  .card--night:active{ box-shadow:2px 2px 0 var(--night-hard); }
-  .card--night .count{ color:#0E0C14; }
-  .card--night .sub{ filter:none; }
-  .card--night .desc{ color:var(--night-dim); }
-  .card--night .desc b{ color:var(--night-ink); }
-  .card--night .tags span{
-    color:var(--night-dim);
-    background:rgba(255,255,255,.05);
-    border-color:rgba(255,255,255,.16);
-  }
-  .card--night .cta{ filter:none; }
-
-  /* ===== 可折叠的地图卡片（酒吧）=====
-     默认收成一个虚线入口条（不是卡片本身），点击才展开出整张夜间卡片。 */
-  .card--fold{
-    display:block;
-    align-self:start;
-    --accent:#FF3D81;
-    padding:0;
-    border:2px dashed var(--night-stroke);
-    border-radius:14px;
-    background:transparent;
-    box-shadow:none;
-    color:var(--night-ink);
-  }
-  .card--fold::before{ display:none; }              /* 收起时不显示顶部主色条 */
-  .card--fold:hover,
-  .card--fold:active{ transform:none; box-shadow:none; }
-
-  .fold-head{
-    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
-    margin:0; padding:15px 18px;
-    list-style:none; cursor:pointer;                /* 去掉原生三角，整条可点 */
-  }
-  .fold-head::-webkit-details-marker{ display:none; }
-  .fold-head:focus-visible{ outline:2px dashed var(--accent); outline-offset:3px; border-radius:12px; }
-  .fold-title{ flex:1 1 auto; min-width:0; }
-  .card--fold .fold-name{ margin:0; font-size:16px; font-weight:700; letter-spacing:.02em; }
-  .card--fold .count{ color:#0E0C14; }
-  .fold-hint{
-    display:flex; align-items:center; gap:5px;
-    font-size:11px; font-weight:600; color:var(--night-dim); white-space:nowrap;
-  }
-  .chev{ display:inline-block; transition:transform .2s ease; }
-  .card--fold[open] .chev{ transform:rotate(180deg); }
-  .fold-hint-close{ display:none; }
-  .card--fold[open] .fold-hint-close{ display:inline; }
-  .card--fold[open] .fold-hint-open{ display:none; }
-
-  /* 展开后：变成完整的夜间卡片 */
-  .card--fold[open]{
-    padding:20px 20px 18px;
-    border-style:solid;
-    background:var(--night-card);
-    background-image:radial-gradient(circle at 88% 6%, rgba(34,211,238,.13), transparent 52%),
-                     radial-gradient(circle at 10% 96%, rgba(255,61,129,.14), transparent 54%);
-    box-shadow:4px 4px 0 var(--night-hard);
-  }
-  .card--fold[open]::before{ display:block; }
-  @media (hover:hover){
-    .card--fold[open]:hover{ box-shadow:6px 6px 0 var(--night-hard); }
-  }
-  .card--fold[open] .fold-head{ padding:0; align-items:flex-start; }
-  .card--fold[open] .fold-name{ font-size:20px; }
-
-  .fold-body{ margin-top:16px; }
-  .fold-sub{ margin:0 0 8px; font-size:12px; font-weight:600; color:var(--accent); }
-  .fold-body .desc{ margin-top:0; }
-  .card--fold .desc{ color:var(--night-dim); }
-  .card--fold .desc b{ color:var(--night-ink); }
-  .card--fold .tags span{
-    color:var(--night-dim);
-    background:rgba(255,255,255,.05);
-    border-color:rgba(255,255,255,.16);
-  }
-  .card--fold .cta{ margin-top:0; padding-top:14px; display:inline-block; color:var(--accent); filter:none; }
-
-  /* ===== 说明区 ===== */
-  .notes{
-    margin-top:clamp(26px,4vw,42px);
-    padding:18px 20px;
-    background:var(--card);
-    border:2px solid var(--stroke);
-    border-radius:14px;
-    box-shadow:3px 3px 0 rgba(62,57,51,.28);
-  }
-  .notes h3{
-    margin:0 0 8px; font-size:14px; font-weight:700; letter-spacing:.03em;
-  }
-  .notes ul{ margin:0; padding-left:1.15em; }
-  .notes li{ font-size:12px; line-height:1.8; color:var(--ink-dim); }
-  .notes li b{ color:var(--ink); font-weight:600; }
-  .notes code{
-    font-size:11px; padding:1px 5px; border-radius:4px;
-    background:var(--card2); border:1px solid rgba(62,57,51,.2);
-    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
-  }
-
-  footer{
-    margin-top:28px; padding-top:18px;
-    border-top:1px dashed rgba(62,57,51,.28);
-    text-align:center;
-    font-size:11px; line-height:1.9; color:var(--ink-dim);
-  }
-  footer b{ color:var(--ink); }
-
-  @media (prefers-reduced-motion:reduce){
-    *{ transition:none !important; animation:none !important; }
-  }
+/* Country is the top-level group; Shanghai's extra maps remain inside China. */
+.country{margin-bottom:40px;scroll-margin-top:24px}
+.country-heading{border-top:2px solid #c5a29f;padding-top:20px;margin-bottom:20px}
+.country-heading .section-title h2{font-size:25px}
+.country-heading .section-title h2 span{font-size:19px}
+.country .city-nav{margin-bottom:18px}
+.china-topics{margin:28px 0 0}
+.china-topics .section-head{border-top-style:dashed;padding-top:19px}
+.topic-heading{font-size:20px;letter-spacing:.03em;margin:0;font-weight:600}
+.topic-heading span{font:italic 16px Georgia,serif;color:var(--muted);margin-left:8px;letter-spacing:0}
+@media(max-width:600px){.country{margin-bottom:30px}.country-heading{padding-top:17px;margin-bottom:16px}.country-heading .section-title h2{font-size:23px}.country-heading .section-title h2 span{font-size:17px}.country-heading>p{max-width:145px}.china-topics{margin-top:24px}.topic-heading{font-size:19px}.topic-heading span{display:none}.country .city-nav{margin-bottom:15px}}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#maps">跳到地图目录</a>
 <div class="wrap">
-
-  <header>
-    <span class="kicker">上海 · 2026 · 认路与探店参考</span>
-    <h1 class="handwritten">
-      🗺️ 上海探店地图 2026
-      <span class="thin">四张图，一次找齐</span>
-    </h1>
-    <p class="lede">
-      夜间去哪喝、去哪听现场；白天去哪吃、哪家值得排队——<b>按榜单分成四张地图</b>。
-      每张图都是<b>可离线打开的单文件 HTML</b>，点图钉看菜系、地址、人均与认路落脚点，也能一键跳去百度地图<b>导航</b>或<b>店铺页</b>。
-    </p>
+  <header class="masthead">
+    <a class="brand" href="index.html" aria-label="城市探店地图首页">
+      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><path d="M3 6.5 10 4l8 3 7-2.5v18L18 25l-8-3-7 2.5v-18Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M10 4v18M18 7v18" stroke="currentColor" stroke-width="1.4"/><circle cx="14" cy="12.5" r="3.8" fill="#f8f5ef" stroke="currentColor" stroke-width="1.4"/><path d="m12 16 2 3 2-3" fill="#f8f5ef" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      <span>城市探店地图<small>A LITTLE GUIDE TO GOOD PLACES</small></span>
+    </a>
+    <nav class="nav" aria-label="按国家浏览"><a href="#china">中国</a><a href="#korea">韩国</a><a class="about-link" href="#about">使用说明</a></nav>
   </header>
 
-  <main class="grid">
-
-    <a class="card" href="seoul_michelin_2026.html" style="--accent:#a94454">
-      <div class="card-top"><span class="emoji">🇰🇷</span><span class="count">
-        93
-        家</span></div>
-      <h2 class="handwritten">首尔米其林地图</h2>
-      <p class="sub">首尔及周边 · MICHELIN 2026</p>
-      <p class="desc">收录首尔 <b>42 家星级餐厅与 51 家必比登</b>，按菜系、行政区与价位筛选。支持韩文搜索、收藏、距离排序，以及 Naver / Kakao / Google 地图导航。</p>
-      <div class="tags"><span>官方坐标</span><span>韩文店名</span><span>地图导航</span></div>
-      <span class="cta">打开首尔地图</span>
-    </a>
-
-
-    <a class="card" href="shanghai_eat_2026.html" style="--accent:#7C3AED">
-      <div class="card-top">
-        <span class="emoji">🍜</span>
-        <span class="count">
-          131
-          家
-        </span>
-      </div>
-      <h2 class="handwritten">上海餐饮总览</h2>
-      <p class="sub">必吃榜 × 扫街榜 × 米其林 · 三榜合一</p>
-      <p class="desc">
-        把大众点评必吃榜、高德扫街榜与 2026 米其林指南合在<b>同一张图</b>上，三榜去重后合为一份名录。
-        榜单作主色、米其林走金色角标，标签可<b>多选叠加</b>筛选。
-      </p>
-      <div class="tags">
-        <span>三榜去重</span><span>多选叠加筛选</span><span>含必比登</span><span>先看这张</span>
-      </div>
-      <span class="cta">打开总览地图</span>
-    </a>
-
-    <a class="card" href="shanghai_bichi_saojie_2026.html" style="--accent:#DC2626">
-      <div class="card-top">
-        <span class="emoji">🥢</span>
-        <span class="count">
-          58
-          家
-        </span>
-      </div>
-      <h2 class="handwritten">必吃榜 × 高德扫街榜</h2>
-      <p class="sub">大众点评必吃榜 × 高德扫街榜 · 上海 2026</p>
-      <p class="desc">
-        一个店可以同时上两个榜：重合的店铺标注为<b>双榜</b>；若它同时也是米其林（含必比登），
-        只在角落加一枚金色小角标，不再另作分类。看菜系、门牌地址、人均档位与认路落脚点。
-      </p>
-      <div class="tags">
-        <span>必吃榜</span><span>扫街榜</span><span>双榜</span><span>含米其林角标</span>
-      </div>
-      <span class="cta">打开榜单地图</span>
-    </a>
-
-    <a class="card" href="shanghai_michelin_2026.html" style="--accent:#B8860B">
-      <div class="card-top">
-        <span class="emoji">🍽️</span>
-        <span class="count">
-          86
-          家
-        </span>
-      </div>
-      <h2 class="handwritten">米其林指南 2026</h2>
-      <p class="sub">2026 沪苏浙米其林指南 · 上海</p>
-      <p class="desc">
-        收录 2026 沪苏浙《米其林指南》上海榜单的<b>全部星级餐厅</b>与<b>必比登推介</b>，
-        三星 / 二星 / 一星与必比登分色标注。坐标为米其林官方 WGS-84 点位，含菜系、门牌地址与官方价位档。
-      </p>
-      <div class="tags">
-        <span>三星 / 二星 / 一星</span><span>必比登</span><span>官方坐标</span>
-      </div>
-      <span class="cta">打开米其林地图</span>
-    </a>
-
-    <details class="card card--fold">
-      <summary class="fold-head">
-        <span class="emoji">🌃</span>
-        <span class="fold-title">
-          <h2 class="handwritten fold-name">上海酒吧 × Livehouse</h2>
-        </span>
-        <span class="count">
-          37
-          家
-        </span>
-        <span class="fold-hint">
-          <span class="fold-hint-open">点击展开</span>
-          <span class="fold-hint-close">收起</span>
-          <span class="chev" aria-hidden="true">▾</span>
-        </span>
-      </summary>
-      <div class="fold-body">
-        <p class="fold-sub">夜行探店地图 · 入夜后的四件事</p>
-        <p class="desc">
-          一张图串起<b>喝一杯</b>（精酿 / 鸡尾酒 / 威士忌）、<b>听爵士</b>、<b>看现场</b>（Livehouse / 音乐剧场）、
-          <b>蹦到天亮</b>（电音俱乐部 / 大型夜店）共 8 类。含来源等级、最近地铁、实名与预约要求，并单列停业沿革供对照。
-        </p>
-        <div class="tags">
-          <span>精酿 / 鸡尾酒</span><span>爵士现场</span><span>Livehouse</span><span>夜店</span><span>最近地铁</span>
-        </div>
-        <a class="cta" href="shanghai_bars_livehouse_2026.html">打开夜间地图</a>
-      </div>
-    </details>
-
-  </main>
-
-  <section class="notes">
-    <h3 class="handwritten">📌 使用与数据说明</h3>
-    <ul>
-      <li><b>怎么用：</b>点卡片进入地图；<b>酒吧那张默认收在最后</b>，点一下展开成卡片后，再点里面的「打开夜间地图」进入。进入后可直接用右上角的 <b>🛣️ / 📍</b> 开关切换道路与地标层级，用标签筛选榜单，点图钉看详情。</li>
-      <li><b>坐标与导航：</b>坐标统一为 <b>WGS-84</b>。街道近似点位误差约 ±150–400 m，出行请以到店导航为准。</li>
-      <li><b>百度店铺页：</b>详情卡底部两个按钮——<b>🧭 导航</b>（定位后走步行路线）与<b>🏪 百度店铺页</b>，<b>都不需要任何密钥</b>。后者默认用店名在百度检索：名字够独特时直接落在该店，连锁/重名则会落在一列候选里。想直达店面页可以给那条补一个百度分享短链（<code>baidu_url</code>），补法见 README「百度店铺页」。</li>
-      <li><b>不编造数据：</b>人均与营业时间取自公开店铺页；查不到的一律显示「待核实」，不做跨店套用或同类推算。</li>
-      <li><b>时效信息：</b>演出、票价与入场规则随时变动，请以秀动 / 大麦等官方渠道的实时排期为准；榜单与地址的数据截止日期见各页页脚。</li>
-      <li><b>离线可用：</b>把单张 <code>.html</code> 下载到本地即可双击打开，除底图瓦片与字体外无需联网构建。</li>
-    </ul>
+  <section class="hero" aria-labelledby="page-title">
+    <div>
+      <p class="eyebrow">CITY WALKS &amp; GOOD TABLES</p>
+      <h1 id="page-title">好好吃饭，<span>慢慢逛城。</span></h1>
+      <p class="lede">从中国的街巷小馆与维港餐桌，到韩国首尔的日常好味。按国家找城市，把值得期待的下一餐放进地图。</p>
+    </div>
+    <div class="hero-index" aria-label="地图目录概览">
+      <div><b data-city-count>7</b><span>座城市</span></div>
+      <div><b data-map-count>10</b><span>张主题地图</span></div>
+    </div>
   </section>
 
-  <footer>
-    🍃 共 <b>4 张地图</b> · 夜间场馆
-    <b>
-      37
-      家
-    </b>
-    · 餐饮
-    <b>
-      131
-      家
-    </b>
-    （三榜去重后）· 数据整理自榜单与店铺公开页 · 仅供认路与探店参考，非广告、不构成消费建议 🍃<br>
-    上海探店地图 2026 · 单文件离线版
-  </footer>
+  <main id="maps">
+    <section class="country" data-country="china" id="china" aria-labelledby="china-title">
+      <div class="section-head country-heading"><div class="section-title"><span class="section-number">01</span><h2 id="china-title">中国 <span>China</span></h2></div><p>城市指南 · 星级餐厅与必比登</p></div>
+      <nav class="city-nav" id="city-navigation" aria-label="中国城市地图">
+        <a href="#shanghai"><span>上海</span><small>SHANGHAI</small></a>
+        <a href="#beijing"><span>北京</span><small>BEIJING</small></a>
+        <a href="#suzhou"><span>苏州</span><small>SUZHOU</small></a>
+        <a href="#nanjing"><span>南京</span><small>NANJING</small></a>
+        <a href="#hangzhou"><span>杭州</span><small>HANGZHOU</small></a>
+        <a href="#hong-kong"><span>香港</span><small>HONG KONG</small></a>
+      </nav>
+      <div class="city-grid">
+        <a class="map-card city-card" data-city="shanghai" id="shanghai" href="shanghai_michelin_2026.html">
+          <div class="card-kicker"><span>MICHELIN · 2026</span><span class="card-count"><b>
+            86
+          </b>家餐厅</span></div>
+          <h3>上海 <span>Shanghai</span></h3>
+          <p class="desc">梧桐树下、黄浦江畔，从本帮滋味到世界料理，找到值得期待的下一餐。</p>
+          <div class="card-bottom"><span>打开上海米其林地图</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
 
+        <a class="map-card city-card" data-city="beijing" id="beijing" href="beijing_michelin_2027.html">
+          <div class="card-kicker"><span>MICHELIN · 2027</span><span class="card-count"><b>
+            65
+          </b>家餐厅</span></div>
+          <h3>北京 <span>Beijing</span></h3>
+          <p class="desc">从胡同里的京味小馆，到匠心独具的主厨餐桌。按已发布的2027版指南寻味京城。</p>
+          <div class="card-bottom"><span>打开北京米其林地图</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
+
+        <a class="map-card city-card" data-city="suzhou" id="suzhou" href="suzhou_michelin_2026.html">
+          <div class="card-kicker"><span>MICHELIN · 2026</span><span class="card-count"><b>
+            21
+          </b>家餐厅</span></div>
+          <h3>苏州 <span>Suzhou</span></h3>
+          <p class="desc">一碗苏式面，一席时令鲜。沿着水巷与园林，慢慢品尝姑苏风味。</p>
+          <div class="card-bottom"><span>打开苏州米其林地图</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
+
+        <a class="map-card city-card" data-city="nanjing" id="nanjing" href="nanjing_michelin_2026.html">
+          <div class="card-kicker"><span>MICHELIN · 2026</span><span class="card-count"><b>
+            25
+          </b>家餐厅</span></div>
+          <h3>南京 <span>Nanjing</span></h3>
+          <p class="desc">在秦淮街巷与金陵餐桌之间，寻找淮扬鲜味，也留一份胃口给汤包与面食。</p>
+          <div class="card-bottom"><span>打开南京米其林地图</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
+
+        <a class="map-card city-card" data-city="hangzhou" id="hangzhou" href="hangzhou_michelin_2026.html">
+          <div class="card-kicker"><span>MICHELIN · 2026</span><span class="card-count"><b>
+            47
+          </b>条餐厅记录</span></div>
+          <h3>杭州 <span>Hangzhou</span></h3>
+          <p class="desc">西湖边的杭帮滋味，钱塘江畔的创意料理。先看餐厅名录，再循着湖山出发。</p>
+          <div class="card-bottom"><span>打开杭州米其林地图</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
+
+        <a class="map-card city-card" data-city="hong-kong" id="hong-kong" href="hong_kong_michelin_2026.html">
+          <div class="card-kicker"><span>MICHELIN · 2026</span><span class="card-count"><b>
+            147
+          </b>家餐厅</span></div>
+          <h3>香港 <span>Hong Kong</span></h3>
+          <p class="desc">粤味小馆、点心与维港餐桌。查看星级与必比登，价位采用官方港币档位。</p>
+          <div class="card-bottom"><span>打开香港米其林地图</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
+      </div>
+
+    <section class="collection china-topics" id="shanghai-extras" aria-labelledby="shanghai-extras-title">
+      <div class="section-head"><div class="section-title"><span class="section-number">＋</span><h3 class="topic-heading" id="shanghai-extras-title">上海专题 <span>More to explore</span></h3></div><p>日常觅食，也有入夜后的去处</p></div>
+      <div class="cards topic-cards">
+        <a class="map-card overview" data-city="shanghai" href="shanghai_eat_2026.html">
+          <div class="card-kicker"><span>三榜合一 · ALL IN ONE</span><span class="card-count"><b>
+            131
+          </b>家餐厅</span></div>
+          <h4>上海餐饮总览</h4>
+          <p class="desc">必吃榜、扫街榜与米其林合在同一张地图。交叉上榜门店去重，先看附近，再决定吃什么。</p>
+          <ul class="tags" aria-label="地图特色"><li>三榜合并去重</li><li>多选标签筛选</li></ul>
+          <div class="card-bottom"><span>打开餐饮总览</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
+        <a class="map-card local" data-city="shanghai" href="shanghai_bichi_saojie_2026.html">
+          <div class="card-kicker"><span>街巷寻味 · LOCAL</span><span class="card-count"><b>
+            58
+          </b>家餐厅</span></div>
+          <h4>必吃榜 × 扫街榜</h4>
+          <p class="desc">小笼、生煎、本帮菜，沿着榜单寻找街头好味。查看双榜与米其林交叉标记、地址和参考人均。</p>
+          <ul class="tags" aria-label="地图特色"><li>大众点评必吃榜</li><li>高德扫街榜</li></ul>
+          <div class="card-bottom"><span>打开街巷美食地图</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
+        <a class="map-card night" data-city="shanghai" href="shanghai_bars_livehouse_2026.html">
+          <div class="card-kicker"><span>天黑以后 · NIGHTLIFE</span><span class="card-count"><b>
+            37
+          </b>条场馆记录</span></div>
+          <h4>酒吧 × Livehouse</h4>
+          <p class="desc">喝一杯、听爵士、看现场。查看类型、预约及入场提示；停业与历史场馆单独标记，供行前核对。</p>
+          <ul class="tags" aria-label="地图特色"><li>精酿与鸡尾酒</li><li>爵士与现场</li></ul>
+          <div class="card-bottom"><span>打开夜间地图</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </a>
+      </div>
+    </section>
+    </section>
+
+    <section class="country" data-country="korea" id="korea" aria-labelledby="korea-title">
+      <div class="section-head country-heading"><div class="section-title"><span class="section-number">02</span><h2 id="korea-title">韩国 <span>Korea</span></h2></div><p>从首尔出发，寻找下一餐</p></div>
+      <a class="map-card featured" data-city="seoul" id="seoul" href="seoul_michelin_2026.html">
+        <div class="card-copy">
+          <div class="card-kicker"><span>MICHELIN GUIDE · 2026</span><span class="card-count"><b>
+            93
+          </b>家餐厅</span></div>
+          <h3>首尔米其林地图</h3>
+          <p class="desc">从精致韩餐到一碗暖胃的面。按星级、区域、菜系与价位寻找餐厅，收藏心仪的一家，再用韩文地址导航出发。</p>
+          <ul class="tags" aria-label="地图特色"><li>星级餐厅 · 必比登</li><li>韩文店名与地址</li><li>收藏与距离排序</li></ul>
+          <div class="card-bottom"><span>探索首尔风味</span><span class="arrow" aria-hidden="true">↗</span></div>
+        </div>
+        <div class="city-print" aria-hidden="true"><span class="stars">✦ ✦ ✦</span><strong>SEOUL</strong><span class="korean">서울</span><span class="print-note">A TABLE WORTH THE JOURNEY</span></div>
+      </a>
+    </section>
+  </main>
+
+  <section class="notes" id="about" aria-labelledby="notes-title">
+    <div><p class="eyebrow">BEFORE YOU GO</p><h2 id="notes-title">出发前，读一读</h2><p class="notes-intro">让地图帮你做选择，<br>让到店信息以官方为准。</p></div>
+    <div class="note-grid">
+      <div><h3>筛选，再点选</h3><p>进入地图后，用榜单、菜系等条件缩小范围。点图钉或名录查看详情，再打开地图应用导航。</p></div>
+      <div><h3>按城市导航</h3><p>中国内地城市提供百度导航与店铺检索；首尔支持 Naver、Kakao 和 Google 地图，并提供韩文地址。香港价位以港币档位显示。</p></div>
+      <div><h3>留意资料时效</h3><p>各城采用已发布的指南版本，北京2027版已于2026年发布。营业、价格及演出排期请出发前确认；收录数量指名录记录，缺少可靠坐标的餐厅仅列入名录。</p></div>
+      <div><h3>可以保存到本地</h3><p>地图文件包含餐厅资料与页面功能，可保存为 HTML 离线查阅；在线底图、定位和外部导航仍取决于网络与浏览器权限。</p></div>
+    </div>
+  </section>
+
+  <footer><span class="footer-brand">CITY WALKS &amp; GOOD TABLES</span><p>中国：上海 · 北京 · 苏州 · 南京 · 杭州 · 香港 &nbsp; / &nbsp; 韩国：首尔<br>数据整理自榜单与店铺公开信息，仅供探店参考。</p></footer>
 </div>
+<script>
+// 数量随目录增减同步，餐厅条数由构建期从 JSON 生成。
+document.querySelector('[data-city-count]').textContent = new Set([...document.querySelectorAll('main .map-card[data-city]')].map(card => card.dataset.city)).size;
+document.querySelector('[data-map-count]').textContent = document.querySelectorAll('main .map-card').length;
+</script>
 </body>
 </html>

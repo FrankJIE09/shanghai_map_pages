@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "inputs": ["/tmp/city-atlas-promo/picture.mp4", "/tmp/city-atlas-promo/audio.wav"],
+  "filtergraph": "final-audio.ffgraph",
+  "output": "/tmp/city-atlas-promo/final-candidate.mp4",
+  "work_dir": "/tmp/city-atlas-promo/final-validation",
+  "video_map": "0:v:0",
+  "audio_map": "[aout]",
+  "video": {"codec":"copy","width":1920,"height":1080,"fps":30},
+  "audio": {"codec":"aac","args":["-b:a","192k"],"sample_rate":48000},
+  "validation": {"duration":24,"duration_tolerance":0.05,"codec":"h264","pixel_formats":["yuv420p"],"lufs":-16,"true_peak":-1.5,"loudness_range":7}
+}

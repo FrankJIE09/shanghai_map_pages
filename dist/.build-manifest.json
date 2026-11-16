@@ -4,33 +4,58 @@
   "pages": {
     "index.html": {
       "source": "src/pages/index.html",
-      "sha256": "864d93f5631d14bf2bd9af1db907dee886159642c2c5be9c88d1e21e144bcf1f",
-      "bytes": 17531
-    },
-    "shanghai_bars_livehouse_2026.html": {
-      "source": "src/pages/bars.html",
-      "sha256": "b07de2d51b14086b80406081c7fa719233426655e02a43a53a18bd1af5a4ff1f",
-      "bytes": 453746
-    },
-    "shanghai_bichi_saojie_2026.html": {
-      "source": "src/pages/bichi.html",
-      "sha256": "58115b060203a8a46247d9f3297eeee8778cf9bcc031dd7f89354085fdf37ec1",
-      "bytes": 467962
+      "sha256": "6db823e47aa88596874aad04abdb4fe70a18431f5cd609f611232d07a913777c",
+      "bytes": 24763
     },
     "shanghai_michelin_2026.html": {
       "source": "src/pages/michelin.html",
-      "sha256": "ed73b129a7b4946dbc69917ed2f852ab0f4bfe9bb4d8c9c108d4cadde0328baa",
-      "bytes": 480166
+      "sha256": "685df18dc4671dbbaf6f4f1aede30188670185442a75ebe31bf9b375839ebaa2",
+      "bytes": 347563
     },
     "shanghai_eat_2026.html": {
       "source": "src/pages/eat.html",
-      "sha256": "ad4e019326575a56c4c1e2a91c5c6cc8a09ca5f18dea616b6fce93aedd8c60f6",
-      "bytes": 528213
+      "sha256": "f63ae95d93c083283c196f5668e4fb4846435d34d80e392411494408ebabfb0c",
+      "bytes": 385311
+    },
+    "shanghai_bichi_saojie_2026.html": {
+      "source": "src/pages/bichi.html",
+      "sha256": "db68368503173b59a79a9d3a6ea718ae6a79913315efdf5c6fd1237c3cf37402",
+      "bytes": 312375
+    },
+    "shanghai_bars_livehouse_2026.html": {
+      "source": "src/pages/bars.html",
+      "sha256": "6aaec9fe4d31d4faa1d60f57bd1b2f2cba0bb20c40fa6daafd91a9b0250bdff3",
+      "bytes": 311592
+    },
+    "beijing_michelin_2027.html": {
+      "source": "src/pages/beijing-michelin.html",
+      "sha256": "3c67c630acd0c7b705ed0d13d53570138ab2a53be40a6ebe530755f6f9eb82f3",
+      "bytes": 290550
+    },
+    "suzhou_michelin_2026.html": {
+      "source": "src/pages/suzhou-michelin.html",
+      "sha256": "96974dc1166f16fb021915a0925c153268014cda641ce86702e7a66bb7722b3d",
+      "bytes": 272784
+    },
+    "nanjing_michelin_2026.html": {
+      "source": "src/pages/nanjing-michelin.html",
+      "sha256": "3740e82e89bf186071f0d6be28ddde5eb7e2d5234400bd2bfb82d35eae808327",
+      "bytes": 274418
+    },
+    "hangzhou_michelin_2026.html": {
+      "source": "src/pages/hangzhou-michelin.html",
+      "sha256": "512ee00db8400122c49f70b795460403a1b3e1866c7da4e4ec5aec4e55379d89",
+      "bytes": 284760
+    },
+    "hong_kong_michelin_2026.html": {
+      "source": "src/pages/hong-kong-michelin.html",
+      "sha256": "037400d6585153090aaa78440cad91d28fd2ca592f19e0b74d7597d8ba33b0c9",
+      "bytes": 325726
     },
     "seoul_michelin_2026.html": {
       "source": "src/pages/seoul-michelin.html",
-      "sha256": "a4b2fd3ac2603c52400799b4183cd448cc6942869c1ea817cf03160272b18ac9",
-      "bytes": 238942
+      "sha256": "62cf48a2d09afbef3771cd0ae544e4926415a6b86ac6e8387e827ca08774783a",
+      "bytes": 310770
     }
   }
 }

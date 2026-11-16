@@ -6,10 +6,13 @@
     python3 scripts/validate_data.py
 """
 import json
+import math
 import os
 import re
 import sys
 from collections import Counter
+from datetime import date
+from urllib.parse import urlparse
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -91,10 +94,289 @@ DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
 # 所以只做「像 id 的字符串」这一层校验；数据里手填的 uid 与短链由人工保证正确。
 BAIDU_UID = re.compile(r"^[0-9A-Za-z_-]{8,64}$")
 
+SEOUL_JSON = "data/venues/seoul-michelin.json"
+GUIDE_METADATA = "data/guide-metadata.json"
+MICHELIN_AWARDS = {
+    "3": "THREE_STARS", "2": "TWO_STARS", "1": "ONE_STAR", "bib": "BIB_GOURMAND",
+}
+ATLAS_PAGES = "data/atlas-pages.json"
+OFFICIAL_GUIDE_HOSTS = {"www.michelin.com", "guide.michelin.com", "www.michelin.com.cn"}
+# 宽松的城市行政范围用于拦截错城/经纬倒置；不把边界框当作精确行政区划。
+CITY_GUIDES = {
+    "seoul": {"label": "首尔", "lat": (37.4, 37.75), "lng": (126.75, 127.2), "currency": "₩"},
+    "beijing": {"label": "北京", "lat": (39.4, 41.1), "lng": (115.4, 117.6), "currency": "¥"},
+    "suzhou": {"label": "苏州", "lat": (30.75, 32.1), "lng": (119.9, 121.5), "currency": "¥"},
+    "nanjing": {"label": "南京", "lat": (31.2, 32.7), "lng": (118.3, 119.3), "currency": "¥"},
+    "hangzhou": {"label": "杭州", "lat": (29.1, 30.6), "lng": (118.3, 120.8), "currency": "¥"},
+    "hong-kong": {"label": "香港", "lat": (22.1, 22.6), "lng": (113.8, 114.5), "currency": "$"},
+}
+for _city, _cfg in CITY_GUIDES.items():
+    _cfg["data"] = "data/venues/{}-michelin.json".format(_city)
+
 
 def load(rel):
     with open(os.path.join(ROOT, rel), encoding="utf-8") as f:
         return json.load(f)
+
+
+def check_city_michelin(errors, city):
+    """验证首尔及新增城市；各城市使用自己的地理边界和货币符号。"""
+    cfg = CITY_GUIDES[city]
+    rel = cfg["data"]
+    records = load(rel)
+    if not isinstance(records, list) or not records:
+        errors.append(rel + ": 必须是非空数组")
+        return
+    seen = {field: set() for field in ("id", "key", "url")}
+    required_strings = ("id", "key", "name", "url", "award", "year", "category")
+    for i, record in enumerate(records):
+        where = "{}[{}]".format(rel, i)
+        if not isinstance(record, dict):
+            errors.append(where + ": 必须是对象")
+            continue
+        where += " ({})".format(record.get("name", "?"))
+        for field in required_strings:
+            if not isinstance(record.get(field), str) or not record[field].strip():
+                errors.append("{}: {} 必须是非空字符串".format(where, field))
+        for field in seen:
+            value = record.get(field)
+            if isinstance(value, str):
+                if value in seen[field]:
+                    errors.append("{}: {} 重复".format(where, field))
+                seen[field].add(value)
+        rid = record.get("id")
+        if not isinstance(rid, str) or not re.fullmatch(r"[A-Za-z0-9]+(?:[-_][A-Za-z0-9]+)*", rid):
+            errors.append(where + ": id 必须是数字或稳定的字母数字slug")
+        if city == "seoul" and isinstance(rid, str) and not rid.isdecimal():
+            errors.append(where + ": 首尔官方id必须是数字字符串")
+        if record.get("key") != "{}_{}".format(city, rid):
+            errors.append(where + ": key 必须使用城市前缀并与 id 对应")
+
+        unverified = record.get("locationStatus") == "unverified"
+        if unverified:
+            if "lat" not in record or "lng" not in record or record["lat"] is not None or record["lng"] is not None:
+                errors.append(where + ": 未核实定位必须显式使用 lat:null / lng:null，不能填占位坐标")
+            if record.get("directoryStatus") != "not-listed":
+                errors.append(where + ": 未定位档案必须显式标记 directoryStatus=not-listed")
+            if not isinstance(record.get("directoryNote"), str) or not record["directoryNote"].strip():
+                errors.append(where + ": 未定位档案必须说明 directoryNote")
+        else:
+            for field, bounds in (("lat", cfg["lat"]), ("lng", cfg["lng"])):
+                value = record.get(field)
+                if (type(value) not in (int, float) or not math.isfinite(value)
+                        or not bounds[0] <= value <= bounds[1]):
+                    errors.append("{}: {} 必须是{}范围内的有限坐标".format(where, field, cfg["label"]))
+        for field in ("price", "cuisine", "address", "district"):
+            value = record.get(field)
+            if not isinstance(value, str) or (not unverified and field != "district" and not value.strip()):
+                errors.append("{}: {} 必须是{}字符串".format(where, field, "" if unverified or field == "district" else "非空"))
+        category = record.get("category")
+        if not isinstance(category, str) or category not in MICHELIN_AWARDS:
+            errors.append(where + ": category 不是已收录的米其林奖项")
+        elif record.get("award") != MICHELIN_AWARDS[category]:
+            errors.append(where + ": category 与 award 不一致")
+        price = record.get("price")
+        if not (unverified and price == "") and (not isinstance(price, str) or not re.fullmatch(re.escape(cfg["currency"]) + r"{1,4}", price)):
+            errors.append(where + ": price 必须是1至4个本币价位符号")
+        if not isinstance(record.get("year"), str) or not re.fullmatch(r"20[0-9]{2}", record["year"]):
+            errors.append(where + ": year 必须为四位指南年度")
+        if record.get("phone") is not None and not isinstance(record["phone"], str):
+            errors.append(where + ": phone 必须是字符串或null")
+        if "greenStar" in record and not isinstance(record["greenStar"], bool):
+            errors.append(where + ": greenStar 必须是布尔值；未核实请省略")
+        if "distinctionChange" in record and record["distinctionChange"] not in ("new", "promoted", "retained"):
+            errors.append(where + ": distinctionChange 必须为 new / promoted / retained；未核实请省略")
+        if city == "seoul":
+            for field in ("koreanName", "koreanAddress", "district"):
+                if not isinstance(record.get(field), str) or not record[field].strip():
+                    errors.append("{}: {} 必须是非空字符串".format(where, field))
+            if "greenStar" not in record or "distinctionChange" not in record:
+                errors.append(where + ": 首尔已核验的绿星和年度奖项字段不可缺失")
+        url = record.get("url")
+        if isinstance(url, str):
+            parsed = urlparse(url)
+            if (parsed.scheme != "https" or parsed.netloc != "guide.michelin.com"
+                    or "/restaurant/" not in parsed.path):
+                errors.append(where + ": url 必须指向米其林官方餐厅页")
+    mapped = sum(isinstance(r, dict) and r.get("locationStatus") != "unverified" for r in records)
+    print("  {:<34} {:>3} 条  {}米其林（地图定位 {}）".format(rel, len(records), cfg["label"], mapped))
+
+
+def check_seoul(errors):
+    check_city_michelin(errors, "seoul")
+
+
+def check_city_guides(errors):
+    for city in CITY_GUIDES:
+        try:
+            check_city_michelin(errors, city)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append("{}: 资料读取失败 {}".format(city, exc))
+
+
+def check_guide_metadata(errors):
+    """官方年度数量含未定位档案；零家分类与地图定位数分别核对。"""
+    metadata = load(GUIDE_METADATA)
+    if not isinstance(metadata, dict):
+        errors.append(GUIDE_METADATA + ": 必须是对象")
+        return
+    guides = {city: cfg["data"] for city, cfg in CITY_GUIDES.items()}
+    guides["shanghai"] = "data/venues/michelin.json"
+    for city, rel in guides.items():
+        guide = metadata.get(city)
+        if not isinstance(guide, dict):
+            errors.append(GUIDE_METADATA + ": 缺少 " + city)
+            continue
+        if city not in ("seoul", "shanghai"):
+            try:
+                standalone = load("data/guides/{}.json".format(city))
+                if standalone != guide:
+                    errors.append("{}: {} 与独立指南元数据不一致".format(GUIDE_METADATA, city))
+            except (OSError, json.JSONDecodeError) as exc:
+                errors.append("{}: 独立指南资料读取失败 {}".format(city, exc))
+        edition = guide.get("edition")
+        if not isinstance(edition, str) or not re.fullmatch(r"20[0-9]{2}", edition):
+            errors.append("{}: {}.edition 必须为四位指南年度".format(GUIDE_METADATA, city))
+        for field in ("announcedAt", "verifiedAt"):
+            try:
+                value = guide[field]
+                if not isinstance(value, str) or not DATE.fullmatch(value):
+                    raise ValueError("invalid date")
+                date.fromisoformat(value)
+            except (KeyError, TypeError, ValueError):
+                errors.append("{}: {}.{} 必须为有效日期".format(GUIDE_METADATA, city, field))
+        sources = guide.get("sources")
+        if not isinstance(sources, list) or not sources:
+            errors.append("{}: {} 缺少核验来源".format(GUIDE_METADATA, city))
+        else:
+            has_official_source = False
+            for source in sources:
+                url = source.get("url", "") if isinstance(source, dict) else ""
+                parsed = urlparse(url) if isinstance(url, str) else urlparse("")
+                if parsed.scheme != "https" or not parsed.netloc or not isinstance(source, dict) or not source.get("label"):
+                    errors.append("{}: {} 核验来源必须有说明和有效HTTPS链接".format(GUIDE_METADATA, city))
+                has_official_source |= parsed.netloc in OFFICIAL_GUIDE_HOSTS
+            if not has_official_source:
+                errors.append("{}: {} 必须至少引用一项米其林官方核验来源".format(GUIDE_METADATA, city))
+        try:
+            records = load(rel)
+        except (OSError, json.JSONDecodeError) as exc:
+            errors.append("{}: 资料读取失败 {}".format(rel, exc))
+            continue
+        if not isinstance(records, list) or any(not isinstance(r, dict) for r in records):
+            continue
+        allowed = {"michelin3", "michelin2", "michelin1", "bib"} if city == "shanghai" else set(MICHELIN_AWARDS)
+        counts = guide.get("counts")
+        counts_valid = (isinstance(counts, dict) and set(counts) <= allowed
+                        and all(type(value) is int and value >= 0 for value in counts.values()))
+        if not counts_valid:
+            errors.append("{}: {}.counts 必须是合法奖项到非负整数的映射".format(GUIDE_METADATA, city))
+        categories = [r.get("category") for r in records]
+        if counts_valid and all(isinstance(category, str) for category in categories):
+            actual = Counter(categories)
+            if set(actual) - allowed or any(actual[category] != counts.get(category, 0) for category in allowed):
+                errors.append("{}: 分类数量与 {} 的官方年度统计不一致".format(rel, GUIDE_METADATA))
+        if city != "shanghai" and any(r.get("year") != edition for r in records):
+            errors.append(rel + ": year 与指南版本不一致")
+        if "greenStarCount" in guide:
+            if type(guide["greenStarCount"]) is not int or sum(r.get("greenStar") is True for r in records) != guide["greenStarCount"]:
+                errors.append(rel + ": 绿星数量与官方统计不一致")
+        if "distinctionChanges" in guide:
+            changes = [r.get("distinctionChange") for r in records]
+            if not all(isinstance(value, str) for value in changes) or dict(Counter(changes)) != guide["distinctionChanges"]:
+                errors.append(rel + ": 年度奖项变动数量与官方统计不一致")
+        unmapped = [r for r in records if r.get("locationStatus") == "unverified"]
+        if unmapped or "mappedCount" in guide or "unmappedEntries" in guide:
+            mapped_count = guide.get("mappedCount")
+            if type(mapped_count) is not int or mapped_count != len(records) - len(unmapped):
+                errors.append(rel + ": mappedCount 与已定位门店数不一致")
+            entries = guide.get("unmappedEntries")
+            declared = []
+            if isinstance(entries, list):
+                for entry in entries:
+                    identifier = entry if isinstance(entry, str) else entry.get("id", entry.get("key")) if isinstance(entry, dict) else None
+                    match = next((r for r in unmapped if identifier in (r.get("id"), r.get("key"))), None)
+                    if match is None:
+                        errors.append(rel + ": unmappedEntries 必须逐项引用未定位档案的id或key")
+                    else:
+                        declared.append(match.get("key"))
+            if not isinstance(entries, list) or len(declared) != len(unmapped) or set(declared) != {r.get("key") for r in unmapped}:
+                errors.append(rel + ": unmappedEntries 与未定位档案不一致")
+
+
+def check_atlas_pages(errors):
+    """页面数量、数据源与指南版本一起校验，防止目录与构建配置漂移。"""
+    import merge_venues
+
+    pages = load(ATLAS_PAGES)
+    metadata = load(GUIDE_METADATA)
+    if not isinstance(pages, list) or not pages:
+        errors.append(ATLAS_PAGES + ": 必须是非空页面数组")
+        return
+    if not isinstance(metadata, dict):
+        return
+    seen = {field: set() for field in ("id", "file")}
+    known_cities = set(CITY_GUIDES) | {"shanghai"}
+    for i, page in enumerate(pages):
+        where = "{}[{}]".format(ATLAS_PAGES, i)
+        if not isinstance(page, dict):
+            errors.append(where + ": 必须是对象")
+            continue
+        for field in seen:
+            value = page.get(field)
+            if not isinstance(value, str) or not value:
+                errors.append("{}: {} 必须是非空字符串".format(where, field))
+            elif value in seen[field]:
+                errors.append("{}: {} 重复".format(where, field))
+            else:
+                seen[field].add(value)
+        filename = page.get("file")
+        if not isinstance(filename, str) or not re.fullmatch(r"[a-z0-9_-]+[.]html", filename):
+            errors.append(where + ": file 必须是安全的HTML输出文件名")
+        city, kind = page.get("city"), page.get("kind")
+        if not isinstance(city, str) or city not in known_cities:
+            errors.append(where + ": city 未配置地理范围")
+            continue
+        country = page.get("country")
+        expected_country = "KR" if city == "seoul" else "CN"
+        if country not in ("CN", "KR"):
+            errors.append(where + ": country 必须为 CN / KR")
+        elif country != expected_country:
+            errors.append(where + ": country 与城市所属国家不一致（香港属于CN，首尔属于KR）")
+        if page.get("countryName") != {"CN": "中国", "KR": "韩国"}[expected_country]:
+            errors.append(where + ": countryName 与城市所属国家不一致")
+        expected_currency = CITY_GUIDES[city]["currency"] if city != "shanghai" else "¥"
+        if ("currency" in page or city == "hong-kong") and page.get("currency") != expected_currency:
+            errors.append(where + ": currency 与城市货币不一致（香港使用港币$档位）")
+        if kind not in ("michelin", "eat", "bichi", "bars") or (city != "shanghai" and kind != "michelin"):
+            errors.append(where + ": kind 不是当前城市支持的地图类型")
+            continue
+        edition = page.get("edition")
+        if not isinstance(edition, str) or not re.fullmatch(r"20[0-9]{2}", edition):
+            errors.append(where + ": edition 必须为四位年度")
+        if kind in ("michelin", "eat"):
+            guide = metadata.get(city, {})
+            if not isinstance(guide, dict) or edition != guide.get("edition"):
+                errors.append(where + ": 页面edition与城市指南版本不一致")
+        if city != "shanghai":
+            expected_sources = [CITY_GUIDES[city]["data"]]
+        elif kind == "eat":
+            expected_sources = ["data/venues/bichi.json", "data/venues/michelin.json"]
+        else:
+            expected_sources = ["data/venues/{}.json".format(kind)]
+        if page.get("data") != expected_sources:
+            errors.append(where + ": data 必须与城市和地图类型的数据源对应")
+            continue
+        try:
+            inputs = [load(rel) for rel in expected_sources]
+            if any(not isinstance(records, list) for records in inputs):
+                continue
+            count = len(merge_venues.merge_sources(list(zip(("bichi", "michelin"), inputs)))) if kind == "eat" else len(inputs[0])
+            if type(page.get("expectedCount")) is not int or page["expectedCount"] != count:
+                errors.append("{}: expectedCount 与数据条数 {} 不一致".format(where, count))
+        except (OSError, json.JSONDecodeError, ValueError) as exc:
+            errors.append("{}: 无法读取/合并页面资料 {}".format(where, exc))
+    print("  {:<34} {:>3} 张  城市地图配置".format(ATLAS_PAGES, len(pages)))
 
 
 def check_coords(errors, where, coords):
@@ -487,6 +769,11 @@ def validate_all(verbose=True):
             check_records(errors, rel, cfg)
         except json.JSONDecodeError as e:
             errors.append("{}: JSON 解析失败 {}".format(rel, e))
+    for checker in (check_city_guides, check_guide_metadata, check_atlas_pages):
+        try:
+            checker(errors)
+        except (OSError, json.JSONDecodeError) as e:
+            errors.append("指南资料读取失败: {}".format(e))
     try:
         check_roads(errors)
     except json.JSONDecodeError as e:

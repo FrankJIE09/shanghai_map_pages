@@ -1,0 +1,35 @@
+{
+  "edition": "2026",
+  "announcedAt": "2026-04-09",
+  "verifiedAt": "2026-11-16",
+  "scope": "上海星级餐厅与必比登推介；不含70家米其林入选餐厅及江苏、浙江餐厅",
+  "counts": {
+    "michelin3": 1,
+    "michelin2": 12,
+    "michelin1": 38,
+    "bib": 35
+  },
+  "sources": [
+    {
+      "label": "米其林官方：上海、江苏、浙江2026年度发布",
+      "url": "https://www.michelin.com/en/publications/products-and-services/michelin-guide-shanghai-jiangsu-zhejiang"
+    }
+  ],
+  "verificationNote": "本次核对2026版分类总数、新晋二星与新获星餐厅；未逐店重新核验全部地址、人均、营业状态。唐阁按酒店官网更正定位及餐厅介绍。2026-11-16另核对米其林官方上海星级及必比登实时目录与第2页（https://guide.michelin.com/sg/zh_CN/shanghai-municipality/shanghai/restaurants/3-stars-michelin/2-stars-michelin/1-star-michelin/bib-gourmand）：按中文店名匹配83/86条年度记录，补充官方详情URL、名称及ID；当前目录83家为1家三星、11家二星、38家一星、33家必比登。望庐（浦东）、壹零贰小馆、阿娘面未在当前目录中找到，仍保留2026发布版评级、原坐标与既有营业状态证据，不仅凭目录缺失判定停业。此次链接身份核对不等于重新核验门店实时营业、地址或价格。",
+  "recordUpdates": [
+    {
+      "key": "michelin_tang_court",
+      "verifiedAt": "2026-11-16",
+      "fields": [
+        "coords",
+        "desc",
+        "note"
+      ],
+      "note": "坐标来自酒店官网JSON-LD的GeoCoordinates，原值31.208949,121.445604与马当路地址不符；采用官方31.221,121.474酒店近似点，不宣称餐厅入口精度。更新主理人、营业时段及预约电话。",
+      "sources": [
+        "https://www.langhamhotels.com/en/the-langham/shanghai/discover/our-location/",
+        "https://www.langhamhotels.com/sc/the-langham/shanghai/dine/tang-court/"
+      ]
+    }
+  ]
+}
