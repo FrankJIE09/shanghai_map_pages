@@ -1,0 +1,86 @@
+{
+  "capturedAt": "2026-11-16T04:59:48.962Z",
+  "method": "Playwright screenshots of local dist/ pages. Shanghai camera centered at 31.225,121.47 / z13 with MapBase.getMap().setView; real controls select the double-list filter, Lai Lai Xiao Long, and Yuyintang B Hall. No DOM/data replacement.",
+  "shots": [
+    {
+      "file": "eat-overview.png",
+      "page": "/dist/shanghai_eat_2026.html",
+      "viewport": {
+        "width": 1440,
+        "height": 940
+      },
+      "selector": null,
+      "hash": ""
+    },
+    {
+      "file": "shanghai-map.png",
+      "page": "/dist/shanghai_eat_2026.html",
+      "viewport": {
+        "width": 1440,
+        "height": 940
+      },
+      "selector": "#leaflet-map",
+      "hash": ""
+    },
+    {
+      "file": "eat-selected.png",
+      "page": "/dist/shanghai_eat_2026.html",
+      "viewport": {
+        "width": 1440,
+        "height": 940
+      },
+      "selector": null,
+      "hash": "#v=both_lailai_xiaolong"
+    },
+    {
+      "file": "night-map.png",
+      "page": "/dist/shanghai_bars_livehouse_2026.html",
+      "viewport": {
+        "width": 1440,
+        "height": 940
+      },
+      "selector": "#leaflet-map",
+      "hash": ""
+    },
+    {
+      "file": "bars-mobile.png",
+      "page": "/dist/shanghai_bars_livehouse_2026.html",
+      "viewport": {
+        "width": 430,
+        "height": 1000
+      },
+      "selector": null,
+      "hash": ""
+    },
+    {
+      "file": "bars-mobile-detail.png",
+      "page": "/dist/shanghai_bars_livehouse_2026.html",
+      "viewport": {
+        "width": 430,
+        "height": 1000
+      },
+      "selector": null,
+      "hash": "#v=yyt_b"
+    },
+    {
+      "file": "seoul-overview.png",
+      "page": "/dist/seoul_michelin_2026.html",
+      "viewport": {
+        "width": 1440,
+        "height": 940
+      },
+      "selector": null,
+      "hash": ""
+    },
+    {
+      "file": "seoul-map.png",
+      "page": "/dist/seoul_michelin_2026.html",
+      "viewport": {
+        "width": 1440,
+        "height": 940
+      },
+      "selector": "#map",
+      "hash": ""
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "title": "把下一站，放进地图",
+  "delivery": {"duration_seconds":15,"fps":30,"width":1920,"height":1080,"container":"mp4","video_codec":"h264","pixel_format":"yuv420p","audio_codec":"aac","audio_sample_rate":48000,"platform":"GitHub README: linked full-length GIF + downloadable MP4"},
+  "sources": "sources/capture-report.json; authentic local dist/ screenshots, no substituted app UI or venue data",
+  "beats": [
+    {"id":"opening","start":0,"end":2.5,"headline":"下一站，去哪儿？","picture":"shanghai-map.png","purpose":"Introduce the product through its real map and city theme."},
+    {"id":"dining","start":2.5,"end":6,"headline":"三张榜单，一张地图。","picture":["eat-overview.png","eat-selected.png"],"state_cut":4.1,"purpose":"Show merged listings followed by an actual double-list filter and restaurant detail."},
+    {"id":"nightlife","start":6,"end":9,"headline":"好饭之后，好戏开场。","picture":["night-map.png","bars-mobile.png","bars-mobile-detail.png"],"state_cut":7.5,"purpose":"Move to evening and demonstrate the mobile detail drawer."},
+    {"id":"seoul","start":9,"end":12,"headline":"换座城市，继续探店。","picture":"seoul-overview.png","purpose":"Show the second city and its 93 listed restaurants."},
+    {"id":"cta","start":12,"end":15,"headline":"把下一站，放进地图。","picture":["shanghai-map.png","seoul-map.png"],"purpose":"Resolve with both cities, the product, and a readable project URL."}
+  ],
+  "tracks":{"picture":"Real UI screenshots with camera-style translation/scale, not simulated app recordings","titles":"Chinese editorial headings, location labels and chapter progress","audio":"Original deterministic synthesized city-pop instrumental; no dialogue or external samples"},
+  "transitions":"Motivated chapter cuts with 0.13s green dip; each card and title settles over 0.62s; no scaled-UI crossfades.",
+  "audio":{"target_integrated_lufs":-16,"max_true_peak_db":-1.5,"fade_out_seconds":0.6},
+  "review":{"representative_seconds":[0.8,3.4,5.2,6.8,8.4,10,13.6],"transition_centers":[2.5,4.1,6,7.5,9,12],"checks":["Chinese typography and safe areas","No failed tiles or invented UI","Numeric claims verified from repository data","Full decode and exact 450-frame duration","GIF duration and links"]}
+}

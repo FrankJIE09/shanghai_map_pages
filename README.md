@@ -2,9 +2,19 @@
 
 上海探店地图（四张）：米其林 / 必吃榜×扫街榜 / 酒吧×Livehouse×夜店 / **餐饮总览（三榜合并）**。
 
-**在线访问：<https://frankjie09.github.io/shanghai_map_pages/>**（GitHub Pages 托管的落地页，四张图的总入口）
+另有**首尔米其林地图**，收录 93 家餐厅（42 家星级餐厅与 51 家必比登推介；底图需联网）。
 
-页面是**自包含的单文件 HTML**：数据与共用地图逻辑在构建期内联进去，产物零依赖、可离线双击打开。
+**在线访问：<https://frankjie09.github.io/shanghai_map_pages/>**（GitHub Pages 托管的落地页，地图总入口）
+
+上海地图页面是**自包含的单文件 HTML**：数据与共用地图逻辑在构建期内联进去，产物零依赖、可离线双击打开。
+
+## 15 秒看懂探店地图
+
+从三榜餐饮到上海夜生活，再到首尔米其林，把下一站放进地图。
+
+[![15 秒宣传短片：三榜餐饮、上海夜生活与首尔米其林](docs/media/shanghai-map-promo.gif)](docs/media/shanghai-map-promo.mp4)
+
+[播放 / 下载高清 MP4（15 秒）](docs/media/shanghai-map-promo.mp4)
 
 ## 目录结构
 
@@ -73,7 +83,7 @@ data/map/metro/lines.json + stations.json  --build.py-->  bars 页的 METRO_LINE
 
 ## 三榜合并口径（eat 页）
 
-`eat` 把「必吃榜」「扫街榜」「米其林指南」合成一份 **132 家**的记录，规则只有两条，且都可校验：
+`eat` 把「必吃榜」「扫街榜」「米其林指南」合成一份 **131 家**的记录，规则只有两条，且都可校验：
 
 1. **去重**：两源**坐标完全一致**（距离 0）判为同一家店。实测恰好 13 对，与 bichi 侧 `michelin != 0` 的 13 条一一对应，星级也一致。两源命名不同（如「临湖素食（保利·时光里店）」vs 官方「临湖素食」），所以**不能**靠店名匹配。坐标接近但不等（4 m、8 m 等）的不合并——实测那是不同餐厅。
 2. **标签**：合并成一维可多选的 `tags`（`both`/`bichi`/`saojie`/`michelin3`/`michelin2`/`michelin1`/`bib`），`primary` 取优先级最高的一项作为主色分类：

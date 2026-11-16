@@ -1,0 +1,62 @@
+{
+  "repository_commit": "88aff93441617035b2cd77e9a2c4b4fa18f09b65",
+  "images": [
+    {
+      "file": "bars-mobile-detail.png",
+      "width": 430,
+      "height": 1000,
+      "bytes": 176561,
+      "sha256": "72074c511d720dd633ae884b98eaafbc51b8724b2a662b492d07323b9b01904b"
+    },
+    {
+      "file": "bars-mobile.png",
+      "width": 430,
+      "height": 1000,
+      "bytes": 453463,
+      "sha256": "6cc3e10ed8e72d832fa6767da605e4c214719983f6eb4fe1fa320f7bf72c8193"
+    },
+    {
+      "file": "eat-overview.png",
+      "width": 1440,
+      "height": 940,
+      "bytes": 633254,
+      "sha256": "d0d3e07fb44252eb9e0ee4ed47a30a280ec228d38ad715b2bd03dd53df06e4ef"
+    },
+    {
+      "file": "eat-selected.png",
+      "width": 1440,
+      "height": 940,
+      "bytes": 525008,
+      "sha256": "461042442bf82fd8500c86d3d057cf46bfc849537c512e40d5de70ae2f9293af"
+    },
+    {
+      "file": "night-map.png",
+      "width": 1230,
+      "height": 602,
+      "bytes": 769673,
+      "sha256": "0d45d53c17c862d4a0e7400c9389ab0351bb89a3e6b1337b75ac2347e930d3ec"
+    },
+    {
+      "file": "seoul-map.png",
+      "width": 924,
+      "height": 527,
+      "bytes": 913553,
+      "sha256": "0a7311d3bfe35b631cf6426705159111dac6fe2adff90aef615081d44e7f1247"
+    },
+    {
+      "file": "seoul-overview.png",
+      "width": 1440,
+      "height": 940,
+      "bytes": 1024388,
+      "sha256": "2adf099b0e92eb0d75b008115a39ff2c88f15e9eff993b4570b3170bd4bf9c45"
+    },
+    {
+      "file": "shanghai-map.png",
+      "width": 700,
+      "height": 600,
+      "bytes": 423274,
+      "sha256": "1adf0c43f537e35d5f8e4367df56f157784d6361e1db45c8623811bdc6e6afbf"
+    }
+  ],
+  "capture_basis": "Local dist/ at capture time; saved screenshots are authoritative. Working tree may contain edits beyond repository_commit."
+}
