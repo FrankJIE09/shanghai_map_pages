@@ -1,6 +1,6 @@
 # 15 秒探店地图宣传片
 
-成片位于 `../../docs/media/shanghai-map-promo.mp4`，README 使用同名 GIF 直接展示全片。1920×1080、30 fps、15 秒、H.264 / AAC；GIF 为无声循环预览。
+成片位于 `../../docs/media/shanghai-map-promo.mp4`。README 使用 GitHub 视频附件内嵌播放器，并保留同名 GIF 作为折叠的无声预览。1920×1080、30 fps、15 秒、H.264 / AAC。
 
 `editorial-plan.json` 记录分镜和时间点，`composition.html` 是按时间确定性渲染的动效源，`capture.cjs` 从真实 `dist/` 页面截图。影片中的相机移动属于剪辑效果；筛选和详情前后状态来自实际页面操作。所有数据与界面均未替换。
 
@@ -36,6 +36,18 @@ ffmpeg -y -i docs/media/shanghai-map-promo.mp4 \
 ```
 
 成片元数据、全量解码结果、响度与 SHA-256 在 `../../docs/media/promo-validation.json`；最终联系表和转场抽帧在 `../../docs/media/promo-contact.jpg`、`../../docs/media/promo-transitions.jpg`。更新成片后应重新生成这些验证资料。
+
+## GitHub 内嵌播放
+
+GitHub 仓库文件页无法预览本项目约 12 MB 的 MP4。因此从母版另生成约 6 MB 的 1080p 播放版本，经 GitHub Markdown 编辑器附件按钮上传；将返回的 `https://github.com/user-attachments/assets/…` 地址单独放在 README 一行，即可显示原生视频播放器。附件来源、校验和与元数据保存在 `../../docs/media/github-video.json`。
+
+```sh
+ffmpeg -y -i docs/media/shanghai-map-promo.mp4 \
+  -c:v libx264 -preset slow -crf 24 -pix_fmt yuv420p \
+  -c:a copy -movflags +faststart "$PROMO_WORK/shanghai-map-promo-web.mp4"
+```
+
+更新视频时需重新上传附件并替换 README 中的地址；高清母版与动图仍随仓库保存。
 
 ## 来源与制作说明
 

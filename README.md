@@ -12,9 +12,16 @@
 
 从三榜餐饮到上海夜生活，再到首尔米其林，把下一站放进地图。
 
-[![15 秒宣传短片：三榜餐饮、上海夜生活与首尔米其林](docs/media/shanghai-map-promo.gif)](docs/media/shanghai-map-promo.mp4)
+https://github.com/user-attachments/assets/d2b43c2b-9421-43d7-8fd2-e2aca74d8767
 
-[播放 / 下载高清 MP4（15 秒）](docs/media/shanghai-map-promo.mp4)
+[下载高清 MP4（1080p · 15 秒）](docs/media/shanghai-map-promo.mp4?raw=true)
+
+<details>
+<summary>查看无声动图预览</summary>
+
+![15 秒宣传短片：三榜餐饮、上海夜生活与首尔米其林](docs/media/shanghai-map-promo.gif)
+
+</details>
 
 ## 目录结构
 
